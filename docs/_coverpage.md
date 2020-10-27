@@ -1,5 +1,3 @@
-![logo](images/mall.svg)
-
 # Java-Notes
 
 > Java学习笔记。
