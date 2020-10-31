@@ -9,7 +9,7 @@
 * 容器
 
   * [集合](java/collection/集合.md)
-  * [集合笔试题](java/collection.md)
+  * [集合笔试题](java/collection/集合笔试题.md)
 
 * 并发
 
