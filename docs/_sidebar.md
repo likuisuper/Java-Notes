@@ -14,6 +14,10 @@
 * 并发
 
   * [线程基础](java/线程.md)
+  * [Unsafe类剖析](java/并发编程学习/Unsafe类剖析.md)
+  * [CAS底层](java/并发编程学习/CAS底层.md)
+  * [原子类](java/并发编程学习/原子类.md)
+  * [锁原理剖析](java/并发编程学习/锁原理剖析.md)
 
 * 工具篇
   * [IDEA常用设置及推荐插件](reference/idea.md)
