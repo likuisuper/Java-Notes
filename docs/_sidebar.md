@@ -19,9 +19,17 @@
   * [原子类](java/并发编程学习/原子类.md)
   * [锁原理剖析](java/并发编程学习/锁原理剖析.md)
 
+* 微服务
+
+  * [dubbon-admin管理平台搭建](coludserver/dubbo-admin 平台搭建与管理.md)
+
 * 工具篇
+
+  * [软件安装](reference/soft_install.md)
+
   * [IDEA常用设置及推荐插件](reference/idea.md)
   * [Postman：API接口调试利器](reference/postman.md)
   * [IDEA中创建和启动SpringBoot应用的正确姿势](reference/idea_springboot.md)
 
     
+

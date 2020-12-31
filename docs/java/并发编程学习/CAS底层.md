@@ -81,7 +81,7 @@ UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapInt(JNIEnv *env, jobject unsafe, job
   /*根据value的内存偏移值offset去内存中取指针addr*/(获取偏移地址)
   jint* addr = (jint *) index_oop_from_field_offset_long(p, offset);
   /*获得更新值x,指针addr,期待值e参数后调用Atomic::cmpxchg(x,addr,e)*/(交换)
-  //这里可以看到，把期望值e(即原始值)赋值给了cmpxchg方法，
+  //这里可以看到，判断期望值e(即原始值)与更新值是否相等，相等则返回true，
   return (jint)(Atomic::cmpxchg(x, addr, e)) == e;
 UNSAFE_END
 ~~~
