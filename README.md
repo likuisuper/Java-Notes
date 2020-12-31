@@ -26,5 +26,5 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 ## 微服务
 
-* [dubbon-admin管理平台搭建](docs/coludserver/dubbo-admin 平台搭建与管理.md)
+* [Dubbon搭建管理平台](docs/coludserver/dubbo-admin 平台搭建与管理.md)
 

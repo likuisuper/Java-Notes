@@ -21,7 +21,7 @@
 
 * 微服务
 
-  * [dubbon-admin管理平台搭建](coludserver/dubbo-admin 平台搭建与管理.md)
+  * [Dubbon搭建管理平台](coludserver/dubbo-admin 平台搭建与管理.md)
 
 * 工具篇
 
