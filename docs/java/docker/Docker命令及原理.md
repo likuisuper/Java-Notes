@@ -1,0 +1,135 @@
+## Docker的基本组成
+
+鲸鱼背上有集装箱
+
+蓝色的大海里面----宿主机系统比如Windows
+
+鲸鱼-----docker
+
+集装箱------容器实例  from 来自我们的镜像模板
+
+1.镜像(image)
+
+2.容器(container)
+
+3.仓库(repository)
+
+Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器，一个镜像可以创建很多容器。
+
+容器可以类比面向对象中的对象，镜像可以类比面向对象中的类。**容器是用镜像创建的运行实例**，可以把容器看作一个简易版的linux环境和运行在其中的运行程序。
+
+仓库是**集中存放镜像文件**的场所，是一个运行时环境，就是鲸鱼上的集装箱
+
+## 配置阿里云镜像加速
+
+打开https:dev.aliyun.com，进入镜像加速器，按照步骤配置即可
+
+如果无法启动docker,出现Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?错误：
+
+1、先使用su root切换到root账户
+
+2、systemctl enable docker #开机自动启动docker
+
+3、systemctl start docker #启动docker
+
+4、systemctl restart docker#重启docker
+
+## 基本命令
+
+一、镜像命令
+
+* docker run:从镜像文件中运行容器实例
+
+* docker info:查看docker信息，比如多少容器，多少镜像等
+
+* docker --help:类似linux上的man命令(有问题找男人)
+
+* docker images:列出本地主机上的所有镜像
+
+  ![](https://s3.ax1x.com/2021/01/07/sehLmd.png)
+
+  其中：REPOSITORY表示镜像的仓库源，TAG表示镜像的标签，代表这个仓库源的不同版本，IMAGE ID表示镜像ID,CREATED表示镜像创建时间，SIZE表示镜像大小
+
+  * docker images -a:查出所有镜像(包含中间镜像),镜像是一层套一层的，类似千层饼
+  * docker images -q:查出当前所有镜像的id
+  * docker images -qa:两者结合，确定一个镜像的唯一id,比如删除一个镜像
+
+* docker search 镜像名字:查找镜像
+
+  * 其中stars类似github上面的star，可以用docker search -s 30 tomcat搜索star>30的镜像(现在-s已经被弃用了，使用--filter替代)，docker search --filter=stars=30 tomcat
+  * OFFICIAL表示是否是官方的，ok代表是
+
+* docker pull 镜像名称:从仓库里拉取镜像
+
+  docker pull 镜像名称 不加版本号=docker pull 镜像名称:latest,默认下载最小版本
+
+* docker rmi 镜像名称(镜像id)：删除镜像，如果不加版本号，默认删除版本为latest的镜像，所以**一定要加版本**避免误删
+
+  * 使用-f参数强制删除:docker rmi -f 镜像名称
+
+* docker rmi 镜像名称 镜像名称:加空格删除多个镜像(有i是删除镜像，没i是删除容器)
+
+* docker rmi -f $(docker images -q或者-qa):删除全部镜像
+
+二、容器命令
+
+--name="容器新名字":为容器指定一个名称
+
+-d:后台运行容器，并返回容器ID，也即启动守护式容器
+
+**-i: 以交互模式运行容器，通常与-t同时使用**
+
+**-t: 为容器重写分配一个伪输入终端，通常与-i同时使用**
+
+-P: 随机端口映射；
+
+-p: 指定端口映射
+
+* docker ps:列出当前正在运行的所有容器
+  * -a:作用正在运行的+历史上运行过的
+  * -l:显示最近创建的容器
+  * -n:显示最近n个创建的容器
+  * **-q:静默模式，只显示容器编号**
+* **docker run -it 镜像id(或者使用--name指定名称):新建并登录进入容器**
+* **docker run -d 启动守护式容器（后台运行）**
+* docker start 容器id或者容器名:启动容器
+* docker exec:进入容器，可在运行的容器中执行命令
+  * 后面加入/bin/bash表示可以使用shell脚本，比如docker exec -it 容器id /bin/bash
+* 退出容器，两种方式
+  * (1)docker exit:容器停止退出
+  * (2)ctrl+P+Q:容器不停止退出(使用start重新进入)
+* docker restart 容器id或者名称:重启容器
+* 停止容器:docker stop 容器id或者容器名
+* 强制停止容器:docker kill 容器id或者容器名
+* 删除容器:docker rm 容器id或者容器名
+* 删除全部容器和删除全部镜像一样，不过rmi后面没有i
+* 查看容器日志:docker logs -f -t --tail 容器id,-t是加入时间戳，-f跟随最新的日志打印，-tail 数字:显示最后多少条
+* 查看容器内的进程:docker top 容器id
+* 查看容器内部细节:docker inspect 容器id
+* docker容器内部文件拷贝到宿主机:docker cp 容器id:要拷贝文件的地址 目标地址(宿主机下)
+
+## 镜像原理
+
+![](https://s3.ax1x.com/2021/01/08/suIqZF.png)
+
+## 应用
+
+1.启动tomcat
+
+docker run -it -p 8888:8080 tomcat
+
+其中-it表示交互式终端，-p表示指定端口，8888:8080表示将tomcat默认的8080端口指定成8888通过docker暴露给外界，否则外界是访问不到的。
+
+如果这里的-p换成-P即大P，则表示一个随机端口
+
+新版本的tomcat启动后但是不能访问，因为webapps里面什么内容都没有，欢迎页在webapps.dist中，解决方法：将原来的webapps重命名为webapps2,将webapps.dist重命名为webapps。首先使用
+
+docker exec -it tomcat容器id /bin/bash进入该容器，使用mv命令重命名，并且exit退出容器
+
+![](https://s3.ax1x.com/2021/01/08/sKkPIJ.png)
+
+刷新浏览器即可成功访问tomcat首页。但是这只是修改了当前容器的配置，当再启动一个容器时，依然会报404，因为容器是根据镜像生成（可以类比类和实例），只有将镜像修改了，再生成的容器才不会出现这个问题。解决办法就是使用docker commit命令将生成的容器生成镜像（镜像可以生成容器，反过来，根据容器也可以得到镜像）。
+
+在上一步中（还没有使用exit退出容器时）：（1）按ctrl+p+q(不退出容器的方式返回到宿主机)；（2）使用docker ps -l查看容器id；（3）使用git commit -a='lk' -m='ssssss' 容器id lk/tomcat提交，其中-a是作者名，-m是注释，lk/tomcat是新生成的镜像名
+
+![](https://s3.ax1x.com/2021/01/11/s8A7uj.png)
