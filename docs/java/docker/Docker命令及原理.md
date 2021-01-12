@@ -98,7 +98,7 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
 * **docker run -d 启动守护式容器（后台运行）**
 * docker start 容器id或者容器名:启动容器
 * docker attach 容器id:重新进入容器
-* **docker exec:进入容器**
+* **docker exec 容器id:在容器外面对容器进行操作**，当使用-d后台启动时，可以使用该命令类似于隔空取物操作
   
   * 后面加入/bin/bash表示可以使用shell脚本，比如docker exec -it 容器id /bin/bash
 * **退出容器，两种方式**
@@ -108,7 +108,7 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
 * 停止容器:docker stop 容器id或者容器名
 * 强制停止容器:docker kill 容器id或者容器名
 * 删除容器:docker rm 容器id或者容器名
-* 删除全部容器和删除全部镜像一样，不过rmi后面没有i
+* **删除全部容器和删除全部镜像一样，不过rmi后面没有i，docker rm -f $ (docker ps -q)**
 * 查看容器日志:docker logs -f -t --tail 容器id,-t是加入时间戳，-f跟随最新的日志打印，-tail 数字:显示最后多少条
 * 查看容器内的进程:docker top 容器id
 * 查看容器内部细节:docker inspect 容器id，内容是json字符串
