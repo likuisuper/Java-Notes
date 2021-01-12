@@ -91,15 +91,19 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
   * -n:显示最近n个创建的容器
   * **-q:静默模式，只显示容器编号**
 * **docker run -it 镜像id(或者使用--name指定名称):新建并登录进入容器**
+  
   * 后面加入/bin/bash表示可以使用shell脚本，比如docker run -it 容器id(name) /bin/bash
+  
+    加不加影响不大，因为很多容器的dockerfile默认最后一行都加了这句
 * **docker run -d 启动守护式容器（后台运行）**
 * docker start 容器id或者容器名:启动容器
 * docker attach 容器id:重新进入容器
 * **docker exec:进入容器**
+  
   * 后面加入/bin/bash表示可以使用shell脚本，比如docker exec -it 容器id /bin/bash
 * **退出容器，两种方式**
   * (1)docker exit:容器停止退出
-  * (2)ctrl+P+Q:容器不停止退出(使用start重新进入)
+  * (2)ctrl+P+Q:容器不停止退出(使用attach重新进入)
 * docker restart 容器id或者名称:重启容器
 * 停止容器:docker stop 容器id或者容器名
 * 强制停止容器:docker kill 容器id或者容器名
@@ -219,6 +223,78 @@ CMD /bin/bash
 
 进入该目录下，新建一个文件，容器内将能看到该文件
 
-## dockfile
+## 容器间的数据共享
 
-对镜像的描述文件
+1.先使用docker run -it --name dc01 lk/centos(以该镜像作为模板)启动容器作为父容器
+
+进入上一步创建的volumeContainer2
+
+使用touch dc01_add.txt创建文件，然后ctrl+P+Q不停止容器退出
+
+2.docker run -it --name dc02 --volumes-from dc01 lk/centos启动容器，将dc01作为父容器
+
+进入volumeContainer2,使用ls -l命令可以看上dc01容器创建的dc01_add.txt文件，然后使用
+
+touch dc02_add.txt创建一个文件，ctrl+P+Q退出
+
+3.docker run -it --name dc03 --volumes-from dc01 lk/centos启动容器，还是将dc01作为父容器，
+
+然后进入volumeContainer2,可以看到dc01_add.txt和dc02_add.txt文件，然后touch dc03_add.txt
+
+4.使用docker attach dc01重新进入容器dc01,可以看到子容器新建的文件，达到父子之间数据共享
+
+~~~shell
+[root@local /]# docker ps
+CONTAINER ID   IMAGE       COMMAND                  CREATED              STATUS              PORTS     NAMES
+f70e5f23eca7   lk/centos   "/bin/sh -c /bin/bash"   About a minute ago   Up About a minute             dc03
+e22bf82083dd   lk/centos   "/bin/sh -c /bin/bash"   7 minutes ago        Up 7 minutes                  dc02
+602f2da12a61   lk/centos   "/bin/sh -c /bin/bash"   14 minutes ago       Up 14 minutes                 dc01
+[root@local /]# docker attach dc01
+[root@602f2da12a61 volumeContainer2]# pwd
+/volumeContainer2
+[root@602f2da12a61 volumeContainer2]# ls -l
+total 0
+-rw-r--r--. 1 root root 0 Jan 12 13:40 dc01_add.txt
+-rw-r--r--. 1 root root 0 Jan 12 13:50 dc02_add.txt
+-rw-r--r--. 1 root root 0 Jan 12 13:54 dc03_add.txt
+[root@602f2da12a61 volumeContainer2]# 
+~~~
+
+进入容器dc02和容器dc03也是一样的
+
+下面做这样一件事，删除dc01(即父容器),然后进入dc02容器创建一个文件，看dc03是否能共享这个文件
+
+~~~shell
+[root@local /]# docker ps
+CONTAINER ID   IMAGE       COMMAND                  CREATED          STATUS          PORTS     NAMES
+f70e5f23eca7   lk/centos   "/bin/sh -c /bin/bash"   13 minutes ago   Up 13 minutes             dc03
+e22bf82083dd   lk/centos   "/bin/sh -c /bin/bash"   19 minutes ago   Up 19 minutes             dc02
+602f2da12a61   lk/centos   "/bin/sh -c /bin/bash"   26 minutes ago   Up 25 minutes             dc01
+[root@local /]# docker rm -f dc01 #删除容器dc01
+dc01
+[root@local /]# docker ps
+CONTAINER ID   IMAGE       COMMAND                  CREATED          STATUS          PORTS     NAMES
+f70e5f23eca7   lk/centos   "/bin/sh -c /bin/bash"   13 minutes ago   Up 13 minutes             dc03
+e22bf82083dd   lk/centos   "/bin/sh -c /bin/bash"   19 minutes ago   Up 19 minutes             dc02
+[root@local /]# docker attach dc01
+Error: No such container: dc01
+[root@local /]# docker attach dc02 #进入容器dc02
+[root@e22bf82083dd volumeContainer2]# pwd  
+/volumeContainer2
+[root@e22bf82083dd volumeContainer2]# touch dc02_update.txt #新建一个文件
+[root@e22bf82083dd volumeContainer2]# read escape sequence
+[root@local /]# docker attach dc03 #进入容器dc03
+[root@f70e5f23eca7 volumeContainer2]# pwd
+/volumeContainer2
+[root@f70e5f23eca7 volumeContainer2]# ls -l
+total 0
+-rw-r--r--. 1 root root 0 Jan 12 13:40 dc01_add.txt
+-rw-r--r--. 1 root root 0 Jan 12 13:50 dc02_add.txt
+-rw-r--r--. 1 root root 0 Jan 12 14:07 dc02_update.txt #可以看到容器dc02新建的文件，在父容器被删掉的情况下
+-rw-r--r--. 1 root root 0 Jan 12 13:54 dc03_add.txt
+[root@f70e5f23eca7 volumeContainer2]# 
+~~~
+
+由此可见，就算父容器挂掉了，容器间还是能进行数据的共享的。可以再建一个dc04,然后删除dc03演示
+
+**结论，容器之间配置信息的传递，数据卷的生命周期一直持续到没有容器使用它为止**
