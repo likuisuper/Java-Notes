@@ -11,6 +11,8 @@
 
 源码位置：hotspot/src/share/vm/prims/unsafe.cpp
 
+也可以在在线网址上找到：http://hg.openjdk.java.net/jdk8u/jdk8u/hotspot/file
+
 ### 获取Unsafe实例
 
 先来看一下构造函数

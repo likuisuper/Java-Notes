@@ -61,7 +61,7 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
 
 * docker pull 镜像名称:从仓库里拉取镜像
 
-  docker pull 镜像名称 不加版本号=docker pull 镜像名称:latest,默认下载最小版本
+  docker pull 镜像名称 不加版本号=docker pull 镜像名称:latest,默认下载最新版本
 
 * docker rmi 镜像名称(镜像id)：删除镜像，如果不加版本号，默认删除版本为latest的镜像，所以**一定要加版本**避免误删
 
@@ -91,11 +91,13 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
   * -n:显示最近n个创建的容器
   * **-q:静默模式，只显示容器编号**
 * **docker run -it 镜像id(或者使用--name指定名称):新建并登录进入容器**
+  * 后面加入/bin/bash表示可以使用shell脚本，比如docker run -it 容器id(name) /bin/bash
 * **docker run -d 启动守护式容器（后台运行）**
 * docker start 容器id或者容器名:启动容器
-* docker exec:进入容器，可在运行的容器中执行命令
+* docker attach 容器id:重新进入容器
+* **docker exec:进入容器**
   * 后面加入/bin/bash表示可以使用shell脚本，比如docker exec -it 容器id /bin/bash
-* 退出容器，两种方式
+* **退出容器，两种方式**
   * (1)docker exit:容器停止退出
   * (2)ctrl+P+Q:容器不停止退出(使用start重新进入)
 * docker restart 容器id或者名称:重启容器
@@ -105,14 +107,14 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
 * 删除全部容器和删除全部镜像一样，不过rmi后面没有i
 * 查看容器日志:docker logs -f -t --tail 容器id,-t是加入时间戳，-f跟随最新的日志打印，-tail 数字:显示最后多少条
 * 查看容器内的进程:docker top 容器id
-* 查看容器内部细节:docker inspect 容器id
-* docker容器内部文件拷贝到宿主机:docker cp 容器id:要拷贝文件的地址 目标地址(宿主机下)
+* 查看容器内部细节:docker inspect 容器id，内容是json字符串
+* **docker容器内部文件拷贝到宿主机:docker cp 容器id:要拷贝文件的地址 目标地址(宿主机下)**
 
 ## 镜像原理
 
 ![](https://s3.ax1x.com/2021/01/08/suIqZF.png)
 
-## 应用
+## 使用
 
 1.启动tomcat
 
@@ -133,3 +135,90 @@ docker exec -it tomcat容器id /bin/bash进入该容器，使用mv命令重命�
 在上一步中（还没有使用exit退出容器时）：（1）按ctrl+p+q(不退出容器的方式返回到宿主机)；（2）使用docker ps -l查看容器id；（3）使用git commit -a='lk' -m='ssssss' 容器id lk/tomcat提交，其中-a是作者名，-m是注释，lk/tomcat是新生成的镜像名
 
 ![](https://s3.ax1x.com/2021/01/11/s8A7uj.png)
+
+## 容器数据卷
+
+作用：数据持久化（相当于redis中的rdb和aof的作用）
+
+特点:
+
+* 1.数据卷可在容器之间共享或重用数据
+* 2.卷中的更改可以直接生效
+* 3.数据卷中的更改不会包含在镜像的更新中
+* 4.数据卷的生命周期一直持续到没有容器使用它为止
+
+使用docker run -it -v /宿主机绝对路径目录:/容器内目录 镜像名，让宿主机和容器进行数据共享和对接：
+
+1.首先在宿主机根目录下和容器根目录下查看是否有volumeContainer目录，这是要演示的目录，现在都没有
+
+![](https://s3.ax1x.com/2021/01/11/s8QlZD.png)
+
+2.执行命令docker run -it -v /volumeContainer:/volumeContainer centos
+
+![](https://s3.ax1x.com/2021/01/11/s8ll60.png)
+
+可以看到，在宿主机和容器内都生成了一个volumeContainer目录
+
+3.使用docker inspect 容器id查看内部细节
+
+![](https://s3.ax1x.com/2021/01/11/s81ox1.png)
+
+可以看到两者进行了绑定
+
+4.演示两者间的数据同步
+
+![](https://s3.ax1x.com/2021/01/11/s8JViD.png)
+
+5.容器退出后数据是否还存在
+
+先将容器退出:exit，然后start启动，使用docker attach 刚才退出的容器id
+
+![](https://s3.ax1x.com/2021/01/11/s8tvi8.png)
+
+可以看到，即使容器退出，但是主机在该目录下的数据写入还是能被容器共享
+
+6.带权限命令
+
+docker run -it -v /volumeContainer:/volumeContainer:ro centos,加了ro,就是read only只读的意思，容器只能对主机的数据而并不能写入
+
+6.使用dckfile完成容器数据卷的管理
+
+说明：由于可移植性和分享的考虑，**用-v 主机目录:容器目录这种方法不能够直接在Dockerfile中实现**
+
+使用VOLUME指令来给镜像添加一个或多个数据卷
+
+首先编写dockfile文件
+
+宿主机下根目录新建一个mydocker文件夹，vim Dockerfile
+
+~~~bash
+FROM centos
+VOLUME ["/volumeContainer1","/volumeContainer2"]
+CMD echo "finshed,-----success1"
+CMD /bin/bash
+~~~
+
+然后使用build命令构建：docker build -f /mydcker/Dockerfile -t lk/centos .
+
+-f表示文件,指明文件在哪，后面跟路径，当前目录下可不加，-t是命名空间，后面加镜像名。最后还有一个点.
+
+结果如下
+
+![](https://s3.ax1x.com/2021/01/11/s8yw3q.png)
+
+使用dokcer inspect 容器id查看
+
+~~~json
+"Volumes": {
+    "/volumeContainer1": {},
+    "/volumeContainer2": {}
+},
+~~~
+
+第一个路径是容器内的，第二个路径是宿主机的,上图显示为{},路径是/var/lib/docker/volumes/一大串文件名/_data
+
+进入该目录下，新建一个文件，容器内将能看到该文件
+
+## dockfile
+
+对镜像的描述文件
