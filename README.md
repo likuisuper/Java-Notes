@@ -32,3 +32,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 * [Dubbon搭建管理平台](docs/coludserver/dubbo-admin平台搭建与管理.md)
 
+## 安装配置
+
+* [软件安装配置及环境部署](docs/reference/soft_install.md)
+

@@ -1,3 +1,51 @@
+## 虚拟机网络配置
+
+现在本机查看ip和子网掩码
+
+![](https://s3.ax1x.com/2021/01/12/sGTJvF.png)
+
+选择VMware-编辑-虚拟机网络编辑
+
+![](https://s3.ax1x.com/2021/01/12/sGTbrQ.png)
+
+点击net设置
+
+![](https://s3.ax1x.com/2021/01/12/sGTHKg.png)
+
+点击dhcp设置
+
+![](https://s3.ax1x.com/2021/01/12/sGTzGV.png)
+
+进入虚拟机打开网络配置
+
+![](https://s3.ax1x.com/2021/01/12/sG7WyF.png)
+
+打开物理机网络配置
+
+![](https://s3.ax1x.com/2021/01/12/sGH2tI.png)
+
+然后互相测试是否能ping通，虚拟机要关闭防火墙
+
+* 查看防火墙
+
+~~~shell
+systemctl status firewalld
+~~~
+
+* 关闭防火墙，下次重启仍然生效
+
+~~~shell
+systemctl stop firewalld
+~~~
+
+* 永久关闭
+
+~~~shell
+systemctl disable firewalld
+~~~
+
+配置好后重启
+
 ## node.js安装配置
 
 安装略，主要讲下配置：
