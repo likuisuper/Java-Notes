@@ -104,14 +104,14 @@ systemctl disable firewalld
   export export PATH=$PATH:${JAVA_HOME}/bin
   ~~~
 
-* 测试是否成功(source FileName作用是在当前环境下读取并执行FileName中的命令)
+* 测试是否成功(source FileName作用是在当前环境下读取并执行FileName中的命令，能够立即生效)
 
   ~~~shell
   source profile
   java -version
   ~~~
 
-  
+  如果不能立即生效，重启虚拟机即可
 
 ## node.js安装配置
 
