@@ -46,6 +46,73 @@ systemctl disable firewalld
 
 配置好后重启
 
+## Linux配置本地Java环境
+
+* 先卸载默认的openjdk
+
+  * 查看openjdk的位置
+
+    ~~~shell
+    -- linux管道命令grep
+    
+    [cxylk@localhost ~]$ rpm -qa | grep java
+    java-1.8.0-openjdk-headless-1.8.0.131-11.b12.el7.x86_64
+    javapackages-tools-3.4.1-11.el7.noarch
+    tzdata-java-2017b-1.el7.noarch
+    java-1.7.0-openjdk-headless-1.7.0.141-2.6.10.5.el7.x86_64
+    java-1.7.0-openjdk-1.7.0.141-2.6.10.5.el7.x86_64
+    java-1.8.0-openjdk-1.8.0.131-11.b12.el7.x86_64
+    python-javapackages-3.4.1-11.el7.noarch
+    ~~~
+
+  * 使用root账户卸载，除了.noarch不需要卸载，其余全部卸载
+
+    ~~~shell
+    [root@localhost cxylk]# rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.131-11.b12.el7.x86_64
+    [root@localhost cxylk]# rpm -e --nodeps java-1.7.0-openjdk-headless-1.7.0.141-2.6.10.5.el7.x86_64
+    [root@localhost cxylk]# rpm -e --nodeps java-1.7.0-openjdk-1.7.0.141-2.6.10.5.el7.x86_64
+    [root@localhost cxylk]# rpm -e --nodeps java-1.8.0-openjdk-1.8.0.131-11.b12.el7.x86_64
+    [root@localhost cxylk]# rpm -qa | grep java
+    javapackages-tools-3.4.1-11.el7.noarch
+    tzdata-java-2017b-1.el7.noarch
+    python-javapackages-3.4.1-11.el7.noarch
+    ~~~
+
+* 在/opt/目录下新建soft目录，修改权限为777
+
+  ~~~shell
+  [cxylk@localhost opt]$ mkdir soft
+  [cxylk@localhost opt]$ sudo chmod 777 soft
+  ~~~
+
+* 利用xftp将jdk进行上传，并解压
+
+  ~~~shell
+  tar -zvxf jdk....tar.gz
+  ~~~
+
+* 给/etc/profile授权,先切换到root
+
+  ~~~shell
+  chmod 777 profile
+  ~~~
+
+* 编辑该文件，在末尾添加
+
+  ~~~shell
+  export JAVA_HOME=/opt/soft/jdk1.8.0_201
+  export export PATH=$PATH:${JAVA_HOME}/bin
+  ~~~
+
+* 测试是否成功(source FileName作用是在当前环境下读取并执行FileName中的命令)
+
+  ~~~shell
+  source profile
+  java -version
+  ~~~
+
+  
+
 ## node.js安装配置
 
 安装略，主要讲下配置：
