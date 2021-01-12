@@ -29,7 +29,7 @@
 
 * 工具篇
 
-  * [软件安装配置](reference/soft_install.md)
+  * [软件安装配置及环境部署](reference/soft_install.md)
 
   * [IDEA常用设置及推荐插件](reference/idea.md)
   * [Postman：API接口调试利器](reference/postman.md)
