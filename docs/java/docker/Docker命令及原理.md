@@ -20,6 +20,37 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
 
 仓库是**集中存放镜像文件**的场所，是一个运行时环境，就是鲸鱼上的集装箱
 
+## Docker安装
+
+* 安装yum-utils:
+
+  ~~~shell
+  yum install -y yum-utils device-mapper-persistent-data lvm2
+  ~~~
+
+* 为yum源添加docker仓库位置；
+
+  ~~~shell
+  #官方源
+  yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  #阿里云
+  yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+  ~~~
+
+* 安装docker服务
+
+  ~~~shell
+  yum install docker-ce
+  ~~~
+
+* 启动docker服务
+
+  ~~~shell
+  systemctl start docker
+  ~~~
+
+  
+
 ## 配置阿里云镜像加速
 
 打开https:dev.aliyun.com，进入镜像加速器，按照步骤配置即可
@@ -112,7 +143,7 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
 * 查看容器日志:docker logs -f -t --tail 容器id,-t是加入时间戳，-f跟随最新的日志打印，-tail 数字:显示最后多少条
 * 查看容器内的进程:docker top 容器id
 * 查看容器内部细节:docker inspect 容器id，内容是json字符串
-* **docker容器内部文件拷贝到宿主机:docker cp 容器id:要拷贝文件的地址 目标地址(宿主机下)**
+* **docker容器内部文件拷贝到宿主机:docker cp 容器id:要拷贝文件的地址 目标地址(宿主机下)**(反之亦然)
 
 ## 镜像原理
 
