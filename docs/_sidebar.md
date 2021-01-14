@@ -37,8 +37,8 @@
 * 工具篇
 
   * [软件安装配置及环境部署](reference/soft_install.md)
-
-  * [IDEA常用设置及推荐插件](reference/idea.md)
+* [IDEA常用设置及推荐插件](reference/idea.md)
+  * [spring中对excel操作](reference/spring中对excel操作.md)
   * [Postman：API接口调试利器](reference/postman.md)
   
   
