@@ -87,6 +87,23 @@ maven导入
 | fixedIndex     | int      | -1               | 对应excel的列,忽略名字                                       |
 | isColumnHidden | boolean  | false            | 导出隐藏列                                                   |
 
+可以添加以下依赖解决一定程度的内存溢出问题
+
+~~~xml
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi</artifactId>
+    <version>4.0.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>4.0.0</version>
+</dependency>
+~~~
+
+但是依然很消耗内存
+
 ## easyexcel
 
 easypoi非常耗内存，所以可以使用阿里的easyexcel。
