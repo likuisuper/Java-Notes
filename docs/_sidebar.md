@@ -29,15 +29,15 @@
 
 * Docker相关
 
-  * [dokcer命令及原理](java/docker/docker命令及原理)
-  * [dockerfile原理及应用](java/docker/Dockerfile原理及应用)
-  * [docker常用安装](java/docker/docker常用安装)
-  * [使用Dockerfile部署Springboot项目](java/docker/使用Dockerfile部署Springboot项目)
+  * [dokcer命令及原理](java/docker/docker命令及原理.md)
+  * [dockerfile原理及应用](java/docker/Dockerfile原理及应用.md)
+  * [docker常用安装](java/docker/docker常用安装.md)
+  * [使用Dockerfile部署Springboot项目](java/docker/使用Dockerfile部署Springboot项目.md)
 
 * 工具篇
 
   * [软件安装配置及环境部署](reference/soft_install.md)
-* [IDEA常用设置及推荐插件](reference/idea.md)
+  * [IDEA常用设置及推荐插件](reference/idea.md)
   * [spring中对excel操作](reference/spring中对excel操作.md)
   * [Postman：API接口调试利器](reference/postman.md)
   
