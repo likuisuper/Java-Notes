@@ -88,7 +88,7 @@ systemctl disable firewalld
 * 利用xftp将jdk进行上传，并解压
 
   ~~~shell
-  tar -zvxf jdk....tar.gz
+  tar -zxvf jdk....tar.gz
   ~~~
 
 * 给/etc/profile授权,先切换到root
@@ -152,7 +152,7 @@ npm install express -g     # -g是全局安装的意思
 
 2.使用xftp将redis的linux版本传输到 /tmp目录下(根目录下的tmp目录)
 
-3.使用tar -zvxf redis-5.0.5.tar.gz解压
+3.使用tar -zxvf redis-5.0.5.tar.gz解压
 
 4.移动目录：mv redis-5.0.5(即解压后的文件) /usr/local/redis(重命名为redis)  一般安装软件都放在usr/local/目录下,
 
@@ -210,3 +210,98 @@ npm install express -g     # -g是全局安装的意思
 
 ![](https://s3.ax1x.com/2021/01/10/slXjSK.png)
 
+## Linux下nginx的安装配置
+
+#### 1.打开官网
+
+http://nginx.org/，下载2017的nginx-1.21.1版本
+
+#### 需要装的素材(依赖)：
+
+pcre-8.37.tar.gz
+
+openssl-1.0.1t.tar.gz
+
+zlib-1.2.8.tar.gz
+
+nginx-1.11.1.tar.gz
+
+安装方法：
+
+* 1.可以通过wget命令安装，例如安装pcre-8.37.tar.gz
+
+  ~~~shell
+  wget http://downloads.sourceforge.net/project/pcre/pcre/8.37/pcre-8.37.tar.gz /usr/src/(安装到该目录下)
+  ~~~
+
+  使用tar -xvf解压后进入该文件，然后使用./configure命令进行检查，如果出现You need a C++ compiler for C++ support错误，则安装c++ compiler，否则编译的时候会报错
+
+  ~~~shell
+  yum install -y gcc gcc-c++
+  ~~~
+
+  然后使用如下命令编译并安装
+
+  ~~~shell
+  make && make install
+  ~~~
+
+  然后使用pcre-config --version查看版本
+
+* 2.通过yum命令安装其他依赖
+
+  ~~~shell
+  yum -y install make zlib zlib-devel gcc-c++ libtool openssl openssl-devel
+  ~~~
+
+#### 安装nginx
+
+安装到/usr/src下
+
+将文件拖入该目录，然后解压:tar -xvf ,解压完成后进入该目录，使用./configure命令检查，最后使用
+
+~~~shell
+make && make install
+~~~
+
+进行编译执行
+
+安装成功后，在usr目录多出来一个文件夹local/nginx，在nginx中有sbin里面有启动脚本
+
+#### 启动
+
+进入上一步的sbin目录，然后使用
+
+~~~shell
+./nginx命令启动
+~~~
+
+使用ps -ef | grep nginx查看
+
+![](https://s3.ax1x.com/2021/01/16/sDKQ9x.png)
+
+可以看到一个master和worker进程，这个后面再讲
+
+然后浏览器中根据ip和80端口可以访问。该页面不能访问的话关闭防火墙，或者使用以下命令查看开放端口
+
+~~~shell
+firewall-cmd --list-all
+~~~
+
+设置开放的端口号
+
+~~~shell
+sudo firewall-cmd --add-port=80/tcp --permanent
+~~~
+
+重启防火墙
+
+~~~shell
+firewall-cmd --reload
+~~~
+
+## Linux中tomcat安装
+
+上传安装包到/usr/src目录下，解压
+
+解压完成后进入该目录，进入/bin目录，使用./startup.sh启动即可。可以进入tomcat目录下的logs目录，然后使用tail -f catalina.out查看日志文件

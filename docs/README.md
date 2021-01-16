@@ -35,6 +35,10 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [docker常用安装](java/docker/docker常用安装)
 * [使用Dockerfile部署Springboot项目](java/docker/使用Dockerfile部署Springboot项目)
 
+## 服务器
+
+* [nginx服务器](服务器/nginx服务器.md)
+
 ## 微服务
 
 * [Dubbon搭建管理平台](coludserver/dubbo-admin平台搭建与管理.md)

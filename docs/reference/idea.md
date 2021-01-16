@@ -33,31 +33,35 @@
 
 ![](../images/idea_screen_7.png)
 
+### 鼠标停在类、方法、字段上显示详细信息
+
+settings->editor->general->other，将show quickdocumentation on mouse move打勾，tooltipdelay设置时长
+
 ## IDEA和Eclipse常用快捷键对比
 
 > 友情提示：IDEA可以设置为Eclipse风格的快捷键，在File->Settings->Keymap处，如需更改部分快捷键可按如下表格中的英文描述进行搜索，并改为相应快捷键。
 
-| Eclipse       | IDEA                | 英文描述                      | 中文描述                            |
-| ------------- | ------------------- | ----------------------------- | ----------------------------------- |
-| ctrl+shift+r  | ctrl+shift+n        | Navigate->File                | 找工作空间的文件                    |
-| ctrl+shift+t  | ctrl+n              | Navigate->Class               | 找类定义                            |
-| ctrl+shift+g  | alt+f7              | Edit->Find->Find Usages       | 查找方法在哪里调用.变量在哪里被使用 |
-| ctrl+t        | ctrl+t              | Other->Hierarchy Class        | 看类继承结构                        |
-| ctrl+o        | ctrl+f12            | Navigate->File Structure      | 搜索一个类里面的方法                |
-| shift+alt+z   | ctrl+alt+t          | Code->Surround With           | 生成常见的代码块                    |
-| shift+alt+l   | ctrl+alt+v          | Refactor->Extract->Variable   | 抽取变量                            |
-| shift+alt+m   | ctrl+alt+m          | Refactor->Extract->Method     | 抽取方法                            |
-| alt+左箭头    | ctrl+alt+左箭头     | Navigate->Back                | 回退上一个操作位置                  |
-| alt+右箭头    | ctrl+alt+右键头     | Navigate->Forward             | 前进上一个操作位置                  |
-| ctrl+home     | ctrl+home           | Move Caret to Text Start      | 回到类最前面                        |
-| ctrl+end      | ctrl+end            | Move Caret to Text End        | 回到类最后面                        |
-| ctrl+e        | ctrl+e              | View->Recent Files            | 最近打开的文件                      |
-| alt+/         | ctrl+space          | Code->Completion->Basic       | 提示变量生成                        |
-| ctrl+1        | alt+enter           | Other->Show Intention Actions | 提示可能的操作                      |
-| ctrl+h        | ctrl+shift+f        | Find in Path                  | 全局搜索                            |
-| alt+上/下箭头 | alt+shift+上/下箭头 | Code->Move Line Up/Down       | 移动一行代码                        |
-| ctrl+/        | ctrl+/              | Other->Fix doc comment        | 方法注释                            |
-| ctrl+alt+s    | alt+insert          | Generate                      | 生成getter,setter,tostring等        |
+| Eclipse       | IDEA                | 英文描述                      | 中文描述                                |
+| ------------- | ------------------- | ----------------------------- | --------------------------------------- |
+| ctrl+shift+r  | ctrl+shift+n        | Navigate->File                | 找工作空间的文件                        |
+| ctrl+shift+t  | ctrl+n              | Navigate->Class               | 找类定义                                |
+| ctrl+shift+g  | **alt+f7**          | Edit->Find->Find Usages       | **查找方法在哪里调用.变量在哪里被使用** |
+| ctrl+t        | ctrl+t              | Other->Hierarchy Class        | 看类继承结构                            |
+| ctrl+o        | **ctrl+f12**        | Navigate->File Structure      | **搜索一个类里面的方法**                |
+| shift+alt+z   | **ctrl+alt+t**      | Code->Surround With           | **生成常见的代码块**                    |
+| shift+alt+l   | ctrl+alt+v          | Refactor->Extract->Variable   | 抽取变量                                |
+| shift+alt+m   | ctrl+alt+m          | Refactor->Extract->Method     | 抽取方法                                |
+| alt+左箭头    | **ctrl+alt+左箭头** | Navigate->Back                | **回退上一个操作位置**                  |
+| alt+右箭头    | **ctrl+alt+右键头** | Navigate->Forward             | **前进上一个操作位置**                  |
+| ctrl+home     | ctrl+home           | Move Caret to Text Start      | 回到类最前面                            |
+| ctrl+end      | ctrl+end            | Move Caret to Text End        | 回到类最后面                            |
+| ctrl+e        | **ctrl+e**          | View->Recent Files            | **最近打开的文件**                      |
+| alt+/         | ctrl+space          | Code->Completion->Basic       | 提示变量生成                            |
+| ctrl+1        | alt+enter           | Other->Show Intention Actions | 提示可能的操作                          |
+| ctrl+h        | double shift        | Find in Path                  | 全局搜索                                |
+| alt+上/下箭头 | alt+shift+上/下箭头 | Code->Move Line Up/Down       | 移动一行代码                            |
+| ctrl+/        | ctrl+/              | Other->Fix doc comment        | 方法注释                                |
+| ctrl+alt+s    | alt+insert          | Generate                      | 生成getter,setter,tostring等            |
 
 ## 推荐插件
 > 由于IDEA本身就自带很多插件，可以完成大部分需求，这里就推荐两个本人常用的插件。
@@ -82,3 +86,8 @@
 一个没有getter,setter方法的类通过添加@Getter和@Setter注解拥有了getter,setter方法。
 
 ![](../images/idea_screen_11.png)
+
+### SequenceDiagram
+
+查看源码的好帮手，能够查看调用的方法时序图
+

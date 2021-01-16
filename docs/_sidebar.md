@@ -22,11 +22,13 @@
 * 微服务
 
   * [Dubbon搭建管理平台](coludserver/dubbo-admin平台搭建与管理.md)
+* 服务器
+  * [nginx服务器](服务器/nginx服务器.md)
 * Docker相关
 
-  * [dokcer命令及原理](java/docker/docker命令及原理.md)
+  * [dokcer命令及原理](java/docker/Docker命令及原理.md)
   * [dockerfile原理及应用](java/docker/Dockerfile原理及应用.md)
-  * [docker常用安装](java/docker/docker常用安装.md)
+  * [docker常用安装](java/docker/Docker常用安装.md)
   * [使用Dockerfile部署Springboot项目](java/docker/使用Dockerfile部署Springboot项目.md)
 * 工具篇
 
@@ -34,6 +36,5 @@
   * [IDEA常用设置及推荐插件](reference/idea.md)
   * [spring中对excel操作](reference/spring中对excel操作.md)
   * [Postman：API接口调试利器](reference/postman.md)
-  
 * 工作中遇到的问题总结
   * [工作中的问题](work/工作中遇到的问题.md)
