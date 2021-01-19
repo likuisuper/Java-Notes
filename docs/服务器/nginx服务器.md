@@ -293,3 +293,124 @@ location [= | ~ | ~* | ^~] uri{
 4、~^：用于不含正则表达式的uri前，要求nginx服务器找到标识uri和请求字符串匹配度最高的location后，立即使用此location处理请求，而不再使用location块中的正则uri和请求字符串做匹配
 
 **注意**：如果uri包含正则表达式，则必须要有~或者~*标识
+
+## 配置实例：负载均衡
+
+1.实现效果：
+
+（1）浏览器地址栏输入http://193.168.136.15/edu/a.html，负载均衡效果，平均8080和8081端口中
+
+（2）分别在上面的tomcat8080和tomcat8081的webapps中新建一个edu文件夹，里面创建一个a.html文件，一个内容是8080，一个内容是8081
+
+（3）配置nginx配置文件
+
+在http块里面加上一个upstream块，起一个名字，里面是tomcat服务器的列表。在server块里面将server_name改为自己的ip，然后在location块里面加上proxy_pass,后面就是upstream块的名字。
+
+upstream指令：
+
+该指令用于设置一组可以在proxy_pass和fastcgi_pass指令中使用的代理服务器，默认的负载均衡方式为轮询
+
+~~~shell
+upstream myserver  {
+	#server指令用于指定后端服务器的名称和参数
+	server 193.168.136.15:8080;
+	server 193.168.136.15:8081;
+}
+
+#虚拟主机
+server {
+    listen       80;
+    server_name  193.168.136.15;
+
+    #charset koi8-r;
+
+    #access_log  logs/host.access.log  main;
+
+    location / {
+        root   html;
+        proxy_pass  http://myserver;
+        index  index.html index.htm;
+}
+
+~~~
+
+然后在浏览器输入网址
+
+http://193.168.136.15/edu/a.html，多刷新几下浏览器，便可以看到不同的内容
+
+#### 分配策略
+
+1、轮询：上面采取的分配策略是默认的，也就是**轮询**
+
+每个请求按照时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉了，能自动剔除
+
+2、weight(权重)
+
+默认为1，权重越高，被分配到的请求就越多
+
+~~~shell
+upstream myserver  {
+	#server指令用于指定后端服务器的名称和参数
+	server 193.168.136.15:8080 weight=5;
+	server 193.168.136.15:8081 weight=10;
+}
+~~~
+
+这时候刷新浏览器，可以看到8081到内容出现两次，8080出现的内容1次，即下面的请求是上面的两倍
+
+3、ip_hash
+
+每个请求按访问的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session的问题。
+
+比如第一次访问的ip地址是8081，那么后面访问的一直都是8081，不会访问8080
+
+**注意**：使用该指令无法保证后端服务器的负载均衡，可能有些后端服务器接收到的请求多，有些后端服务器接收到的请求少，**而且设置后端服务器的权重等方法将不起作用**。所以，如果后端的动态应用服务器能做到SESSION共享，还是建议采用后端服务器的SESSION共享替代nginx的ip_hash。如果后端服务器有时要从nginx负载均衡(已使用ip_hash)摘除一段时间，必须将其标记为down，而不是注释或删掉，否则会导致服务器重新进行hash，导致session失效
+
+~~~shell
+upstream myserver  {
+	ip_hash;
+	#server指令用于指定后端服务器的名称和参数
+	server 193.168.136.15:8080 weight=5;#权重不起作用
+	server 193.168.136.15:8081 down;#这时只会访问8080
+~~~
+
+4、fair(第三方)
+
+按后端服务器的响应时间来分配请求，响应时间短的优先分配
+
+## 配置实例：动静分离
+
+在根目录下新建dmsttest目录，在里面新建www目录和image目录分别存放html文件和img文件
+
+~~~shell
+    server {
+        listen       80;
+        server_name  193.168.136.15;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        #location / {
+        #    root   html;
+        #    proxy_pass  http://myserver;
+        #    index  index.html index.htm;
+        #}
+
+        location /www/  {
+            root /dmsttest/;
+            index index.html index.htm;
+        }
+        location /image/  {
+            root /dmsttest/;#表示根目录为/dmsttest
+            autoindex  on;#列出该目录中的文件，可以不加
+        }
+~~~
+
+## 高可用
+
+主服务器:master
+
+从服务器:backup
+
+当主服务器挂掉后，使用从服务器完成工作
