@@ -170,18 +170,18 @@ public class CountDownLatch {
         }
 
         protected int tryAcquireShared(int acquires) {
-            return (getState() == 0) ? 1 : -1;
+            return (getState() == 0) ? 1 : -1;//state=0就返回1，否则返回-1
         }
 
         protected boolean tryReleaseShared(int releases) {
             // Decrement count; signal when transition to zero
-            for (;;) {
-                int c = getState();
-                if (c == 0)
+            for (;;) {//循环进行cas,知道当前线程成功完成cas时state减1并更新到state
+                int c = getState();//获取当前的计数值(state)
+                if (c == 0)//如果等于0就直接返回，防止出现负数
                     return false;
-                int nextc = c-1;
-                if (compareAndSetState(c, nextc))
-                    return nextc == 0;
+                int nextc = c-1;//将计数值-1
+                if (compareAndSetState(c, nextc))//更新state值
+                    return nextc == 0;//减1后如果==0返回true，说明是最后一个线程调用
             }
         }
     }

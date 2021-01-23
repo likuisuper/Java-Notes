@@ -1339,7 +1339,7 @@ public abstract class AbstractQueuedSynchronizer
      */
     public final boolean releaseShared(int arg) {
         if (tryReleaseShared(arg)) {
-            doReleaseShared();
+            doReleaseShared();//调用unpark激活被阻塞的线程
             return true;
         }
         return false;

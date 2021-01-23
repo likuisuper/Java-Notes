@@ -178,8 +178,8 @@ public class CyclicBarrier {
         // signal completion of last generation
         trip.signalAll();
         // set up next generation
-        count = parties;
-        generation = new Generation();
+        count = parties;//重置屏障
+        generation = new Generation();//更新broken为false
     }
 
     /**
@@ -187,9 +187,9 @@ public class CyclicBarrier {
      * Called only while holding lock.
      */
     private void breakBarrier() {
-        generation.broken = true;
+        generation.broken = true;//设置当前屏障为broken
         count = parties;
-        trip.signalAll();
+        trip.signalAll();//唤醒所有线程
     }
 
     /**
@@ -199,44 +199,44 @@ public class CyclicBarrier {
         throws InterruptedException, BrokenBarrierException,
                TimeoutException {
         final ReentrantLock lock = this.lock;
-        lock.lock();
+        lock.lock();//获取独占锁
         try {
             final Generation g = generation;
 
-            if (g.broken)
+            if (g.broken)//如果borken被设置为true,说明屏障被破坏，抛出异常并返回
                 throw new BrokenBarrierException();
 
-            if (Thread.interrupted()) {
-                breakBarrier();
-                throw new InterruptedException();
+            if (Thread.interrupted()) { //如果当前线程被打断
+                breakBarrier();//打破屏障
+                throw new InterruptedException();//抛出中断异常
             }
 
-            int index = --count;
+            int index = --count;//计数器值-1
             if (index == 0) {  // tripped
-                boolean ranAction = false;
+                boolean ranAction = false;//标记位
                 try {
                     final Runnable command = barrierCommand;
                     if (command != null)
-                        command.run();
+                        command.run();//如果任务不为空就执行任务
                     ranAction = true;
-                    nextGeneration();
+                    nextGeneration();//唤醒条件队列里的所有阻塞线程
                     return 0;
                 } finally {
                     if (!ranAction)
-                        breakBarrier();
+                        breakBarrier();//设置屏障状态为broken
                 }
             }
 
             // loop until tripped, broken, interrupted, or timed out
             for (;;) {
                 try {
-                    if (!timed)
-                        trip.await();
-                    else if (nanos > 0L)
-                        nanos = trip.awaitNanos(nanos);
+                    if (!timed)//没有设置超时时间
+                        trip.await();//调用await方法进入trip条件变量的条件队列
+                    else if (nanos > 0L)//设置了超时时间
+                        nanos = trip.awaitNanos(nanos);//指定时间超时后自动被激活
                 } catch (InterruptedException ie) {
                     if (g == generation && ! g.broken) {
-                        breakBarrier();
+                        breakBarrier();//发生异常，将屏障设置为broken
                         throw ie;
                     } else {
                         // We're about to finish waiting even if we had not
@@ -276,9 +276,9 @@ public class CyclicBarrier {
      */
     public CyclicBarrier(int parties, Runnable barrierAction) {
         if (parties <= 0) throw new IllegalArgumentException();
-        this.parties = parties;
-        this.count = parties;
-        this.barrierCommand = barrierAction;
+        this.parties = parties;//始终用来记录总的线程数
+        this.count = parties;//因为cyclicbarrier是可复用的，当count=0后，将parties赋值给count
+        this.barrierCommand = barrierAction;//当屏障被打破时所要执行的任务
     }
 
     /**
@@ -359,7 +359,7 @@ public class CyclicBarrier {
      */
     public int await() throws InterruptedException, BrokenBarrierException {
         try {
-            return dowait(false, 0L);
+            return dowait(false, 0L);//循环屏障的核心实现，第一个参数为false说明不设置超时时间，这时候第二个参数无意义
         } catch (TimeoutException toe) {
             throw new Error(toe); // cannot happen
         }
@@ -462,7 +462,7 @@ public class CyclicBarrier {
      * and choose one to perform the reset.  It may be preferable to
      * instead create a new barrier for subsequent use.
      */
-    public void reset() {
+    public void reset() { //该方法用来重置屏障
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {

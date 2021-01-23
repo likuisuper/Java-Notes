@@ -17,7 +17,9 @@
 
 #### 3.替换SDKS
 
-进入Project Settings,找到SDKS中的SourcePath，将默认路径换成当前项目下的src目录
+为了不影响其他项目使用的sourcePath,新建一个SDKS。
+
+进入Project Settings,新建一个SDKS，选择jdk(java8下面那个jdk)，然后将SourcePath中的默认路径换成当前项目下的src目录
 
 #### 3.新建一个测试包，新建测试类测试
 

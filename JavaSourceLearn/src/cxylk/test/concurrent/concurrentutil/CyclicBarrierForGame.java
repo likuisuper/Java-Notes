@@ -35,7 +35,7 @@ public class CyclicBarrierForGame {
                 } catch (InterruptedException | BrokenBarrierException e) {
                     e.printStackTrace();
                 }
-                cyclicBarrier.reset();
+//                cyclicBarrier.reset();
             }
         }
     }

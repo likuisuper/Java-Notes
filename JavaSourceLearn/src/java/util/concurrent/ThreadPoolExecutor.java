@@ -378,45 +378,36 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * that workerCount is 0 (which sometimes entails a recheck -- see
      * below).
      */
-    //原子变量，传入的参数运算后为RUNNING，也就是原子类中的value=-536870912
-    private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
-    //29位来表示工作线程数量
-    private static final int COUNT_BITS = Integer.SIZE - 3;
-    //容量：001 0000000000000000000000000000
-    private static final int CAPACITY   = (1 << COUNT_BITS) - 1;
+    private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));//高3位用来表示线程池状态，低29位用来表示线程个数,所以默认是RUNNING
+    private static final int COUNT_BITS = Integer.SIZE - 3;//29位来表示工作线程数量
+    private static final int CAPACITY   = (1 << COUNT_BITS) - 1;//容量(线程池最大个数)：000 29个1
 
     // runState is stored in the high-order bits
-    //高3位表示线程状态
-    //-1用二进制表示位32个1，左移29位就是111 00000000000000000000000000000
-    private static final int RUNNING    = -1 << COUNT_BITS;
-    //32个0
-    private static final int SHUTDOWN   =  0 << COUNT_BITS;
-    //001 29个0
-    private static final int STOP       =  1 << COUNT_BITS;
-    //010 29个0
-    private static final int TIDYING    =  2 << COUNT_BITS;
-    //011 29个0
-    private static final int TERMINATED =  3 << COUNT_BITS;
+    private static final int RUNNING    = -1 << COUNT_BITS;//-1用二进制表示位32个1，左移29位就是111 00000000000000000000000000000
+    private static final int SHUTDOWN   =  0 << COUNT_BITS;//32个0
+    private static final int STOP       =  1 << COUNT_BITS;//001 29个0
+    private static final int TIDYING    =  2 << COUNT_BITS;//010 29个0
+    private static final int TERMINATED =  3 << COUNT_BITS;//011 29个0
 
     // Packing and unpacking ctl
-    private static int runStateOf(int c)     { return c & ~CAPACITY; }
-    private static int workerCountOf(int c)  { return c & CAPACITY; }
-    private static int ctlOf(int rs, int wc) { return rs | wc; }
+    private static int runStateOf(int c)     { return c & ~CAPACITY; }//获取高3位(运行状态),CAPACITY取反后就是高3位为1，低29位为0
+    private static int workerCountOf(int c)  { return c & CAPACITY; }//获取低29位(线程数)
+    private static int ctlOf(int rs, int wc) { return rs | wc; }//计算ctl新值(线程状态与线程个数)
 
     /*
      * Bit field accessors that don't require unpacking ctl.
      * These depend on the bit layout and on workerCount being never negative.
      */
 
-    private static boolean runStateLessThan(int c, int s) {
+    private static boolean runStateLessThan(int c, int s) {//运行状态小于给定值s
         return c < s;
     }
 
-    private static boolean runStateAtLeast(int c, int s) {
+    private static boolean runStateAtLeast(int c, int s) {//运行状态>=给定值s
         return c >= s;
     }
 
-    private static boolean isRunning(int c) {
+    private static boolean isRunning(int c) {//判断该线程是否为RUNNING状态，即当给定参数<SHUTDOWN时返回true
         return c < SHUTDOWN;
     }
 

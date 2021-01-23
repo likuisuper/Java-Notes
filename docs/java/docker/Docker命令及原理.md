@@ -121,29 +121,52 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
   * -l:显示最近创建的容器
   * -n:显示最近n个创建的容器
   * **-q:静默模式，只显示容器编号**
+  
 * **docker run -it 镜像id(或者使用--name指定名称):新建并登录进入容器**
   
   * 后面加入/bin/bash表示可以使用shell脚本，比如docker run -it 容器id(name) /bin/bash
   
     加不加影响不大，因为很多容器的dockerfile默认最后一行都加了这句
+  
 * **docker run -d 启动守护式容器（后台运行）**
+
 * docker start 容器id或者容器名:启动容器
+
 * docker attach 容器id:重新进入容器
+
 * **docker exec 容器id:在容器外面对容器进行操作**，当使用-d后台启动时，可以使用该命令类似于隔空取物操作
   
   * 后面加入/bin/bash表示可以使用shell脚本，比如docker exec -it 容器id /bin/bash
+  
 * **退出容器，两种方式**
   * (1)docker exit:容器停止退出
   * (2)ctrl+P+Q:容器不停止退出(使用attach重新进入)
+  
 * docker restart 容器id或者名称:重启容器
+
 * 停止容器:docker stop 容器id或者容器名
+
 * 强制停止容器:docker kill 容器id或者容器名
+
 * 删除容器:docker rm 容器id或者容器名
+
 * **删除全部容器和删除全部镜像一样，不过rmi后面没有i，docker rm -f $ (docker ps -q)**
+
 * 查看容器日志:docker logs -f -t --tail 容器id,-t是加入时间戳，-f跟随最新的日志打印，-tail 数字:显示最后多少条
+
 * 查看容器内的进程:docker top 容器id
+
+* docker network ls: 查看网络
+
 * 查看容器内部细节:docker inspect 容器id，内容是json字符串
+
+  内容里面会有docker网络信息，Networks
+
 * **docker容器内部文件拷贝到宿主机:docker cp 容器id:要拷贝文件的地址 目标地址(宿主机下)**(反之亦然)
+
+**命令图**
+
+![](https://s3.ax1x.com/2021/01/23/sT2k4g.png)
 
 ## 镜像原理
 
