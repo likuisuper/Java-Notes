@@ -176,21 +176,21 @@ public class Semaphore implements java.io.Serializable {
 
         final int nonfairTryAcquireShared(int acquires) {
             for (;;) {
-                int available = getState();
-                int remaining = available - acquires;
-                if (remaining < 0 ||
-                    compareAndSetState(available, remaining))
+                int available = getState();//获取当前信号量值
+                int remaining = available - acquires;//计数当前剩余值
+                if (remaining < 0 ||//如果当前剩余值<0
+                    compareAndSetState(available, remaining))//或者cas设置成功则返回剩余值
                     return remaining;
             }
         }
 
         protected final boolean tryReleaseShared(int releases) {
-            for (;;) {
-                int current = getState();
-                int next = current + releases;
+            for (;;) {//无限循环，失败则重试
+                int current = getState();//获取当前信号量的值
+                int next = current + releases;//将当前信号量的值+1
                 if (next < current) // overflow
                     throw new Error("Maximum permit count exceeded");
-                if (compareAndSetState(current, next))
+                if (compareAndSetState(current, next))//cas设置state的值，成功则返回
                     return true;
             }
         }
@@ -242,7 +242,7 @@ public class Semaphore implements java.io.Serializable {
 
         protected int tryAcquireShared(int acquires) {
             for (;;) {
-                if (hasQueuedPredecessors())
+                if (hasQueuedPredecessors())//查看当前线程的前驱节点是否也在等待获取该资源，是则放弃并放入AQS阻塞队列
                     return -1;
                 int available = getState();
                 int remaining = available - acquires;
@@ -464,7 +464,7 @@ public class Semaphore implements java.io.Serializable {
      */
     public void acquire(int permits) throws InterruptedException {
         if (permits < 0) throw new IllegalArgumentException();
-        sync.acquireSharedInterruptibly(permits);
+        sync.acquireSharedInterruptibly(permits);//传递参数为permits，说明要获取permits个信号量资源
     }
 
     /**

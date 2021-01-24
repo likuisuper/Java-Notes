@@ -1,13 +1,13 @@
 
->
-java:S1604)"(Make this anonymous inner class a lambda(ÉãÃ®
 \
 java:S2142"FEither re-interrupt this method or rethrow the "InterruptedException".(ä ¹€
-3
-java:S2119"Save and re-use this "Random".(¼İÅf
-M	java:S106"9Replace this use of System.out or System.err by a logger.(ÌÛ=
+N	java:S1062"9Replace this use of System.out or System.err by a logger.(ô•¼
 \
 java:S21423"FEither re-interrupt this method or rethrow the "InterruptedException".(ä ¹€
-S	java:S106-"9Replace this use of System.out or System.err by a logger.(Óğæœúÿÿÿÿ
 S	java:S106."9Replace this use of System.out or System.err by a logger.(úªˆ®şÿÿÿÿ
-N	java:S1062"9Replace this use of System.out or System.err by a logger.(ô•¼
+M	java:S106"9Replace this use of System.out or System.err by a logger.(ÌÛ=
+>
+java:S1604)"(Make this anonymous inner class a lambda(ÉãÃ®
+S	java:S106-"9Replace this use of System.out or System.err by a logger.(Óğæœúÿÿÿÿ
+3
+java:S2119"Save and re-use this "Random".(¼İÅf

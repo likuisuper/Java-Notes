@@ -1,3 +1,30 @@
+## 一些关键的类和接口
+
+#### Resource接口
+
+![](https://s3.ax1x.com/2021/01/23/sHShE6.png)
+
+该接口是一个资源描述符接口，从基础资源的类型中抽象出来，例如文件或类路径资源。它对各种形式的BeanDefinition的使用都提供了统一接口。
+
+#### ResourceLoader接口
+
+该接口用于加载资源(例如类路径或文件系统资源)
+
+~~~java
+public interface ResourceLoader {
+
+	/** Pseudo URL prefix for loading from the class path: "classpath:". */
+	String CLASSPATH_URL_PREFIX = ResourceUtils.CLASSPATH_URL_PREFIX;
+
+    //返回一个Resource
+	Resource getResource(String location);
+
+	@Nullable
+	ClassLoader getClassLoader();
+
+}
+~~~
+
 ## 容器刷新流程入口
 
 ### 1.刷新准备

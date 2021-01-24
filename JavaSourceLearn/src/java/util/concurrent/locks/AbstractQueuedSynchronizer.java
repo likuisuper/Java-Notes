@@ -1298,10 +1298,10 @@ public abstract class AbstractQueuedSynchronizer
      */
     public final void acquireSharedInterruptibly(int arg)
             throws InterruptedException {
-        if (Thread.interrupted())
+        if (Thread.interrupted())//如果被中断则抛出中断异常
             throw new InterruptedException();
         if (tryAcquireShared(arg) < 0)
-            doAcquireSharedInterruptibly(arg);
+            doAcquireSharedInterruptibly(arg);//获取失败则放入阻塞队列，调用park挂起当前线程
     }
 
     /**

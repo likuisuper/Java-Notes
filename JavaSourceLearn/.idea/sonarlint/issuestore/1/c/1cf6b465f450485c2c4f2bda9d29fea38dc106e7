@@ -1,0 +1,360 @@
+
+h
+java:S3776ñ"RRefactor this method to reduce its Cognitive Complexity from 48 to the 15 allowed.(›è’F
+n
+java:S3776È""RRefactor this method to reduce its Cognitive Complexity from 42 to the 15 allowed.(Œ’øÿÿÿÿÿ
+T
+java:S1854„"8Remove this useless assignment to local variable "temp".(ƒÅÍúıÿÿÿÿ
+O	java:S106İ"9Replace this use of System.out or System.err by a logger.(‡œ£Ñ
+V
+java:S1161œ&":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+1
+java:S1700¤"Rename field "script"(ø§Öâüÿÿÿÿ
+g
+java:S3008¥)"PRename this field "RIGHT" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(„ˆ“
+V
+java:S1161×'":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+R
+java:S1119¬*";Refactor the code to remove this label and the need for it.(ì¨èĞ
+U
+java:S1117ó"9Rename "temp" which hides the field declared at line 985.(Ó¹¯–ûÿÿÿÿ
+i
+java:S3776ú"RRefactor this method to reduce its Cognitive Complexity from 89 to the 15 allowed.(¥äÒŸ
+n
+java:S3776ú"RRefactor this method to reduce its Cognitive Complexity from 56 to the 15 allowed.(›·ú¶şÿÿÿÿ
+m	java:S127ù"XRefactor the code in order to not assign to this loop counter from within the loop body.(†ŒŸ
+T	java:S106Ó"9Replace this use of System.out or System.err by a logger.(´Í¿ùùÿÿÿÿ
+O	java:S106Í"9Replace this use of System.out or System.err by a logger.(‡œ£Ñ
+K
+java:S1066³"/Merge this if statement with the enclosing one.(­€üşúÿÿÿÿ
+?
+java:S1659‘"#Declare "upper" on a separate line.(„îâ±ûÿÿÿÿ
+i	java:S100³"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(óÖÚŞıÿÿÿÿ
+O	java:S106Ï"9Replace this use of System.out or System.err by a logger.(Äî¶
+V
+java:S1161×":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161‘":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+V
+java:S1161É":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+:
+java:S1659ˆ"#Declare "count" on a separate line.(È¹Ó÷
+8
+java:S1116Ø#"Remove this empty statement.(Ï²îûÿÿÿÿ
+V
+java:S1161Ñ)":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161…$":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+n
+java:S3776º"RRefactor this method to reduce its Cognitive Complexity from 36 to the 15 allowed.(äÛ—Øşÿÿÿÿ
+V
+java:S1161‚!":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161Ä":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+O	java:S106Ş"9Replace this use of System.out or System.err by a logger.(ß¥³§
+V
+java:S1161­#":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+n
+java:S3776•!"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(Œ’øÿÿÿÿÿ
+T	java:S106ç"9Replace this use of System.out or System.err by a logger.(Ç«‚ùøÿÿÿÿ
+F
+java:S1066è"/Merge this if statement with the enclosing one.(Çõç
++
+java:S1700Ç"Rename field "ctype"(Â‹Ò’
+p
+java:S1488Î"ZImmediately return this expression instead of assigning it to the temporary variable "ch".(Å—şj
+V
+java:S1161å$":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+a
+java:S1124Ô"EReorder the modifiers to comply with the Java Language Specification.(Ñ…“áùÿÿÿÿ
+V
+java:S1161Ü#":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+t	java:S135Ò!"YReduce the total number of break and continue statements in this loop to use at most one.(ÿ‹éÉıÿÿÿÿ
+V
+java:S1161Ì*":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+N
+java:S1144ø"2Remove this unused private "BitClass" constructor.(ØÛ¦¢ÿÿÿÿÿ
+R
+java:S1119";Refactor the code to remove this label and the need for it.(ÊØœ
+>
+java:S1659˜%""Declare "cmax" on a separate line.(“Œ›Óúÿÿÿÿ
+o	java:S135ò"YReduce the total number of break and continue statements in this loop to use at most one.(´ÿÕ™
+n
+java:S3776ú"RRefactor this method to reduce its Cognitive Complexity from 51 to the 15 allowed.(õÖÉşÿÿÿÿ
+@
+java:S1125ÿ")Remove the literal "false" boolean value.(ÉÎ“
+V
+java:S1161À&":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161˜"":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+0
+java:S2178ë!"Correct this "&" to "&&".(¬–¢
+n
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 39 to the 15 allowed.(ÂŸŒúÿÿÿÿ
+V
+java:S1161Û!":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+F
+java:S1066Ë"/Merge this if statement with the enclosing one.(É”Ì
+i
+java:S3776¾"RRefactor this method to reduce its Cognitive Complexity from 26 to the 15 allowed.(Ó¬˜Ñ
+a
+java:S1124¸"EReorder the modifiers to comply with the Java Language Specification.(¿”Æ¡úÿÿÿÿ
+E
+java:S1481„")Remove this unused "temp" local variable.(ƒÅÍúıÿÿÿÿ
+i
+java:S3776Ç"RRefactor this method to reduce its Cognitive Complexity from 22 to the 15 allowed.(‹³øû
+U
+java:S1117Œ"9Rename "temp" which hides the field declared at line 985.(Ñ£›üÿÿÿÿÿ
+n
+java:S3776í"RRefactor this method to reduce its Cognitive Complexity from 37 to the 15 allowed.(¬ÚÄúÿÿÿÿ
+R
+java:S1854Ñ"6Remove this useless assignment to local variable "ch".(ª†Ã”øÿÿÿÿ
+2
+java:S1700¥"Rename field "pattern"(½‘‰×ûÿÿÿÿ
+O
+java:S1197õ"8Move the array designator from the variable to the type.(šªø‰
+V
+java:S1161Ä":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+:
+java:S3398Û)"Move this method into "Bound".(áÌÄÑùÿÿÿÿ
+]
+java:S1117´"FRename "hasSupplementary" which hides the field declared at line 1016.(ÚãĞÉ
+W	java:S125"<This block of commented-out lines of code should be removed.(‹‹Ïñûÿÿÿÿ
+V
+java:S1161Ô ":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+E
+java:S1121¹".Extract the assignment out of this expression.(Æ©ÿ
+V
+java:S1161¿":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+i
+java:S3776ÿ
+"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(Üş¹¢
+k
+java:S3008§)"ORename this field "NONE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(±ŒşÍşÿÿÿÿ
+p
+java:S1192‡"YDefine a constant instead of duplicating this literal "Unclosed character class" 3 times.(ä«”¿
+Z
+java:S3358Ï)"DExtract this nested ternary operation into an independent statement.(Œ†Í@
+O	java:S106á"9Replace this use of System.out or System.err by a logger.(‡œ£Ñ
+5
+java:S2178’$"Correct this "&" to "&&".(Ù—Øßúÿÿÿÿ
+Z
+java:S1610·+"CConvert the abstract class "CharPropertyFactory" into an interface.(Æâ¾ 
+n
+java:S3776ú"RRefactor this method to reduce its Cognitive Complexity from 26 to the 15 allowed.(É¨«şÿÿÿÿ
+V
+java:S1161¡":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161ä":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
++
+java:S1700—"Rename field "block"(Ğ¥ÑÄ
+V
+java:S1161 ":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+L
+java:S1751·!"6Remove this "return" statement or make it conditional.(¸®Ã'
+O	java:S106Ñ"9Replace this use of System.out or System.err by a logger.(‡œ£Ñ
+V
+java:S1161‹'":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+e
+java:S3008¦)"ORename this field "BOTH" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÛŠğ(
+V
+java:S1161È(":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+=
+java:S1481ª"&Remove this unused "d" local variable.(·ÿ¾¾
+o	java:S135ÿ"YReduce the total number of break and continue statements in this loop to use at most one.(´ÿÕ™
+V
+java:S1161›":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+E
+java:S1066Ú"/Merge this if statement with the enclosing one.(‹ø¨z
+V
+java:S1161«":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+R
+java:S1119ş";Refactor the code to remove this label and the need for it.(àµŸ”
+V
+java:S1161ù#":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161Ï$":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+V
+java:S1161%":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+t	java:S135¥!"YReduce the total number of break and continue statements in this loop to use at most one.(ı›‚éùÿÿÿÿ
+5
+java:S2178°'"Correct this "&" to "&&".(û˜®øÿÿÿÿ
+V
+java:S1161±$":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+i
+java:S3776¡-"RRefactor this method to reduce its Cognitive Complexity from 19 to the 15 allowed.(ÌÔÒÙ
+V
+java:S1854‘
+"?Remove this useless assignment to local variable "slashEIndex".(Æõ†ÿ
+V
+java:S1161ú&":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+R	java:S125¢"<This block of commented-out lines of code should be removed.(È÷íŸ
+i
+java:S3776²	"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(‘î€´
+R
+java:S1119Ò*";Refactor the code to remove this label and the need for it.(Šâùü
+o	java:S135à""YReduce the total number of break and continue statements in this loop to use at most one.(´ÿÕ™
+W	java:S125§"<This block of commented-out lines of code should be removed.(­«®£ûÿÿÿÿ
+V
+java:S1161Ë$":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161é&":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+V
+java:S1161²&":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+V
+java:S1161¾'":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161­":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+p
+java:S3012¶"YUse "Arrays.copyOf", "Arrays.asList", "Collections.addAll" or "System.arraycopy" instead.(ÿ´½
+m	java:S127õ
+"XRefactor the code in order to not assign to this loop counter from within the loop body.(†ŒŸ
+i
+java:S3776³"RRefactor this method to reduce its Cognitive Complexity from 81 to the 15 allowed.(¬İâ
+Q
+java:S1161ü%":Add the "@Override" annotation above this method signature(Ü‚œÊ
+Q
+java:S1191˜"5Use classes from the Java API instead of Sun classes.(ß¥“øÿÿÿÿ
+V
+java:S1161ô'":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+n
+java:S3776À&"RRefactor this method to reduce its Cognitive Complexity from 18 to the 15 allowed.(Ûªôüÿÿÿÿ
+D	java:S108ƒ")Either remove or fill this block of code.(…Â˜”øÿÿÿÿ
+E
+java:S1125°")Remove the literal "false" boolean value.(ÙÎ¹ıÿÿÿÿ
+R	java:S125Ÿ"<This block of commented-out lines of code should be removed.(à«­
+e
+java:S1871„&"NThis branch's code block is the same as the block for the branch on line 4863.(úİÑ
+0
+java:S2178½#"Correct this "&" to "&&".(¬–¢
+V
+java:S1161†":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+^
+java:S1479ü"BReduce the number of non-empty switch cases from 40 to at most 30.(Œ¹ÿÿÿÿÿ
+O	java:S106Õ"9Replace this use of System.out or System.err by a logger.(‡œ£Ñ
+v
+java:S1488»"ZImmediately return this expression instead of assigning it to the temporary variable "ch".(ï¯›ûÿÿÿÿ
+O	java:S106×"9Replace this use of System.out or System.err by a logger.(î°™ì
+u
+java:S3012“"YUse "Arrays.copyOf", "Arrays.asList", "Collections.addAll" or "System.arraycopy" instead.(“Š·øÿÿÿÿ
+V
+java:S1161‰%":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+V
+java:S1161€":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+B
+java:S1481¡*"&Remove this unused "k" local variable.(Æ™‚ùÿÿÿÿ
+G
+java:S1144º"0Remove this unused private "readEscaped" method.(éÖøˆ
+V
+java:S1161î*":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+V
+java:S1161à%":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+o	java:S135º"YReduce the total number of break and continue statements in this loop to use at most one.(´ÿÕ™
+V
+java:S1161Õ":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+9
+java:S1659Á(""Declare "rmin" on a separate line.(©ññ¼
+U
+java:S1117„"9Rename "temp" which hides the field declared at line 985.(ƒÅÍúıÿÿÿÿ
+N	java:S106Û"9Replace this use of System.out or System.err by a logger.(¹ØÎT
+n	java:S127é"XRefactor the code in order to not assign to this loop counter from within the loop body.(Ì‚ˆÌ
+9
+java:S1659ş'""Declare "rmin" on a separate line.(©ññ¼
+R
+java:S1119ˆ+";Refactor the code to remove this label and the need for it.(Šâùü
+V
+java:S1161‘":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+n	java:S127ç"XRefactor the code in order to not assign to this loop counter from within the loop body.(±ÂŞï
+;
+java:S1659¡*"Declare "k" on a separate line.(Æ™‚ùÿÿÿÿ
+b
+java:S1117ğ"FRename "hasSupplementary" which hides the field declared at line 1016.(ûÒŒÒûÿÿÿÿ
+m	java:S127å
+"XRefactor the code in order to not assign to this loop counter from within the loop body.(†ŒŸ
+i
+java:S3776Û"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(Œí®´
+n
+java:S3776º"RRefactor this method to reduce its Cognitive Complexity from 28 to the 15 allowed.(Ûªôüÿÿÿÿ
+L
+java:S1481Ó
+"0Remove this unused "inCharClass" local variable.(§¸€üÿÿÿÿ
+V
+java:S1161‹&":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+V
+java:S1161¡'":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+[
+java:S1124Í+"EReorder the modifiers to comply with the Java Language Specification.(¼à—
+V
+java:S1161è":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+V
+java:S1161š'":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+u
+java:S1488Å"YImmediately return this expression instead of assigning it to the temporary variable "m".(‘¸˜Şüÿÿÿÿ
+V
+java:S1161ç":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+t	java:S135#"YReduce the total number of break and continue statements in this loop to use at most one.(ÿ‹éÉıÿÿÿÿ
+V
+java:S1161ã ":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+5
+java:S2178°'"Correct this "&" to "&&".(û˜®øÿÿÿÿ
+V
+java:S1161û":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+n
+java:S3776³"RRefactor this method to reduce its Cognitive Complexity from 32 to the 15 allowed.(óÖÚŞıÿÿÿÿ
+V
+java:S1161å(":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161‚+":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161…(":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+s
+java:S3077Ï"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(¢›Ø´øÿÿÿÿ
+O	java:S106Ù"9Replace this use of System.out or System.err by a logger.(‡œ£Ñ
+V
+java:S1161 ":Add the "@Override" annotation above this method signature(±Œâöıÿÿÿÿ
+V
+java:S1161è":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+W	java:S125š*"<This block of commented-out lines of code should be removed.(¸‡–äÿÿÿÿÿ
+R	java:S125‰"<This block of commented-out lines of code should be removed.(¾ÂÎÆ
+V
+java:S1161†%":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+@
+java:S1481ƒ")Remove this unused "skip" local variable.(ãşÚ»
+V
+java:S1161÷":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+j
+java:S2975Ğ+"SRemove this "clone" implementation; use a copy constructor or copy factory instead.(ì…ÑŒ
+V
+java:S1161¢(":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161Ï%":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ
+s	java:S127ğ
+"XRefactor the code in order to not assign to this loop counter from within the loop body.(ë’úËıÿÿÿÿ
+E
+java:S1125Ç%")Remove the literal "false" boolean value.(Á¦²©úÿÿÿÿ
+k
+java:S3008¤)"ORename this field "LEFT" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ä²Ÿ†ùÿÿÿÿ
+F
+java:S1172Ğ"*Remove this unused method parameter "seq".(Ûªôüÿÿÿÿ
+8
+java:S1659”'"!Declare "yes" on a separate line.(¹€Á‰
+8
+java:S1659”'"!Declare "not" on a separate line.(¹€Á‰
+n
+java:S3776˜""RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(Ûªôüÿÿÿÿ
+V
+java:S1161Ù#":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+;
+java:S1659¡*"Declare "j" on a separate line.(Æ™‚ùÿÿÿÿ
+o	java:S135Ò""YReduce the total number of break and continue statements in this loop to use at most one.(´ÿÕ™
+E
+java:S1481‘")Remove this unused "atom" local variable.(çßó…şÿÿÿÿ
+\
+java:S1124·+"EReorder the modifiers to comply with the Java Language Specification.(Æâ¾ 
+O	java:S106å"9Replace this use of System.out or System.err by a logger.(ŠŸáµ
+V
+java:S1161º":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161’":Add the "@Override" annotation above this method signature(Ûªôüÿÿÿÿ
+V
+java:S1161ì":Add the "@Override" annotation above this method signature(Ã¶ªÉùÿÿÿÿ

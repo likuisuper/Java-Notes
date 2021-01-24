@@ -1,20 +1,24 @@
 package cxylk.test.concurrent.concurrentutil;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 /**
  * @Classname SemaphoreTest
- * @Description 使用信号量来模拟CyclicBarrier的功能，改信号量内部的计数器是递增的
+ * @Description 使用信号量来模拟CyclicBarrier的功能，该信号量内部的计数器是递增的
  * @Author likui
  * @Date 2021/1/7 21:54
  **/
 public class SemaphoreTest {
     //创建一个信号量实例,初始化信号量的初值为0
-    private static volatile Semaphore semaphore=new Semaphore(0);
+    private static volatile Semaphore semaphore=new Semaphore(0,true);
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, NoSuchFieldException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         //创建一个核心线程个数为2的线程池
         ExecutorService executorService= Executors.newFixedThreadPool(2);
         //将线程A加入线程池

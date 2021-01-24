@@ -117,6 +117,14 @@ public int await() throws InterruptedException, BrokenBarrierException {
 }
 ~~~
 
+**调用该方法会阻塞当前线程，直到满足下面条件之一才会返回：**
+
+（1）parties个线程都调用了awit()方法，也就是线程都到了屏障点。
+
+（2）其他线程调用了当前线程的interrupt()方法中断了当前线程，当前线程抛出中断异常并返回
+
+（3）与当前屏障点惯量的Generation对象的broken标志被设为true，会抛出BrokenBarrierException异常并返回。
+
 #### 核心实现dowait方法
 
 ~~~java

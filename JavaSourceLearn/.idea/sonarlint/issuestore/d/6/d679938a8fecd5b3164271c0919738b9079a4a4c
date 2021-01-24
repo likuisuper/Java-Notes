@@ -1,87 +1,87 @@
 
-P
-java:S1191'"5Use classes from the Java API instead of Sun classes.(ÉÃ¾åüÿÿÿÿ
+\
+java:S1124÷"EReorder the modifiers to comply with the Java Language Specification.(Ë²‰
 d
 java:S1192À"HDefine a constant instead of duplicating this literal "Thread-" 4 times.(ì°‰²üÿÿÿÿ
-v
-java:S1192È"ZDefine a constant instead of duplicating this literal "timeout value is negative" 3 times.(­¤„õûÿÿÿÿ
+Q
+java:S1133ç"5Do not forget to remove this deprecated code someday.(‘©Ìúÿÿÿÿ
+D
+java:S1604ƒ"(Make this anonymous inner class a lambda(»Üëùÿÿÿÿ
 e
-java:S3014¦"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(¥ßÓıÿÿÿÿ
-`
-java:S3014Û"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(³é‰
+java:S3014¤"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(óã†®ùÿÿÿÿ
+P
+java:S1191'"5Use classes from the Java API instead of Sun classes.(ÉÃ¾åüÿÿÿÿ
+X
+java:S2886õ"BSynchronize this method to match the synchronization on "setName".(ûäc
+D	java:S108’")Either remove or fill this block of code.(ª¤Ùºûÿÿÿÿ
+E
+java:S1121Ç".Extract the assignment out of this expression.(Ÿü×é
 `
 java:S3014í"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(³é‰
 `
 java:S3014ò"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(ÍÿåÊ
-e
-java:S3014–"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(º…ØØûÿÿÿÿ
-`
-java:S3014Ö"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(óÕ¥Ì
-e
-java:S3014¤"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(óã†®ùÿÿÿÿ
-e
-java:S3014¾"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(ÈìÃ°úÿÿÿÿ
-e
-java:S3014€	"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(Ñ›Îëûÿÿÿÿ
-e
-java:S3014ù
-"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(îß²¸üÿÿÿÿ
 F
 java:S1066"/Merge this if statement with the enclosing one.(ªä®â
-g	java:S117Ì"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(õ¡»ë
-D
-java:S1604ƒ"(Make this anonymous inner class a lambda(»Üëùÿÿÿÿ
-E
-java:S1121Ç".Extract the assignment out of this expression.(Ÿü×é
-o
-java:S1450Ã"XRemove the "stackSize" field and declare it as a local variable in the relevant methods.(„Š«á
-n
-java:S3077ã"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(ÔÙêê
-n
-java:S3077é"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(ŞƒÚÓ
-n
-java:S3077Â"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(‹¬˜
 n
 java:S3077Å"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(û²Ğ„
-q	java:S116š"VRename this field "single_step" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(³”íàøÿÿÿÿ
-\
-java:S1124÷"EReorder the modifiers to comply with the Java Language Specification.(Ë²‰
+L
+java:S1133 "5Do not forget to remove this deprecated code someday.(’ıœÀ
 a
 java:S1124ü"EReorder the modifiers to comply with the Java Language Specification.(÷º÷Úúÿÿÿÿ
 \
 java:S1124"EReorder the modifiers to comply with the Java Language Specification.(ŞÁ³¶
+g	java:S117Ì"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(õ¡»ë
+a
+java:S1124œ"EReorder the modifiers to comply with the Java Language Specification.(Ë®°Ôúÿÿÿÿ
+n
+java:S3077é"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(ŞƒÚÓ
+D	java:S108Œ")Either remove or fill this block of code.(ª¤Ùºûÿÿÿÿ
+`
+java:S3014Û"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(³é‰
+n
+java:S3077Â"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(‹¬˜
+Z
+java:S1144¦">Remove this unused private "dispatchUncaughtException" method.(İà·¦ıÿÿÿÿ
 ^
 java:S1182´"HUse super.clone() to create and seed the cloned instance to be returned.(™”” 
-<
-java:S1181Ô"%Catch Exception instead of Throwable.(Æ·™‹
-L
-java:S1133Æ"5Do not forget to remove this deprecated code someday.(®¦“
-Q
-java:S1133ç"5Do not forget to remove this deprecated code someday.(‘©Ìúÿÿÿÿ
-L
-java:S1133à"5Do not forget to remove this deprecated code someday.(‚“¶î
-Q
-java:S1133†"5Do not forget to remove this deprecated code someday.(Ü¡ó¶øÿÿÿÿ
-L
-java:S1133 "5Do not forget to remove this deprecated code someday.(’ıœÀ
-X
-java:S2886õ"BSynchronize this method to match the synchronization on "setName".(ûäc
-O
-java:S1197²	"8Move the array designator from the variable to the type.(®ğš½
+n
+java:S3077ã"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(ÔÙêê
 L
 java:S1133Â	"5Do not forget to remove this deprecated code someday.(È°Ã‚
+\
+java:S1124"EReorder the modifiers to comply with the Java Language Specification.(“Õ–§
+7
+java:S3878Š"Remove this array creation.( ¢ïäÿÿÿÿÿ
+v
+java:S1192È"ZDefine a constant instead of duplicating this literal "timeout value is negative" 3 times.(­¤„õûÿÿÿÿ
+e
+java:S3014¾"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(ÈìÃ°úÿÿÿÿ
+e
+java:S3014–"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(º…ØØûÿÿÿÿ
+E
+java:S1144ô")Remove this unused private "exit" method.(úş‡ şÿÿÿÿ
+<
+java:S1181Ô"%Catch Exception instead of Throwable.(Æ·™‹
 V
 java:S1117ù
 ":Rename "group" which hides the field declared at line 166.(îß²¸üÿÿÿÿ
-7
-java:S3878Š"Remove this array creation.( ¢ïäÿÿÿÿÿ
-D	java:S108Œ")Either remove or fill this block of code.(ª¤Ùºûÿÿÿÿ
-D	java:S108’")Either remove or fill this block of code.(ª¤Ùºûÿÿÿÿ
-a
-java:S1124œ"EReorder the modifiers to comply with the Java Language Specification.(Ë®°Ôúÿÿÿÿ
-\
-java:S1124"EReorder the modifiers to comply with the Java Language Specification.(“Õ–§
-E
-java:S1144ô")Remove this unused private "exit" method.(úş‡ şÿÿÿÿ
-Z
-java:S1144¦">Remove this unused private "dispatchUncaughtException" method.(İà·¦ıÿÿÿÿ
+L
+java:S1133Æ"5Do not forget to remove this deprecated code someday.(®¦“
+o
+java:S1450Ã"XRemove the "stackSize" field and declare it as a local variable in the relevant methods.(„Š«á
+Q
+java:S1133†"5Do not forget to remove this deprecated code someday.(Ü¡ó¶øÿÿÿÿ
+e
+java:S3014ù
+"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(îß²¸üÿÿÿÿ
+e
+java:S3014€	"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(Ñ›Îëûÿÿÿÿ
+`
+java:S3014Ö"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(óÕ¥Ì
+O
+java:S1197²	"8Move the array designator from the variable to the type.(®ğš½
+L
+java:S1133à"5Do not forget to remove this deprecated code someday.(‚“¶î
+e
+java:S3014¦"IRemove this use of "ThreadGroup". Prefer the use of "ThreadPoolExecutor".(¥ßÓıÿÿÿÿ
+q	java:S116š"VRename this field "single_step" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(³”íàøÿÿÿÿ
