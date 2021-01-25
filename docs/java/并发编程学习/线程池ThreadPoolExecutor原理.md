@@ -70,3 +70,54 @@ RejectedExecutionHandle：饱和策略，就是当队列满并且线程个数达
 * CallerRunsPolicy(使用调用者所在线程来运行任务)
 * DiscardOldestPolicy(丢弃队列里最近的一个任务，执行当前任务)
 * DiscardPolicy(不处理，直接丢弃掉)
+
+KeepAliveTime：存活时间，空闲的非核心线程的存活时间。
+
+TimeUnit：存活时间的时间单位。
+
+#### 实现原理
+
+查看execute方法的源码了解其实现
+
+~~~java
+public void execute(Runnable command) {
+        if (command == null)
+            throw new NullPointerException();//如果任务为null，抛出NPE异常
+        /*
+         * Proceed in 3 steps:
+         *
+         * 1. If fewer than corePoolSize threads are running, try to
+         * start a new thread with the given command as its first
+         * task.  The call to addWorker atomically checks runState and
+         * workerCount, and so prevents false alarms that would add
+         * threads when it shouldn't, by returning false.
+         *
+         * 2. If a task can be successfully queued, then we still need
+         * to double-check whether we should have added a thread
+         * (because existing ones died since last checking) or that
+         * the pool shut down since entry into this method. So we
+         * recheck state and if necessary roll back the enqueuing if
+         * stopped, or start a new thread if there are none.
+         *
+         * 3. If we cannot queue task, then we try to add a new
+         * thread.  If it fails, we know we are shut down or saturated
+         * and so reject the task.
+         */
+        int c = ctl.get();//获取当前线程池的状态+线程数
+        if (workerCountOf(c) < corePoolSize) { //如果线程个数<核心线程池的大小
+            if (addWorker(command, true))//添加线程，第二个参数为true代表当前线程为核心线程
+                return;//添加成功则返回
+            c = ctl.get();//添加失败则检查当前状态
+        }
+        if (isRunning(c) && workQueue.offer(command)) {//走到这里说明线程个数已经>=核心线程池大小，则判断线程池状态是否为Running,并且入队
+            int recheck = ctl.get();//双重检查，假如此时是非Running状态，那么command永远不会执行
+            if (! isRunning(recheck) && remove(command))//如果上一步获取的线程池状态不是Running,则从队列移除
+                reject(command);//执行拒接策略
+            else if (workerCountOf(recheck) == 0)//确实是Running，但是没有线程
+                addWorker(null, false);//则创建线程(非核心线程)
+        }
+        else if (!addWorker(command, false))//走到这里说明队列满了，新增线程，如果失败执行拒接策略
+            reject(command); 
+    }
+~~~
+

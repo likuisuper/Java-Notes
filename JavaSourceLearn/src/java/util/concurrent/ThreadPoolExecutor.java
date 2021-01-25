@@ -1341,7 +1341,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      */
     public void execute(Runnable command) {
         if (command == null)
-            throw new NullPointerException();
+            throw new NullPointerException();//如果任务为null，抛出NPE异常
         /*
          * Proceed in 3 steps:
          *
@@ -1362,20 +1362,20 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          * thread.  If it fails, we know we are shut down or saturated
          * and so reject the task.
          */
-        int c = ctl.get();
-        if (workerCountOf(c) < corePoolSize) {
-            if (addWorker(command, true))
-                return;
-            c = ctl.get();
+        int c = ctl.get();//获取当前线程池的状态+线程数
+        if (workerCountOf(c) < corePoolSize) { //如果线程个数<核心线程池的大小
+            if (addWorker(command, true))//添加线程，第二个参数为true代表当前线程为核心线程
+                return;//添加成功则返回
+            c = ctl.get();//添加失败则检查当前状态
         }
-        if (isRunning(c) && workQueue.offer(command)) {
-            int recheck = ctl.get();
-            if (! isRunning(recheck) && remove(command))
-                reject(command);
-            else if (workerCountOf(recheck) == 0)
-                addWorker(null, false);
+        if (isRunning(c) && workQueue.offer(command)) {//走到这里说明线程个数已经>=核心线程池大小，则判断线程池状态是否为Running,并且入队
+            int recheck = ctl.get();//双重检查，假如此时是非Running状态，那么command永远不会执行
+            if (! isRunning(recheck) && remove(command))//如果上一步获取的线程池状态不是Running,则从队列移除
+                reject(command);//执行拒接策略
+            else if (workerCountOf(recheck) == 0)//确实是Running，但是没有线程
+                addWorker(null, false);//则创建线程(非核心线程)
         }
-        else if (!addWorker(command, false))
+        else if (!addWorker(command, false))//走到这里说明队列满了，新增线程，如果失败执行拒接策略
             reject(command);
     }
 
