@@ -30,6 +30,7 @@
   * [dockerfile原理及应用](java/docker/Dockerfile原理及应用.md)
   * [docker常用安装](java/docker/Docker常用安装.md)
   * [使用Dockerfile部署Springboot项目](java/docker/使用Dockerfile部署Springboot项目.md)
+  * [DockerCompose](java/docker/DockerCompose.md)
 * 工具篇
 
   * [软件安装配置及环境部署](reference/soft_install.md)

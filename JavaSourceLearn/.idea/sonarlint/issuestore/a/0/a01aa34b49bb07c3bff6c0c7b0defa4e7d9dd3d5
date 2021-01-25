@@ -1,17 +1,17 @@
 
-ž
-java:S1130y"‚Remove the declaration of thrown exception 'java.io.UnsupportedEncodingException', as it cannot be thrown from constructor's body.(ÌÆ«ãûÿÿÿÿ
-Q
-java:S1161Î":Add the "@Override" annotation above this method signature(ã®¸Â
-V
-java:S1161½":Add the "@Override" annotation above this method signature(’÷Ÿüûÿÿÿÿ
 V
 java:S1161Ü":Add the "@Override" annotation above this method signature(êÃö«ýÿÿÿÿ
-T
-java:S1197Ü"8Move the array designator from the variable to the type.(êÃö«ýÿÿÿÿ
+Q
+java:S1161Î":Add the "@Override" annotation above this method signature(ã®¸Â
 T
 java:S1197ó"8Move the array designator from the variable to the type.(ŒãŽ„þÿÿÿÿ
+T
+java:S1197Ü"8Move the array designator from the variable to the type.(êÃö«ýÿÿÿÿ
+V
+java:S1161½":Add the "@Override" annotation above this method signature(’÷Ÿüûÿÿÿÿ
 O
 java:S1197Œ"8Move the array designator from the variable to the type.(Üë¿à
 T
 java:S1197–"8Move the array designator from the variable to the type.(¸â·²ùÿÿÿÿ
+ž
+java:S1130y"‚Remove the declaration of thrown exception 'java.io.UnsupportedEncodingException', as it cannot be thrown from constructor's body.(ÌÆ«ãûÿÿÿÿ
