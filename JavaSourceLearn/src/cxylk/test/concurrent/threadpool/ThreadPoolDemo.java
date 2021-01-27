@@ -20,15 +20,16 @@ public class ThreadPoolDemo {
     
     public static void main(String[] args) {
         //使用ArrayBlockingQueue作为阻塞队列，拒接策略为callerRunsPolicy,即使用调用者所在的线程来运行任务
+        //如果将队列大小改为10，任务变为20，即i<20，就会新建5个非核心线程来执行不能加入队列的任务。
         ThreadPoolExecutor poolExecutor=new ThreadPoolExecutor(CORE_POOL_SIZE,MAXIMUM_POOL_SIZE,KEEP_ALIVE_TIME,
-                TimeUnit.SECONDS,new ArrayBlockingQueue<>(100),new ThreadPoolExecutor.CallerRunsPolicy());
-        for (int i = 0; i < 10; i++) {
+                TimeUnit.SECONDS,new ArrayBlockingQueue<>(10),new ThreadPoolExecutor.CallerRunsPolicy());
+        for (int i = 0; i < 20; i++) {
             Runnable runnable=new MyRunnable(""+i);
             poolExecutor.execute(runnable);
         }
         //终止线程池
         poolExecutor.shutdown();
-        //如果线程池没有终止就死循环知道终止
+        //如果线程池没有终止就死循环直到终止
         while (!poolExecutor.isTerminated()){
 
         }
