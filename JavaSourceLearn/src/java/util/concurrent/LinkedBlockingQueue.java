@@ -119,7 +119,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
     /**
      * Linked list node class
      */
-    static class Node<E> {
+    static class Node<E> {//node节点，单链表结构
         E item;
 
         /**
@@ -128,7 +128,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
          * - this Node, meaning the successor is head.next
          * - null, meaning there is no successor (this is the last node)
          */
-        Node<E> next;
+        Node<E> next;//存放下一个节点
 
         Node(E x) { item = x; }
     }
@@ -137,7 +137,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
     private final int capacity;
 
     /** Current number of elements */
-    private final AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger();//记录队列元素个数
 
     /**
      * Head of linked list.
@@ -152,16 +152,16 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
     private transient Node<E> last;
 
     /** Lock held by take, poll, etc */
-    private final ReentrantLock takeLock = new ReentrantLock();
+    private final ReentrantLock takeLock = new ReentrantLock();//执行take、poll等操作时需要获取该锁
 
     /** Wait queue for waiting takes */
-    private final Condition notEmpty = takeLock.newCondition();
+    private final Condition notEmpty = takeLock.newCondition();//当队列为空时，执行出队操作会被放入该条件变量的条件队列进行等待
 
     /** Lock held by put, offer, etc */
-    private final ReentrantLock putLock = new ReentrantLock();
+    private final ReentrantLock putLock = new ReentrantLock();//执行put、offer等操作时需要获取该锁
 
     /** Wait queue for waiting puts */
-    private final Condition notFull = putLock.newCondition();
+    private final Condition notFull = putLock.newCondition();//当队列为满时，执行入队操作会被放入条件队列中等待
 
     /**
      * Signals a waiting take. Called only from put/offer (which do not
@@ -198,7 +198,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
     private void enqueue(Node<E> node) {
         // assert putLock.isHeldByCurrentThread();
         // assert last.next == null;
-        last = last.next = node;
+        last = last.next = node;//插入新节点，并让last指向新插入的节点
     }
 
     /**
@@ -247,7 +247,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
      * {@link Integer#MAX_VALUE}.
      */
     public LinkedBlockingQueue() {
-        this(Integer.MAX_VALUE);
+        this(Integer.MAX_VALUE);//默认容量为0x7fffffff,一定程度上LinkedBlockingQueue还是有界阻塞队列
     }
 
     /**
@@ -257,10 +257,10 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code capacity} is not greater
      *         than zero
      */
-    public LinkedBlockingQueue(int capacity) {
+    public LinkedBlockingQueue(int capacity) {//可以自定义容量大小
         if (capacity <= 0) throw new IllegalArgumentException();
         this.capacity = capacity;
-        last = head = new Node<E>(null);
+        last = head = new Node<E>(null);//初始化首尾节点，让它们都指向哨兵节点
     }
 
     /**
@@ -285,9 +285,9 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
                 if (n == capacity)
                     throw new IllegalStateException("Queue full");
                 enqueue(new Node<E>(e));
-                ++n;
+                ++n;//队列容量加1
             }
-            count.set(n);
+            count.set(n);//将队列元素设置为节点插入后的大小
         } finally {
             putLock.unlock();
         }
@@ -351,8 +351,8 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
             }
             enqueue(node);
             c = count.getAndIncrement();
-            if (c + 1 < capacity)
-                notFull.signal();
+            if (c + 1 < capacity)//如果当前队列大小+1<队列容量，说明还可以继续put，那么执行下一步。否则说明队列满了
+                notFull.signal();//唤醒notFull的条件队列里面的一个因为调用了put操作而被阻塞的线程
         } finally {
             putLock.unlock();
         }
@@ -438,7 +438,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         final ReentrantLock takeLock = this.takeLock;
         takeLock.lockInterruptibly();
         try {
-            while (count.get() == 0) {
+            while (count.get() == 0) {//当队列元素个数为0时将当前线程放入
                 notEmpty.await();
             }
             x = dequeue();

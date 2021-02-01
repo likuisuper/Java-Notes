@@ -94,11 +94,11 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
 
   docker pull 镜像名称 不加版本号=docker pull 镜像名称:latest,默认下载最新版本
 
-* docker rmi 镜像名称(镜像id)：删除镜像，如果不加版本号，默认删除版本为latest的镜像，所以**一定要加版本**避免误删
+* docker rmi 镜像id：删除镜像，如果不加版本号，默认删除版本为latest的镜像，所以**一定要加版本**避免误删
 
-  * 使用-f参数强制删除:docker rmi -f 镜像名称
+  * 使用-f参数强制删除:docker rmi -f 镜像id
 
-* docker rmi 镜像名称 镜像名称:加空格删除多个镜像(有i是删除镜像，没i是删除容器)
+* docker rmi 镜像id 镜像id:加空格删除多个镜像(有i是删除镜像，没i是删除容器)
 
 * docker rmi -f $(docker images -q或者-qa):删除全部镜像
 
@@ -151,6 +151,14 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
 * 删除容器:docker rm 容器id或者容器名
 
 * **删除全部容器和删除全部镜像一样，不过rmi后面没有i，docker rm -f $ (docker ps -q)**
+
+* **删除一个镜像的所有容器**：
+
+  ~~~shell
+  docker rm -f `docker container ls -a | grep imageName | awk '{print $1}'`
+  ~~~
+
+  imageName 为想要删除的镜像名称
 
 * 查看容器日志:docker logs -f -t --tail 容器id,-t是加入时间戳，-f跟随最新的日志打印，-tail 数字:显示最后多少条
 

@@ -74,6 +74,19 @@ use mall;
 source mall.sql;
 ~~~
 
+#### 运行Redis服务
+
+首先得将项目中的redis地址改为服务器地址
+
+启动：
+
+~~~shell
+docker run -p 6379:6379 -v /lkuse/myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+-v /lkuse/myredis/data:/data -d redis:5.0.5 redis-server /usr/local/etc/redis/redis.conf
+~~~
+
+如果redis.conf需要配置密码的话，提前在文件中修改然后挂载到容器目录中。如果这种方式不行的话，先启动容器，然后去宿主机生成的conf文件中将conf文件删除，拷贝一份已有的conf文件，在里面配置密码，然后需要停止容器在启动。当用密码连接redis的时候，如果设置了密码但是提示没有密码，那么先停止容器再启动就好了。为了能让所有客服端能访问，将bind 127.0.0.1该为0.0.0.0(根据需求)
+
 8.运行redis-test/redis-docker-file:0.0.1-SNAPSHOT应用
 
 ~~~shell

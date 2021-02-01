@@ -178,15 +178,15 @@ public class ConcurrentLinkedQueue<E> extends AbstractQueue<E>
      */
 
     private static class Node<E> {
-        volatile E item;
-        volatile Node<E> next;
+        volatile E item;//存放节点的值
+        volatile Node<E> next;//用来存放下一个节点
 
         /**
          * Constructs a new node.  Uses relaxed write because item can
          * only be seen after publication via casNext.
          */
         Node(E item) {
-            UNSAFE.putObject(this, itemOffset, item);
+            UNSAFE.putObject(this, itemOffset, item);//将当前对象(Node)中偏移量为itemOffset的字段也就是item设置为传入参数item
         }
 
         boolean casItem(E cmp, E val) {
@@ -254,7 +254,7 @@ public class ConcurrentLinkedQueue<E> extends AbstractQueue<E>
      */
     public ConcurrentLinkedQueue() {
         head = tail = new Node<E>(null);
-    }
+    }//初始化的时候将节点值设置为null,head和tali都指向该节点(哨兵节点)
 
     /**
      * Creates a {@code ConcurrentLinkedQueue}
@@ -318,24 +318,24 @@ public class ConcurrentLinkedQueue<E> extends AbstractQueue<E>
 
     /**
      * Inserts the specified element at the tail of this queue.
-     * As the queue is unbounded, this method will never return {@code false}.
+     * As the queue is unbounded, this method will never return {@code false}.//因为是无界队列，所以永远返回true
      *
      * @return {@code true} (as specified by {@link Queue#offer})
      * @throws NullPointerException if the specified element is null
      */
     public boolean offer(E e) {
-        checkNotNull(e);
-        final Node<E> newNode = new Node<E>(e);
+        checkNotNull(e);//如果入队元素为空则抛出NPE
+        final Node<E> newNode = new Node<E>(e);//新建入队节点
 
-        for (Node<E> t = tail, p = t;;) {
-            Node<E> q = p.next;
-            if (q == null) {
+        for (Node<E> t = tail, p = t;;) {//因为是无界队列，所以循环只有一次初始化
+            Node<E> q = p.next;//假设插入的时候独立为空，那么此时q为null
+            if (q == null) {//成立
                 // p is last node
-                if (p.casNext(null, newNode)) {
+                if (p.casNext(null, newNode)) {//cas设置p节点的next节点
                     // Successful CAS is the linearization point
                     // for e to become an element of this queue,
                     // and for newNode to become "live".
-                    if (p != t) // hop two nodes at a time
+                    if (p != t) // hop two nodes at a time 一次跳两个节点，也就是1，3，5，...节点为尾节点
                         casTail(t, newNode);  // Failure is OK.
                     return true;
                 }
