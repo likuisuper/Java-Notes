@@ -416,7 +416,7 @@ public class Proxy implements java.io.Serializable {
         // If the proxy class defined by the given loader implementing
         // the given interfaces exists, this will simply return the cached copy;
         // otherwise, it will create the proxy class via the ProxyClassFactory
-        return proxyClassCache.get(loader, interfaces);
+        return proxyClassCache.get(loader, interfaces);//缓存中有的话直接返回，否则ProxyClassFactory创建代理类
     }
 
     /*
@@ -707,7 +707,7 @@ public class Proxy implements java.io.Serializable {
     {
         Objects.requireNonNull(h);
 
-        final Class<?>[] intfs = interfaces.clone();
+        final Class<?>[] intfs = interfaces.clone();//复制接口
         final SecurityManager sm = System.getSecurityManager();
         if (sm != null) {
             checkProxyAccess(Reflection.getCallerClass(), loader, intfs);
@@ -716,7 +716,7 @@ public class Proxy implements java.io.Serializable {
         /*
          * Look up or generate the designated proxy class.
          */
-        Class<?> cl = getProxyClass0(loader, intfs);
+        Class<?> cl = getProxyClass0(loader, intfs);//通过类加载器和接口查找或生成代理类
 
         /*
          * Invoke its constructor with the designated invocation handler.
@@ -726,17 +726,17 @@ public class Proxy implements java.io.Serializable {
                 checkNewProxyPermission(Reflection.getCallerClass(), cl);
             }
 
-            final Constructor<?> cons = cl.getConstructor(constructorParams);
+            final Constructor<?> cons = cl.getConstructor(constructorParams);//通过反射拿到代理类的构造函数
             final InvocationHandler ih = h;
             if (!Modifier.isPublic(cl.getModifiers())) {
                 AccessController.doPrivileged(new PrivilegedAction<Void>() {
                     public Void run() {
-                        cons.setAccessible(true);
+                        cons.setAccessible(true);//如果访问权限不是public的话设置为可访问
                         return null;
                     }
                 });
             }
-            return cons.newInstance(new Object[]{h});
+            return cons.newInstance(new Object[]{h});//通过构造函数new一个实例，并绑定到invocationHandler接口
         } catch (IllegalAccessException|InstantiationException e) {
             throw new InternalError(e.toString(), e);
         } catch (InvocationTargetException e) {
