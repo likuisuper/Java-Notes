@@ -50,7 +50,13 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 * [Dubbon搭建管理平台](docs/coludserver/dubbo-admin平台搭建与管理.md)
 
+## Linux
+
+* [一些常用命令](docs/linux/linux命令.md)
+
 ## 工具篇
+
+* [压测](docs/reference/压测.md)
 
 * [软件安装配置及环境部署](docs/reference/soft_install.md)
 * [spring中对excel操作](docs/reference/spring中对excel操作.md)

@@ -37,8 +37,10 @@
   * [docker常用安装](java/docker/Docker常用安装.md)
   * [使用Dockerfile部署Springboot项目](java/docker/使用Dockerfile部署Springboot项目.md)
   * [DockerCompose](java/docker/DockerCompose.md)
+* Linux
+  * [一些常用命令](linux/linux命令.md)
 * 工具篇
-
+* [压测](reference/压测.md)
   * [软件安装配置及环境部署](reference/soft_install.md)
   * [IDEA常用设置及推荐插件](reference/idea.md)
   * [spring中对excel操作](reference/spring中对excel操作.md)
