@@ -134,7 +134,7 @@ Docker镜像就是一个只读的模板。镜像可以用来创建Docker容器�
 
 * docker attach 容器id:重新进入容器
 
-* **docker exec 容器id:在容器外面对容器进行操作**，当使用-d后台启动时，可以使用该命令类似于隔空取物操作
+* **docker exec 容器id(或者启动容器时指定的name):在容器外面对容器进行操作**，当使用-d后台启动时，可以使用该命令类似于隔空取物操作
   
   * 后面加入/bin/bash表示可以使用shell脚本，比如docker exec -it 容器id /bin/bash
   

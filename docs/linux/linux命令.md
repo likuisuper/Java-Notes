@@ -22,5 +22,13 @@ sz 文件名
 tail -f 文件名
 ~~~
 
+#### jar包运行结果追加到nohup.out
+
+~~~shell
+nohup java -jar jar包名 &
+~~~
+
+然后可以使用tail -f  nohup.out查看是否成功
+
 
 

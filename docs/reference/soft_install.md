@@ -305,3 +305,7 @@ firewall-cmd --reload
 上传安装包到/usr/src目录下，解压
 
 解压完成后进入该目录，进入/bin目录，使用./startup.sh启动即可。可以进入tomcat目录下的logs目录，然后使用tail -f catalina.out查看日志文件
+
+## Linux下rabbitmq安装配置
+
+使用docker安装。

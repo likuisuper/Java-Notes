@@ -98,3 +98,73 @@ docker exec -it 容器id redis-cli(redis客户端)
 ~~~
 
 7.随便设置几个值，然后shutdown后在/lkuse/myredis/data下看是否有appendonly.aof文件
+
+## 安装rabbitmq
+
+1.下载最新版本
+
+~~~shell
+docker pull rabbitmq
+~~~
+
+2.启动
+
+~~~shell
+docker run -p 5672:5672 -p 15672:15672 --name rabbitmq -d rabbitmq
+~~~
+
+**注意**：5672是应用访问端口，15672是控制台web访问端口
+
+3.进入容器开启管理功能
+
+~~~shell
+docker exec -it rabbitmq /bin/bash
+rabbitmq-plugins enable rabbitmq_management
+
+The following plugins have been configured:
+  rabbitmq_management
+  rabbitmq_management_agent
+  rabbitmq_prometheus
+  rabbitmq_web_dispatch
+Applying plugin configuration to rabbit@49cc858010bf...
+The following plugins have been enabled:
+  rabbitmq_management
+
+started 1 plugins.
+~~~
+
+4.可在容器外开启防火墙
+
+~~~shell
+firewall-cmd --zone=public --add-port=15672/tcp --permanent
+firewall-cmd --reload
+~~~
+
+5.浏览器访问15672查看是否能访问成功
+
+6.guest账号默认只能访问localhost，所以如果要访问远程服务器，可以配置一个用户。
+
+* 创建账号并设置角色为管理员：cxylk cxylk
+
+  ![](https://s3.ax1x.com/2021/02/09/yaoPII.png)
+
+* 创建一个新的虚拟host为/cxylk
+
+  ![](https://s3.ax1x.com/2021/02/09/yaokJP.png)
+
+* 点击cxylk用户进入配置界面
+
+  ![](https://s3.ax1x.com/2021/02/09/yaoesg.png)
+
+* 给cxylk用户配置该虚拟host权限
+
+  ![](https://s3.ax1x.com/2021/02/09/yaouZj.png)
+
+配置好之后，在yml或properties中修改为如下配置
+
+~~~properties
+spring.rabbitmq.username=cxylk
+spring.rabbitmq.password=cxylk
+spring.rabbitmq.virtual-host=/cxylk
+~~~
+
