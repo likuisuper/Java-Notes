@@ -1,30 +1,78 @@
 ## 虚拟机网络配置
 
-现在本机查看ip和子网掩码
+1.桥接模式配置，若没有net0要添加一个，net0就代表桥接模式
 
-![](https://s3.ax1x.com/2021/01/12/sGTJvF.png)
+![](https://s3.ax1x.com/2021/02/28/6CXdqe.png)
 
-选择VMware-编辑-虚拟机网络编辑
+已桥接那里选择物理机 上面的无线网就好了
 
-![](https://s3.ax1x.com/2021/01/12/sGTbrQ.png)
+2.net模式设置
 
-点击net设置
+![](https://s3.ax1x.com/2021/02/28/6CXhZQ.png)
 
-![](https://s3.ax1x.com/2021/01/12/sGTHKg.png)
+net设置
 
-点击dhcp设置
+![](https://s3.ax1x.com/2021/02/28/6CXTGq.png)
 
-![](https://s3.ax1x.com/2021/01/12/sGTzGV.png)
+3.确认要启动的虚拟机的网络适配器类型是"NAT"模式，选择虚拟机配置选择模式
 
-进入虚拟机打开网络配置
+4.修改文件**vim /etc/sysconfig/network-scripts/ifcfg-ens33*
 
-![](https://s3.ax1x.com/2021/01/12/sG7WyF.png)
+修改前：
 
-打开物理机网络配置
+~~~shell
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=49b33a65-c5e2-4e4a-a281-cbf13a513e0e
+DEVICE=ens33
+ONBOOT=no
+~~~
 
-![](https://s3.ax1x.com/2021/01/12/sGH2tI.png)
+修改后
 
-然后互相测试是否能ping通，虚拟机要关闭防火墙
+~~~shell
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=static #这里改为static
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=49b33a65-c5e2-4e4a-a281-cbf13a513e0e
+DEVICE=ens33
+ONBOOT=yes #这里要将no改为yes
+IPADDR=192.168.136.128 #ip地址随便配置，但是必须同VMnet8的子网IP在同一网段
+NETMASK=255.255.255.0  #子网掩码
+GATEWAY=192.168.136.2  #网关，这个值与我们在上面NAT设置设置的网关一样
+DNS1=192.168.136.2  #DNS的值也跟上面的NET设置中设置的网关一样
+~~~
+
+5.重启服务
+
+~~~shell
+systemctl restart network.service
+~~~
+
+如果ping不通的话重启虚拟机
+
+~~~shell
+reboot
+~~~
 
 * 查看防火墙
 
@@ -45,6 +93,10 @@ systemctl disable firewalld
 ~~~
 
 配置好后重启
+
+#### 虚拟机克隆
+
+右键虚拟机->管理，然后选择克隆，创建完整克隆，其他默认，克隆完成后将ifcfg-ens33中的ip地址最后一位随便改个其他的就可以了，然后重启服务或者重启虚拟机，使用xshell连接测试。如果连接不上那么多试几次，实在不行将虚拟机网络配置重置，然后再把被克隆的虚拟机和克隆的虚拟机的ifcfg-ens33重新配置。
 
 ## Linux配置本地Java环境
 
