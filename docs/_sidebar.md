@@ -28,6 +28,8 @@
 * 微服务
 
   * [Dubbon搭建管理平台](coludserver/dubbo-admin平台搭建与管理.md)
+* 分布式
+  * [dubbo与springboot集成](分布式/dubbo与springboot集成.md)
 * 服务器
   * [nginx服务器](服务器/nginx服务器.md)
 * Docker相关

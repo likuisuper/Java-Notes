@@ -42,6 +42,10 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [使用Dockerfile部署Springboot项目](java/docker/使用Dockerfile部署Springboot项目)
 * [DockerCompose](java/docker/DockerCompose.md)
 
+## 分布式
+
+*[dubbo与springboot集成](分布式/dubbo与springboot集成.md)
+
 ## 服务器
 
 * [nginx服务器](服务器/nginx服务器.md)
