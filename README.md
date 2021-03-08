@@ -45,6 +45,8 @@ Java学习过程中遇到的知识点总结，复习笔记
 ## 分布式
 
 * [dubbo与springboot集成](docs/分布式/dubbo与springboot集成.md)
+* [zk和redis注册中心](docs/分布式/zk和redis注册中心的区别.md)
+* [dubbo服务集群机制](docs/分布式/dubbo服务集群机制.md)
 
 ## 服务器
 

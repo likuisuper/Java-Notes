@@ -30,6 +30,8 @@
   * [Dubbon搭建管理平台](coludserver/dubbo-admin平台搭建与管理.md)
 * 分布式
   * [dubbo与springboot集成](分布式/dubbo与springboot集成.md)
+  * [zk和redis注册中心](分布式/zk和redis注册中心的区别.md)
+  * [dubbo服务集群机制](分布式/dubbo服务集群机制.md)
 * 服务器
   * [nginx服务器](服务器/nginx服务器.md)
 * Docker相关
