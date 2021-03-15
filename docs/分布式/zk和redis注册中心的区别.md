@@ -186,3 +186,62 @@ dubbo正是利用zk的监听机制，去监听/dubbo/{接口名}/providers的子
 相关源码 
 
 org.apache.dubbo.registry.zookeeper.ZookeeperRegistry#doRegister// 注册 org.apache.dubbo.registry.zookeeper.ZookeeperRegistry#doUnregister// 注销 org.apache.dubbo.registry.zookeeper.ZookeeperRegistry#doSubscribe// 订阅 org.apache.dubbo.registry.zookeeper.ZookeeperRegistry#doUnregister // 取消订阅 注：doRegister注册包括消费者和提供者的信息。
+
+#### spring一直报无法连接zk的错误解法方法
+
+以前报这个错误，将服务端的超时时间调大就可以了，但有一次怎么调都没用，
+
+debug进入CuratorZookeeperClient类
+
+~~~java
+public CuratorZookeeperClient(URL url) {
+        super(url);
+        try {
+            //这里的超时时间默认是3000ms
+            int timeout = url.getParameter(TIMEOUT_KEY, DEFAULT_CONNECTION_TIMEOUT_MS);
+            int sessionExpireMs = url.getParameter(ZK_SESSION_EXPIRE_KEY, DEFAULT_SESSION_TIMEOUT_MS);
+            CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
+                    .connectString(url.getBackupAddress())
+                    .retryPolicy(new RetryNTimes(1, 1000))
+                    .connectionTimeoutMs(timeout)
+                    .sessionTimeoutMs(sessionExpireMs);
+            String authority = url.getAuthority();
+            if (authority != null && authority.length() > 0) {
+                builder = builder.authorization("digest", authority.getBytes());
+            }
+            client = builder.build();
+            client.getConnectionStateListenable().addListener(new CuratorConnectionStateListener(url));
+            client.start();
+            boolean connected = client.blockUntilConnected(timeout, TimeUnit.MILLISECONDS);
+            if (!connected) {
+                throw new IllegalStateException("zookeeper not connected");
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+~~~
+
+因为默认超时时间是3000ms，如果这期间连接不上就会报无法连接，所以要想办法将这个时间调大。
+
+通过这个配置来调大超时时间
+
+~~~properties
+dubbo.config-center.timeout=10000
+~~~
+
+时间确实调大了，但还是没用，后来发现还有个注册中心时间，继续配置该时间
+
+~~~properties
+dubbo.registry.timeout=10000
+~~~
+
+但发现还是没用，想砸键盘的冲动都有了。。。
+
+没办法，再配置个服务端的超时时间
+
+~~~properties
+dubbo.provider.timeout=10000
+~~~
+
+这下终于tm能连接成功了！真tm离谱。所以以后如果一直遇到无法连接zk的情况，三个时间全给它配置上。

@@ -87,6 +87,8 @@ docker run -p 6379:6379
 --appendonly yes #开启持久化(aof)
 ~~~
 
+redis.conf文件中不能将daemon即后台启动设置为yes，否则会使redis-server不能用配置文件启动。
+
 -v参数后面左边的路径都是目录，并不是文件
 
 5.在主机的/lkuse/myredis/conf/redis.conf目录下新建一个redis.conf配置文件，然后找个redis.conf文件将其中内容复制到里面，修改自己想修改的内容，比如端口等
