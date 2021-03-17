@@ -1,8 +1,26 @@
-## 同步调用
+## 远程调用机制
 
+基本过程：客户端向服务端发送参数，并等待获取结果。如果调用过程出错则需要对异常进行处理。
 
+![](https://s3.ax1x.com/2021/03/17/66xLA1.png)
 
-## 异步调用
+dubbo默认是使用同步调用的，还支持异步调用、并行调用、广播调用。
+
+### 同步调用
+
+对远程接口方法调用就属于同步调用。
+
+原理：向远程服务端发送参数后，整个线程将会阻塞，知道服务端将结果返回。
+
+dubbo远程调用传输是由专门的IO线程(非阻塞)完成的，调用线程把结果传递给IO线程后，会构建一个CompletableFuture，并通过它阻塞当前线程去等待结果返回，当服务端返回结果后就会为CompletableFuture填充结果，并释放阻塞的调用线程。如果在设定的时间内服务端没有返回，就会触发超时异常。
+
+![](https://s3.ax1x.com/2021/03/17/66zLrQ.png)
+
+相关源码：
+
+org.apache.dubbo.remoting.exchange.support.DefaultFuture// 结果回执 org.apache.dubbo.rpc.protocol.AsyncToSyncInvoker // 异步转同步
+
+### 异步调用
 
 客户端配置
 
@@ -67,9 +85,17 @@ future3:User{id=1, name='lk', age=22, birthday='1998', desc='当前服务:李四
 
 可以看到耗时为调用每个服务所花费的时间之和。
 
-## 并行调用
+异步调用和同步调用对比：
 
-同时调用多个服务，返回一个结果，如果其中一个出现异常，继续往下调用，**直到最先一个成功返回为止**。
+![](https://s3.ax1x.com/2021/03/17/6cSrZj.png)
+
+**实现原理**：其实dubbo的调用本身就是异步的，其常规的调用是通过AsyncToSyncInvoker组件，由异步转成了同步。所以异步的实现就是让该组件不去执行阻塞逻辑即可。此外为了顺利拿到结果回执(Future)，在调用发起之后其回执会被填充到RpcContext中。
+
+![](https://s3.ax1x.com/2021/03/17/6cpfht.png)
+
+### 并行调用
+
+为了尽可能获得更高的性能，以及最高级别的保证服务的可用性。面对多个服务，并不知道哪个处理更快。这时客户端可并行发起多个调用，只要其中一个成功返回，其他出现异常的将会被忽略，**只有所有服务出现异常情况才会判定调用出错。**。
 
 配置
 
@@ -207,6 +233,109 @@ Result result = invoker.invoke(invocation);
 
 这个时候客户端再发起调用，就会返回调用最先成功的结果，**它并不会像异步调用一样返回多个结果，而是谁最先成功就返回谁。但是它调用所花费的时间和异步调用是一样的**
 
-## 广播调用
+**原理**：通过上面的源代码可以看出并行调用的实现原理，它是通过线程池异步发送远程请求，流程如下：
 
-和并行调用是相反的
+1.根据forks(并行数量)挑选出服务节点；
+
+2.基于线程池(ExecutorService)并行发起远程调用
+
+3.基于阻塞队列(BlockingQueue)等待结果返回
+
+4.第一个结果返回，填充阻塞队列，并释放线程
+
+### 广播调用
+
+广播调用一次调用，会遍历所有服务提供者并发起调用，任意一台报错就算失败。**确保所有节点都被调用到**。
+
+配置：
+
+~~~properties
+dubbo.consumer.cluster=forking
+~~~
+
+源码：org.apache.dubbo.rpc.cluster.support.BroadcastClusterInvoker 
+
+~~~java
+    public Result doInvoke(final Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadbalance) throws RpcException {
+        checkInvokers(invokers, invocation);
+        RpcContext.getContext().setInvokers((List) invokers);
+        RpcException exception = null;
+        Result result = null;
+        //循环调用服务提供者
+        for (Invoker<T> invoker : invokers) {
+            try {
+                //返回结果，同步调用
+                result = invoker.invoke(invocation);
+            } catch (RpcException e) {
+                exception = e;
+                logger.warn(e.getMessage(), e);
+            } catch (Throwable e) {
+                exception = new RpcException(e.getMessage(), e);
+                logger.warn(e.getMessage(), e);
+            }
+        }
+        if (exception != null) {
+            throw exception;
+        }
+        return result;
+    }
+~~~
+
+**原理**：用一个循环遍历所有提供者，然后顺序**同步**发起调用
+
+## 集群容错
+
+在调用过程中，如果出现错误，框架会对其进行补救措施称为容错。这里的容错是指**除业务异常外的所有异常**。
+
+![](https://s3.ax1x.com/2021/03/17/6cFWS1.png)
+
+异常类型定义在RpcException中
+
+~~~java
+    public static final int UNKNOWN_EXCEPTION = 0;
+    public static final int NETWORK_EXCEPTION = 1;
+    public static final int TIMEOUT_EXCEPTION = 2;
+    public static final int FORBIDDEN_EXCEPTION = 4;
+    public static final int SERIALIZATION_EXCEPTION = 5;
+    public static final int NO_INVOKER_AVAILABLE_AFTER_FILTER = 6;
+    public static final int LIMIT_EXCEEDED_EXCEPTION = 7;
+    public static final int TIMEOUT_TERMINATE = 8;
+~~~
+
+其中
+
+~~~java
+    public static final int BIZ_EXCEPTION = 3;
+~~~
+
+是业务异常。
+
+### 容错策略
+
+dubbo支持4中容错策略
+
+**1.失败自动切换：**调用失败会基于`retries`属性重试其他服务器，这是**默认的容错机制**，重试默认次数为2。加上最开始调用的一次，相当于一共调用3次
+
+**2.快速失败：**快速失败，只发起一次调用，失败立即报错。通常用于非幂等写入
+
+**3.忽略失败：**失败后忽略，不抛出异常给客户端，并且返回一个空
+
+**4.失败重试：**失败时记录失败请求并安排定期重发。通常用于消息通知操作
+
+设置使用：
+
+~~~properties
+<!--
+2 Failover 失败自动切换 retries="2" 切换次数
+3 Failfast 快速失败
+4 Failsafe 勿略失败,返回一个null
+5 Failback 失败重试，5秒后仅重试一次
+6 -->
+7 #设置方式支持如下两种方式设置，优先级由低至高
+8 <dubbo:service interface="..." cluster="broadcast" />
+9 <dubbo:reference interface="..." cluster="broadcast"/ >
+~~~
+
+相关源码：
+
+org.apache.dubbo.rpc.cluster.support.FailoverClusterInvoker// 失败自动切换org.apache.dubbo.rpc.cluster.support.FailfastClusterInvoker // 快速失败 org.apache.dubbo.rpc.cluster.support.FailsafeClusterInvoker // 勿略失败org.apache.dubbo.rpc.cluster.support.FailbackClusterInvoker //失败重试
