@@ -25,6 +25,8 @@
 
   * [常用注解](框架/spring/常用注解.md)
   * [IOC容器](框架/spring/SpringIOC容器分析.md)
+* MyBatis
+  * [Executor执行器](框架/mybatis/Executor执行器.md)
 * 微服务
 
   * [Dubbon搭建管理平台](coludserver/dubbo-admin平台搭建与管理.md)
