@@ -37,6 +37,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 ## MyBatis
 
 * [Executor执行器](框架/mybatis/Executor执行器.md)
+* [mybatis一级缓存](框架/mybatis/一级缓存.md)
 
 ## Docker相关
 
@@ -48,13 +49,16 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 ## 分布式
 
-*[dubbo与springboot集成](分布式/dubbo与springboot集成.md)
+* [dubbo与springboot集成](分布式/dubbo与springboot集成.md)
+
+* [zk和redis注册中心](分布式/zk和redis注册中心的区别.md)
+* [dubbo服务集群机制](分布式/dubbo服务集群机制.md)
+* [dubbo调用机制和容错策略](分布式/dubbo调用机制和容错策略.md)
+* [dubbo远程传输协议](分布式/dubbo远程传输协议.md)
 
 ## 服务器
 
 * [nginx服务器](服务器/nginx服务器.md)
-* [zk和redis注册中心](分布式/zk和redis注册中心的区别.md)
-* [dubbo服务集群机制](分布式/dubbo服务集群机制.md)
 
 ## 微服务
 
