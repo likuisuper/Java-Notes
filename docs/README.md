@@ -50,8 +50,8 @@ Java学习过程中遇到的知识点总结，复习笔记
 ## 分布式
 
 * [dubbo与springboot集成](分布式/dubbo与springboot集成.md)
-
 * [zk和redis注册中心](分布式/zk和redis注册中心的区别.md)
+* [Dubbon搭建管理平台](分布式/dubbo-admin平台搭建与管理.md)
 * [dubbo服务集群机制](分布式/dubbo服务集群机制.md)
 * [dubbo调用机制和容错策略](分布式/dubbo调用机制和容错策略.md)
 * [dubbo远程传输协议](分布式/dubbo远程传输协议.md)
@@ -59,10 +59,6 @@ Java学习过程中遇到的知识点总结，复习笔记
 ## 服务器
 
 * [nginx服务器](服务器/nginx服务器.md)
-
-## 微服务
-
-* [Dubbon搭建管理平台](coludserver/dubbo-admin平台搭建与管理.md)
 
 ## Linux
 
