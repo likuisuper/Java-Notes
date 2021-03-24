@@ -356,4 +356,4 @@ public class EagerThreadPool implements ThreadPool {
 
 #### IO线程
 
-它不属于业务线程，一般不去配置，要配置的话配置为cpu个数+1就好了。
+它不属于业务线程，一般不去配置，要配置的话将它配置为cpu的个数+1即可。
