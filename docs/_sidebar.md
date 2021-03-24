@@ -35,7 +35,7 @@
   * [Dubbon搭建管理平台](分布式/dubbo-admin平台搭建与管理.md)
   * [dubbo服务集群机制](分布式/dubbo服务集群机制.md)
   * [dubbo调用机制和容错策略](分布式/dubbo调用机制和容错策略.md)
-  * [dubbo远程传输协议](分布式/dubbo远程传输协议.md)
+  * [dubbo远程传输协议](分布式/dubbo传输协议.md)
 * 服务器
   * [nginx服务器](服务器/nginx服务器.md)
 * Docker相关

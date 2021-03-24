@@ -55,7 +55,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [dubbon搭建管理平台](docs/分布式/dubbo-admin平台搭建与管理.md)
 * [dubbo服务集群机制](docs/分布式/dubbo服务集群机制.md)
 * [dubbo调用机制和容错策略](docs/分布式/dubbo调用机制和容错策略.md)
-* [dubbo远程传输协议](docs/分布式/dubbo远程传输协议.md)
+* [dubbo远程传输协议](docs/分布式/dubbo传输协议.md)
 
 ## 服务器
 
