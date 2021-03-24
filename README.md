@@ -38,6 +38,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 * [Executor执行器](docs/框架/mybatis/Executor执行器.md)
 * [mybatis一级缓存](docs/框架/mybatis/一级缓存.md)
+* [mybatis二级缓存](docs/框架/mybatis/二级缓存.md)
 
 ## Docker相关
 

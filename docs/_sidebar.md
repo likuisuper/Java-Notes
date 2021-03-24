@@ -28,6 +28,7 @@
 * MyBatis
   * [Executor执行器](框架/mybatis/Executor执行器.md)
   * [mybatis一级缓存](框架/mybatis/一级缓存.md)
+  * [mybatis二级缓存](框架/mybatis/二级缓存.md)
 * 分布式
   * [dubbo与springboot集成](分布式/dubbo与springboot集成.md)
   * [zk和redis注册中心](分布式/zk和redis注册中心的区别.md)
