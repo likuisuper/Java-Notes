@@ -170,3 +170,24 @@ spring.rabbitmq.password=cxylk
 spring.rabbitmq.virtual-host=/cxylk
 ~~~
 
+## Portainer
+
+这是一款轻量级的应用，它提供了图形化界面，用于方便的管理docker环境，包括单击环境和集群环境。使用它可以方便对我们的容器进行管理。
+
+* 官网地址：https://github.com/portainer/portainer
+
+* 获取镜像文件
+
+  ~~~shell
+  docker pull portainer/portainer
+  ~~~
+
+* 运行容器
+
+  ~~~shell
+  docker run -p 9000:9000 -p 8000:8000 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /lkuse/portainer/data:/data -d portainer/portainer
+  ~~~
+
+* 访问9000端口，第一次访问默认会创建账号，这里用户名输入cxylk，密码cxylikui
+
+* 在仪表盘中可以查看所有的镜像信息，容器信息，以及启动日志，并且可以进入容器操作等。。。
