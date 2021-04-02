@@ -39,6 +39,8 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [Executor执行器](docs/框架/mybatis/Executor执行器.md)
 * [mybatis一级缓存](docs/框架/mybatis/一级缓存.md)
 * [mybatis二级缓存](docs/框架/mybatis/二级缓存.md)
+* [处理器statementHandler解析](docs/框架/mybatis/处理器statementHandler解析.md)
+* [mybatis映射体系](docs/框架/mybatis/mybatis映射体系.md)
 
 ## Docker相关
 
@@ -58,6 +60,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [dubbo远程传输协议](docs/分布式/dubbo传输协议.md)
 * [dubbo服务治理](docs/分布式/dubbo服务治理.md)
 * [dubbo服务暴露与引用](docs/分布式/dubbo服务暴露与引用.md)
+* [注册中心源码剖析](docs/分布式/注册中心源码剖析.md)
 
 ## 服务器
 

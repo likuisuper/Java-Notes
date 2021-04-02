@@ -250,7 +250,7 @@ Result result = invoker.invoke(invocation);
 配置：
 
 ~~~properties
-dubbo.consumer.cluster=forking
+dubbo.consumer.cluster=broadcast
 ~~~
 
 源码：org.apache.dubbo.rpc.cluster.support.BroadcastClusterInvoker 

@@ -94,6 +94,23 @@ systemctl disable firewalld
 
 配置好后重启
 
+#### 解决ens33消息的问题
+
+有时候网络莫名其妙就连不上了，通过ifconfig命令发现ens33消息不见，解决办法:
+
+~~~SHELL
+systemctl stop NetworkManager	#临时关闭
+systemctl disable NetworkManager	#永久关闭
+~~~
+
+然后重启：
+
+~~~shell
+systemctl restart network.service
+~~~
+
+就会发现ens33能够正常显示了
+
 #### 虚拟机克隆
 
 右键虚拟机->管理，然后选择克隆，创建完整克隆，其他默认，克隆完成后将ifcfg-ens33中的ip地址最后一位随便改个其他的就可以了，然后重启服务或者重启虚拟机，使用xshell连接测试。如果连接不上那么多试几次，实在不行将虚拟机网络配置重置，然后再把被克隆的虚拟机和克隆的虚拟机的ifcfg-ens33重新配置。

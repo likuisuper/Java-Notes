@@ -29,6 +29,8 @@
   * [Executor执行器](框架/mybatis/Executor执行器.md)
   * [mybatis一级缓存](框架/mybatis/一级缓存.md)
   * [mybatis二级缓存](框架/mybatis/二级缓存.md)
+  * [处理器statementHandler解析](框架/mybatis/处理器statementHandler解析.md)
+  * [mybatis映射体系](框架/mybatis/mybatis映射体系.md)
 * 分布式
   * [dubbo与springboot集成](分布式/dubbo与springboot集成.md)
   * [zk和redis注册中心](分布式/zk和redis注册中心的区别.md)
@@ -38,6 +40,7 @@
   * [dubbo远程传输协议](分布式/dubbo传输协议.md)
   * [dubbo服务治理](分布式/dubbo服务治理.md)
   * [dubbo服务暴露与引用](分布式/dubbo服务暴露与引用.md)
+  * [注册中心源码剖析](分布式/注册中心源码剖析.md)
 * 服务器
   * [nginx服务器](服务器/nginx服务器.md)
 * Docker相关
