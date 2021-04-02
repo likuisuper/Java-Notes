@@ -191,3 +191,44 @@ spring.rabbitmq.virtual-host=/cxylk
 * 访问9000端口，第一次访问默认会创建账号，这里用户名输入cxylk，密码cxylikui
 
 * 在仪表盘中可以查看所有的镜像信息，容器信息，以及启动日志，并且可以进入容器操作等。。。
+
+## 安装nginx
+
+* 下载nginx`1.18`的docker镜像
+
+  ~~~shell
+  docker pull nginx:1.18
+  ~~~
+
+* 先运行一次容器，为了拷贝配置文件
+
+  ~~~shell
+  docker run -p 80:80 --name nginx -v /lkuse/nginx/html:/usr/shar/nginx/html -v /lkuse/nginx/logs:/var/log/nginx -d nginx:1.18
+  ~~~
+
+* 将容器内的配置文件拷贝到指定目录
+
+  ~~~shell
+  docker container cp nginx:/etc/nginx /lkuse/nginx/
+  ~~~
+
+* 修改文件名称
+
+  ~~~shell
+  mv nginx conf
+  ~~~
+
+* 终止并删除容器
+
+  ~~~shell
+  docker stop nginx
+  docker rm nginx
+  ~~~
+
+* 使用以下命令启动容器
+
+  ~~~shell
+  docker run -p 80:80 --name nginx -v /lkuse/nginx/html:/usr/shar/nginx/html -v /lkuse/nginx/logs:/var/log/nginx -v /lkuse/nginx/conf:/etc/nginx -d nginx:1.18
+  ~~~
+
+  
