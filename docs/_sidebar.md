@@ -1,10 +1,10 @@
 * Java基础
   * [包装类型](java/basis/包装类型.md)
   * [动态代理](java/basis/动态代理.md)
-  
   * [反射](java/basis/反射)
-  
   * [回调接口](java/basis/回调接口.md)
+* JVM
+  * [深入理解类加载机制](java/jvm/深入理解类加载机制.md)
 * 容器
 
   * [集合](java/collection/集合.md)

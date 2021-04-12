@@ -11,6 +11,10 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [反射](java/basis/反射.md)
 * [回调接口](java/basis/回调接口)
 
+## JVM
+
+* [深入理解类加载机制](java/jvm/深入理解类加载机制.md)
+
 ## 容器
 
 * [集合](java/collection/集合.md)
