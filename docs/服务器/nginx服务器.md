@@ -80,134 +80,6 @@ Nginx配置最频繁的部分，分为两部分
 
 ②、location块
 
-
-
-**具体内容**
-
-~~~json
-#user  nobody;
-
-#这是Nginx服务器并发处理服务的关键配置，worker_processes值越大，可以支持的并发处理量也越多，但是
-#会受到硬件、软件等设备的制约
-worker_processes  1;
-
-#error_log  logs/error.log;
-#error_log  logs/error.log  notice;
-#error_log  logs/error.log  info;
-
-#pid        logs/nginx.pid;
-
-
-events {
-    #支持的最大连接数为1024
-    worker_connections  1024;
-}
-
-
-http {
-    include       mime.types;
-    default_type  application/octet-stream;
-
-    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-    #                  '$status $body_bytes_sent "$http_referer" '
-    #                  '"$http_user_agent" "$http_x_forwarded_for"';
-
-    #access_log  logs/access.log  main;
-
-    sendfile        on;
-    #tcp_nopush     on;
-
-    #keepalive_timeout  0;
-    keepalive_timeout  65;
-
-    #gzip  on;
-
-    server {
-    	#监听端口
-        listen       80;
-        server_name  localhost;
-
-        #charset koi8-r;
-
-        #access_log  logs/host.access.log  main;
-
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-
-        #error_page  404              /404.html;
-
-        # redirect server error pages to the static page /50x.html
-        #
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   html;
-        }
-
-        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
-        #
-        #location ~ \.php$ {
-        #    proxy_pass   http://127.0.0.1;
-        #}
-
-        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-        #
-        #location ~ \.php$ {
-        #    root           html;
-        #    fastcgi_pass   127.0.0.1:9000;
-        #    fastcgi_index  index.php;
-        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
-        #    include        fastcgi_params;
-        #}
-
-        # deny access to .htaccess files, if Apache's document root
-        # concurs with nginx's one
-        #
-        #location ~ /\.ht {
-        #    deny  all;
-        #}
-    }
-
-
-    # another virtual host using mix of IP-, name-, and port-based configuration
-    #
-    #server {
-    #    listen       8000;
-    #    listen       somename:8080;
-    #    server_name  somename  alias  another.alias;
-
-    #    location / {
-    #        root   html;
-    #        index  index.html index.htm;
-    #    }
-    #}
-
-
-    # HTTPS server
-    #
-    #server {
-    #    listen       443 ssl;
-    #    server_name  localhost;
-
-    #    ssl_certificate      cert.pem;
-    #    ssl_certificate_key  cert.key;
-
-    #    ssl_session_cache    shared:SSL:1m;
-    #    ssl_session_timeout  5m;
-
-    #    ssl_ciphers  HIGH:!aNULL:!MD5;
-    #    ssl_prefer_server_ciphers  on;
-
-    #    location / {
-    #        root   html;
-    #        index  index.html index.htm;
-    #    }
-    #}
-
-}
-~~~
-
 ## 配置实例：反向代理1
 
 在window上面的浏览器中输入www.123.com，然后通过nginx反向代理访问到tomcat的页面，不让tomcat服务暴露。
@@ -407,10 +279,568 @@ upstream myserver  {
         }
 ~~~
 
-## 高可用
+## Nginx优化
+
+~~~she
+1.工作线程数和并发连接数
+worker_rlimit_nofile 20480; #每个进程打开的最大的文件数=worker_connections*2是安全的，受限于操作系统/etc/security/limits.conf
+vi /etc/security/limits.conf
+* hard nofile 204800
+* soft nofile 204800
+* soft core unlimited
+* soft stack 204800
+
+worker_processes 4; #cpu，如果nginx单独在一台机器上
+worker_processes auto;
+events {
+    worker_connections 10240;#每一个进程打开的最大连接数，包含了nginx与客户端和nginx与upstream之间的连接。出错后可以调大
+    multi_accept on; #可以一次建立多个连接
+    use epoll;
+}
+
+2.操作系统优化
+配置文件/etc/sysctl.conf（注意，真正写入conf的是sysctl -w 后面的命令）
+sysctl -w net.ipv4.tcp_syncookies=1 #防止一个套接字在有过多试图连接到达时引起过载
+sysctl-w net.core.somaxconn=1024 #默认128，连接队列
+sysctl-w net.ipv4.tcp_fin_timeout=10 # timewait的超时时间
+sysctl -w net.ipv4.tcp_tw_reuse=1 #os直接使用timewait的连接
+sysctl -w net.ipv4.tcp_tw_recycle=0 #回收禁用
+
+3.Keepalive长连接
+Nginx与upstream server：
+upstream server_pool{
+        server localhost:8080 weight=1 max_fails=2 fail_timeout=30s;
+        keepalive 300;  #300个长连接
+}
+同时要在location中设置：
+location /  {
+            proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection "upgrade";
+}
+客户端与nginx（默认是打开的）：
+keepalive_timeout  60s; #长连接的超时时间
+keepalive_requests 100; #100个请求之后就关闭连接，可以调大
+keepalive_disable msie6; #ie6禁用
+
+4.启用压缩
+gzip on;
+gzip_http_version 1.1;
+gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+gzip_proxied any;
+gzip_types text/plain text/css application/javascript application/x-javascript application/json application/xml application/vnd.ms-fontobject application/x-font-ttf application/svg+xml application/x-icon;
+gzip_vary on; #Vary: Accept-Encoding
+gzip_static on; #如果有压缩好的 直接使用
+
+5.状态监控
+location = /nginx_status {
+	stub_status on;
+	access_log off;
+	allow <YOURIPADDRESS>;#比如allow 127.0.0.1;
+	deny all;禁用所有ip，除了allow的
+}
+使用curl(或者wget)设置的ip/nginx_status,输出结果：
+Active connections: 1 
+server accepts handled requests
+ 17122 17122 34873 
+Reading: 0 Writing: 1 Waiting: 0 
+Active connections：当前实时的并发连接数
+accepts：收到的总连接数，
+handled：处理的总连接数
+requests：处理的总请求数
+Reading：当前有都少个读，读取客户端的请求
+Writing：当前有多少个写，向客户端输出
+Waiting：当前有多少个长连接（reading + writing）
+reading – nginx reads request header
+writing – nginx reads request body, processes request, or writes response to a client
+waiting – keep-alive connections, actually it is active - (reading + writing)
+
+6.实时请求信息统计ngxtop
+https://github.com/lebinh/ngxtop
+(1)安装python-pip
+yum install epel-release
+yum install python-pip
+(2)安装ngxtop
+pip install ngxtop
+(3)使用
+指定配置文件：           ngxtop -c ./conf/nginx.conf
+查询状态是200：        ngxtop -c ./conf/nginx.conf  --filter 'status == 200'
+查询那个ip访问最多： ngxtop -c ./conf/nginx.conf  --group-by remote_addr
+~~~
+
+以秒杀项目为例，完整的conf:
+
+~~~shell
+...
+worker_rlimit_nofile 20480; #每个进程打开的最大的文件数=worker_connections*2是安全的，受限于操作系统/etc/security/limits.conf
+worker_processes 4; #cpu，如果nginx单独在一台机器上
+events {
+    worker_connections 10240;#每一个进程打开的最大连接数，包含了nginx与客户端和nginx与upstream之间的连接
+    multi_accept on; #可以一次建立多个连接
+    use epoll;#使用epoll I/O多路复用
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    server_tokens off; #隐藏版本号
+    client_max_body_size 10m; #文件上传需要调大
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  logs/access.log  main;
+    #默认写日志：打开文件写入关闭，max:缓存的文件描述符数量，inactive缓存时间，valid：检查时间间隔，min_uses：在inactive时间段内使用了多少次加入缓存
+    open_log_file_cache max=200 inactive=20s valid=1m min_uses=2;
+    
+    #只有开启了sendfile，tcp_nopush才起作用
+    #tcp_nodelay和tcp_nopush互斥，二者同时开启，nginx会： （1）确保数据包在发送给客户端之前是满的
+   #（2）对于最后一个数据包，允许tcp立即发送，没有200ms的延迟
+    tcp_nodelay on;
+    sendfile       on;
+    tcp_nopush     on;
+    #与浏览器的长连接
+    keepalive_timeout  65;#长连接超时时间
+    keepalive_requests 500;#500个请求以后，关闭长连接
+    keepalive_disable msie6;
+    # 启用压缩
+    gzip on;
+    gzip_http_version 1.1;
+    gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+    gzip_proxied any;
+    gzip_types text/plain text/css application/javascript application/x-javascript application/json application/xml application/vnd.ms-fontobject application/x-font-ttf application/svg+xml application/x-icon;
+    gzip_vary on; #Vary: Accept-Encoding
+    gzip_static on; #如果有压缩好的 直接使用
+    #超时时间
+    proxy_connect_timeout 5; #连接proxy超时
+    proxy_send_timeout 5; # proxy连接nginx超时
+    proxy_read_timeout 60;# proxy响应超时
+     # 开启缓存,2级目录。进入缓存的路径可以看到具体内容
+    proxy_cache_path /usr/local/nginx/proxy_cache levels=1:2 keys_zone=cache_one:200m inactive=1d max_size=20g;
+    proxy_ignore_headers X-Accel-Expires Expires Cache-Control;
+    proxy_hide_header Cache-Control;
+    proxy_hide_header Pragma;
+    
+    #反向代理服务器集群
+    upstream myserver {
+        server 192.168.63.128:8080 weight=1 max_fails=2 fail_timeout=30s;
+        server 192.168.63.125:8080 weight=1 max_fails=2 fail_timeout=30s;#30内失败重试2次，超出后将当前服务剔除，30s后继续重试
+        keepalive 200; # 最大的空闲的长连接数 
+    }
+
+    server {
+        listen       80;
+        server_name  localhost 192.168.63.128;
+        
+        location / {
+            #长连接
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            #Tomcat获取真实用户ip
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header X-Forwarded-Proto  $scheme;
+            proxy_pass http://myserver;
+        }
+        # 状态监控
+        location /nginx_status {
+            stub_status on;
+            access_log   off;
+            allow 127.0.0.1;
+            allow 192.168.63.128;
+            deny all;#其他ip都不允许执行
+        }
+        #用于清除缓存
+        location ~ /purge(/.*)
+        {
+            allow 127.0.0.1;
+            allow 192.168.63.128;
+            deny all;
+            proxy_cache_purge cache_one $host$1$is_args$args;
+        }
+        # 静态文件加缓存
+        location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|js|css|ico)?$
+        {
+            expires 1d;#过期 时间是1天
+            proxy_cache cache_one;
+            proxy_cache_valid 200 304 1d;#200 304等方法缓存一天
+            proxy_cache_valid any 1m;#其他都是1分钟
+            proxy_cache_key $host$uri$is_args$args;
+            proxy_pass http://myserver;
+        }
+    }
+}
+~~~
+
+## LVS四层负载均衡
+
+所谓的四层就是ip+端口号
+
+当并发量大的时候，可以在前端部署LVS，将请求转发到多台nginx上。
+
+linux内核已经是支持lvs的，首先下载一个LVS管理工具：
+
+~~~shell
+yum install ipvsadm
+~~~
+
+准备3台虚拟机，其中一台用来做虚拟服务，这里是192.168.63.128。另外两台做真实的服务，分别是192.168.63.120，192.168.63.125。
+
+#### 配置虚拟服务
+
+首先在128这台主机上，进入/usr/local/bin目录下，新建lvs_dr.sh，写入如下配置
+
+~~~shell
+#! /bin/bash
+echo 1 > /proc/sys/net/ipv4/ip_forward
+ipv=/sbin/ipvsadm
+vip=192.168.63.110 #虚拟一个ip出来
+rs1=192.168.63.120 #真实服务
+rs2=192.168.63.125 #真实服务
+case $1 in
+start)
+    echo "Start LVS"
+    ifconfig ens33:0 $vip broadcast $vip netmask 255.255.255.255 up #添加虚拟网卡
+    route add -host $vip dev ens33:0          #添加到虚拟主机的路由
+    $ipv -A -t $vip:80 -s lc                 #添加虚拟服务器，-s：调度算法 lc:最少连接
+    $ipv -a -t $vip:80 -r $rs1:80 -g -w 1    #添加真实服务器，-g：DR，-w：权重
+    $ipv -a -t $vip:80 -r $rs2:80 -g -w 1
+;;
+stop)
+    echo "Stop LVS"
+    route del -host $vip dev ens33:0  #删除虚拟网卡
+    ifconfig ens33:0 down             #删除路由
+    $ipv -C                          #删除虚拟主机
+;;
+*)
+echo "Usage:$0 {start|stop}"
+exit 1
+esac
+~~~
+
+其中的ens33是当前通过ifconfig查看得到的网卡名称，有的虚拟机是eth0，这里注意。
+
+然后添加权限：
+
+~~~shell
+chmod 755 lvs_dr.sh
+~~~
+
+然后执行
+
+~~~shell
+./lvs_dr.sh start
+~~~
+
+此时通过ifconfig就可以发现多了一个虚拟网卡ens330
+
+删除网卡：
+
+~~~shell
+./lvs_dr.sh stop
+~~~
+
+#### 真实服务
+
+当虚拟服务将数据转发给这两个真实服务后，这两个真实服务并不知道虚拟服务的存在，所以同样需要给真实服务添加配置，让他们指向虚拟服务。
+
+在120和125这两台主机上，同样是进入usr/local/bin目录下，新建lvs_rs.sh
+
+~~~shell
+#!/bin/bash
+vip=192.168.63.110 #指向虚拟服务
+case $1 in
+start)
+    echo "Start LVS"
+    ifconfig ens33:0 $vip broadcast $vip netmask 255.255.255.255 up
+    route add -host $vip dev ens33:0
+    echo "1" > /proc/sys/net/ipv4/conf/lo/arp_ignore
+    echo "2" > /proc/sys/net/ipv4/conf/lo/arp_announce
+    echo "1" > /proc/sys/net/ipv4/conf/all/arp_ignore
+    echo "2" > /proc/sys/net/ipv4/conf/all/arp_announce
+    sysctl -p > /dev/null 2>&1
+;;
+stop)
+    echo "Stop LVS"
+    route del -host $vip dev ens33:0
+    /sbin/ifconfig ens33:0 down
+    echo "0" > /proc/sys/net/ipv4/conf/lo/arp_ignore
+    echo "0" > /proc/sys/net/ipv4/conf/lo/arp_announce
+    echo "0" > /proc/sys/net/ipv4/conf/all/arp_ignore
+    echo "0" > /proc/sys/net/ipv4/conf/all/arp_announce
+    sysctl -p > /dev/null 2>&1
+;;
+*)
+echo "Usage:$0 {start|stop}"
+exit 1
+esac
+~~~
+
+使用ipvsadm查看路由
+
+~~~shell
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  localhost:http lc
+  -> 192.168.63.120:http          Route   1      0          0         
+  -> 192.168.63.125:http  
+~~~
+
+lc表示采用最少连接的负载均衡算法
+
+还可以使用ipvsadm -ln查看端口号
+
+~~~shell
+[root@localhost bin]# ipvsadm -ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  192.168.63.110:80 lc
+  -> 192.168.63.120:80            Route   1      0          0         
+  -> 192.168.63.125:80            Route   1      0          0   
+~~~
+
+## Keepalived高可用
+
+使用keepalived进行双机热备以及负载均衡。
 
 主服务器:master
 
 从服务器:backup
 
-当主服务器挂掉后，使用从服务器完成工作
+当主服务器挂掉后，使用从服务器完成工作。
+
+#### 配置
+
+下面几个步骤master和backup都是一样的。
+
+master所在的主机ip为130，backup所在的主机为129.
+
+1.首先安装依赖
+
+~~~shell
+yum install ipvsadm openssl-devel popt-devel  libnl libnl-devel  libnfnetlink-devel -y
+~~~
+
+2.官网下载压缩包，进行解压后，进入解压后的目录，使用如下命令安装
+
+~~~shell
+./configure --prefix=/usr/local/keepalived 
+~~~
+
+因为keepalived是c写的，所以需要有gcc环境，否则会报错。出现以下信息表示成功：
+
+~~~shell
+Use IPVS Framework       : Yes
+IPVS use libnl           : Yes
+Use VRRP Framework       : Yes
+Use VRRP VMAC            : Yes
+Use VRRP authentication  : Yes
+~~~
+
+3.make编译
+
+4.make install
+
+Keepalived做负载均衡是基于lvs的，所以先把前面配置的两台真实服务的lvs启动。
+
+一、master配置：
+
+进入/usr/local/keepalived目录下，将默认 的配置文件做个备份，不修改原来的配置文件：
+
+~~~shell
+mv ./etc/keepalived/keepalived.conf ./etc/keepalived/keepalived.bak.conf
+
+vim ./etc/keepalived/keepalived.conf
+~~~
+
+然后添加如下配置：
+
+~~~shell
+# 全局定义，发送邮件这些，不用管这个
+global_defs {
+   notification_email {
+         cxylikui@163.com
+   }
+   notification_email_from admin@163.com
+   smtp_server 192.168.63.128
+   smtp_connect_timeout 30
+   router_id LVS_DEVEL
+}
+
+vrrp_instance VI_1 {
+    state MASTER 
+    interface ens33 #当前网卡
+    virtual_router_id 51  #主从必须一致
+    priority 100  #优先级，选举master用
+    advert_int 1    #master与backup节点间同步检查的时间间隔，单位为秒 
+    authentication {#验证类型和验证密码，通常使用PASS类型，同一vrrp实例MASTER与BACKUP使用相同的密码才能正
+常通信
+        auth_type PASS
+        auth_pass 1111
+    }
+    virtual_ipaddress {#vip
+        192.168.63.110
+    }
+}
+virtual_server 192.168.63.110 80 {
+        delay_loop 6 ##每隔 6 秒查询RealServer状态
+        lb_algo rr   #负载均衡算法
+        lb_kind DR    #DR转发模式
+        persistence_timeout 10 #会话保持时间 
+        protocol TCP 
+        real_server 192.168.63.120 80 { #RS
+                weight 1
+                TCP_CHECK {
+                        connect_timeout 10
+                        connect_port 80
+                }
+        }
+        real_server 192.168.63.125 80 {
+                weight 1
+                TCP_CHECK {
+                        connect_timeout 10
+                        connect_port 80
+                }
+        }
+}
+
+~~~
+
+其中的ip110就是前面配置的虚拟主机，而120和125是真实服务。
+
+二、backup配置，和master一样的步骤，不同的是将配置文件中的两个地方改掉
+
+~~~shell
+    state BACKUP
+    ...
+    priority 80  #优先级，选举master用
+~~~
+
+priority指明优先级，从机的priority一定要比主机小，如果配置了多个从机，那么多个从机的优先级也是不一样的，**当主机挂掉的时候，就会根据从机中优先级高的来选举主机**。
+
+#### 双机热备
+
+因为keepalived有Ip转发的功能，所以在主机和从机中还需要将Ip转发功能打开：
+
+~~~shell
+vi /etc/sysctl.conf
+net.ipv4.ip_forward = 1
+~~~
+
+一、先启动master
+
+~~~shell
+./sbin/keepalived -f /usr/local/keepalived/etc/keepalived/keepalived.conf -D
+~~~
+
+-f：指定配置文件
+
+-D：输出日志，位置在/var/log/messages
+
+使用ps -ef|grep keepalived:
+
+~~~shell
+gdm        1917   1523  0 19:17 ?        00:00:00 /usr/libexec/gsd-housekeeping
+root       8407      1  0 21:50 ?        00:00:00 ./sbin/keepalived -f /usr/local/keepalived/etc/keepalived/keepalived.conf -D
+root       8408   8407  0 21:50 ?        00:00:00 ./sbin/keepalived -f /usr/local/keepalived/etc/keepalived/keepalived.conf -D
+root       8409   8407  0 21:50 ?        00:00:00 ./sbin/keepalived -f /usr/local/keepalived/etc/keepalived/keepalived.conf -D
+root       8424   3114  0 21:50 pts/1    00:00:00 grep --color=auto keep
+
+~~~
+
+8407相当于一个看门狗，8408和8409做lvs和健康检查。
+
+使用ifconfig就可以发现ens33会有两个ip，但是在我的主机上只会显示原来的ip，110这个ip显示不了，通过查看message日志，发现有创建地址的记录，除了ip外还有mac地址，ens33显示的就是两个mac地址，而ip地址只显示了原来的ip。
+
+可以使用如下命令**查看当前机器上的请求连接信息**
+
+~~~shell
+watch ipvsadm -L -n -c
+~~~
+
+这时候浏览器访问一下虚拟ip110就会有如下结果：
+
+![](https://z3.ax1x.com/2021/04/08/cYEH3V.png)
+
+可以看到，此时请求跑到了125这台真实服务上。
+
+这个时候进行压测，以秒杀项目为例，因为虚拟ip那台服务器部署了很多东西，所以关闭它的nginx，只用开启两台真实服务器的nginx做负载均衡即可。另外，**虚拟Ip的lvs服务可以不用再开启，关闭即可**。这个时候压测60000个请求是一点压力都没有的。
+
+二、启动backup
+
+和master一样的启动方式。
+
+然后**演示主从切换达到高可用**：
+
+首先将master上的keepalived进程kill掉，然后此时查看backup的日志：
+
+~~~shell
+Apr  8 16:14:11 localhost Keepalived_vrrp[12055]: (VI_1) Backup received priority 0 advertisement
+Apr  8 16:14:12 localhost Keepalived_vrrp[12055]: (VI_1) Entering MASTER STATE
+Apr  8 16:14:12 localhost Keepalived_vrrp[12055]: (VI_1) setting protocol VIPs.
+Apr  8 16:14:12 localhost Keepalived_vrrp[12055]: Sending gratuitous ARP on ens33 for 192.168.63.110
+Apr  8 16:14:12 localhost Keepalived_vrrp[12055]: (VI_1) Sending/queueing gratuitous ARPs on ens33 for 192.168.63.110
+~~~
+
+可以看到，它会将110这个虚拟ip“抢”过来，然后此时再访问110这个ip，backup的请求信息：
+
+![](https://z3.ax1x.com/2021/04/08/cYnUwF.png)
+
+可以看到，当主机挂掉后，从机会继续工作，从而达到高可用。
+
+然后再将master重新启动，这个时候backup日志如下：
+
+~~~shell
+Apr  8 16:22:45 localhost Keepalived_vrrp[12055]: (VI_1) Master received advert from 192.168.63.130 with higher priority 100, ours 80
+Apr  8 16:22:45 localhost Keepalived_vrrp[12055]: (VI_1) Entering BACKUP STATE
+Apr  8 16:22:45 localhost Keepalived_vrrp[12055]: (VI_1) removing protocol VIPs.
+Apr  8 16:22:45 localhost avahi-daemon[806]: Withdrawing address record for 192.168.63.110 on ens33.
+
+~~~
+
+**然后再访问110这个ip，master又会继续工作**，因为它的优先级比从机高。
+
+#### 轮询
+
+观察上面的图片发现连接的expire很长，因为它默认的是900s也就是15分钟，
+
+通过`ipvsadm -L --timeout`查看：
+
+~~~shell
+Timeout (tcp tcpfin udp): 900 120 300
+~~~
+
+第一个就是tcp的连接时间900s.
+
+所以我们会发现即使在配置文件中配置了
+
+~~~shell
+persistence_timeout 10 #会话保持时间
+~~~
+
+不起作用。
+
+解决办法：使用`ipvsadm --set`命令设置：
+
+~~~shell
+ipvsadm --set 1 2 1
+~~~
+
+将它设置为1s。
+
+**注意**：nginx也需要修改，原来nginx是跟浏览器连接的，现在浏览器直接请求keepalived了，然后keepalive再访问nginx，所以现在是nginx跟keepalived之间连接的超时时间。为了演示效果，将两台真实服务的nginx.conf中的timeout改为1s
+
+~~~shell
+keepalive_timeout  1;#长连接超时时间
+~~~
+
+然后重启master的keepalived，超时时间就是配置文件中配置的10s。
+
+这个时候再去访问110虚拟主机，如果第一次访问请求落到120的话，10s后再访问，此时请求就会落到125。
+
+**keepalived是以连接为单位的，而不是以请求为单位，所以只要连接足够的话，那么请求都会落到一个主机上**。

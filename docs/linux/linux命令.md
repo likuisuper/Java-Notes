@@ -30,5 +30,16 @@ nohup java -jar jar包名 &
 
 然后可以使用tail -f  nohup.out查看是否成功
 
+#### sysctl -p
 
+查看刚修改的文件，可以帮助我们检查配置是否成功。
 
+#### watch
+
+没隔2s执行命watch后面的命令，便于监控一些网络信息。比如keepalived信息
+
+~~~shell
+watch ipvsadm -L -n -c
+~~~
+
+监控当前机器上相关的请求连接

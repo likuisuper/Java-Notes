@@ -113,3 +113,81 @@ services:
 ~~~
 
 该命令是依赖的意思，比如上面的例子，web服务依赖于db和redis，当启动web时会先启动db和redis
+
+## 部署SpringBoot项目
+
+#### 编写docker-compose.yml文件
+
+例：
+
+~~~yml
+version: '3'
+services:
+  # 指定服务名称
+  db:
+    # 指定服务使用的镜像
+    image: mysql:8.0
+    # 指定容器名称
+    container_name: mysql
+    # 执行命令
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    # 开机启动
+    restart: always
+    # 指定服务运行端口
+    ports:
+    - 3306:3306
+    # 指定容器挂载文件
+    volumes:
+    - /lkuse/mysql/conf:/etc/mysql/conf.d #配置文件挂载
+    - /lkuse/mysql/data:/var/lib/mysql #数据文件挂载
+    - /lkuse/mysql/log:/var/log/mysql #日志文件挂载
+    # 指定容器的环境变量，即设置密码
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+  redis:
+    image: redis:5.0.5
+    container_name: redis
+    # 指定配置文件和密码
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass 12345 --appendonly yes
+    ports:
+    - 7369:6379
+    volumes:
+    - /lkuse/myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+    - /lkuse/myredis/data:/data
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+    - /lkuse/rabbitmq/data:/var/lib/rabbitmq 
+    - /lkuse/rabbitmq/log:/var/log/rabbitmq 
+  seckill-docker-file:
+    image: seckill-docker-file:0.0.1-SHAPSHOT
+    container_name: seckill-docker-file
+    # 下面三个服务启动后再启动该服务
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+    ports:
+    - 8080:8080
+    volumes:
+    - /etc/localtime:/etc/localtime
+    - /lkuse/app/seckill-docker-file/logs:/var/logs
+~~~
+
+#### 打包并上传
+
+将当前项目打成jar包，和yml文件上传到服务器。如果当前jar包没有构建成镜像，需要构建成镜像(可以使用dockerfile)。
+
+#### 启动
+
+在当前目录下执行命令,所以 -f 指定yml文件可以省略
+
+~~~shell
+docker-compose up -d
+~~~
+
+需要注意的是，yml文件中的中文注释要去掉，否则会被解码错误。

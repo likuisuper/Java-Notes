@@ -459,3 +459,321 @@ public void load() {
 当出现嵌套子查询的时候就会存在循环依赖的问题，解决的方法就是通过queryStack，一级缓存，延迟加载来解决。**这也是为什么一级缓存要一直打开的原因，如果关闭了，那么当出现嵌套子查询的时候就会出现死循环。虽然一级缓存的生命周期很短，但他还是很有用的**。至于上面出现的懒加载，我们后面再深入分析。最后通过一张图来加深理解：
 
 ![](https://z3.ax1x.com/2021/04/02/cZRqgJ.png)
+
+## 懒加载
+
+#### 结构
+
+首先在sql查询语句中将多的一方设置为懒加载：
+
+~~~xml
+    <resultMap id="blogMap" type="blog">
+        <result column="id" property="id"/>
+        <collection property="comments" column="id" select="selectCommentsByBlogId" fetchType="lazy"/>
+    </resultMap>
+    <select id="selectCommentsByBlogId" resultType="comment">
+        select * from comment where blog_id=#{blogId}
+    </select>
+    <select id="selectBlogById" resultMap="blogMap">
+        select * from blog where id=#{id}
+    </select>
+~~~
+
+通过fetchType="lazy"设置为懒加载，默认是eager。这个配置会覆盖掉配置文件中的懒加载开关：lazyLoadingEnabled
+
+当调用对象的set方法时，将不会进行懒加载：
+
+~~~java
+    @Test
+    public void lazySetTest(){
+        SqlSession sqlSession=factory.openSession();
+        Blog blog = sqlSession.selectOne("selectBlogById", 1);
+        blog.setComments(new ArrayList<>());
+        System.out.println(blog.getComments().size());
+    }
+~~~
+
+这时候输出结果是0，也就是没有进行懒加载，并不会覆盖掉set的值。
+
+可以通过aggressiveLazyLoading设置来使任一方法调用都会加载该对象的懒加载，默认是false。当然也可以通过lazyLoadTriggerMethods来按需加载，这个设置的默认值是equals,clone,hashCode,toString，我们可以指定特定的方法来按需加载，比如：
+
+~~~xml
+<setting name="lazyLoadTriggerMethods" value="toString"/>
+~~~
+
+接下来测试序列化是否能够懒加载：
+
+~~~java
+private static byte[] writeObject(Object obj) throws IOException, IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream outputStream = new ObjectOutputStream(out);
+        outputStream.writeObject(obj);
+        return out.toByteArray();
+    }
+
+    private static Object readObject(byte[] bytes) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        ObjectInputStream inputStream = new ObjectInputStream(in);
+        return inputStream.readObject();
+    }
+
+    // 序列化--》字节码   -》反序列化成对象
+
+
+    /***
+     *
+     * 序列化之后依然可以进行
+     * 注：需要设置configurationFactory 指定configuration构建器
+     */
+    @Test
+    public void lazySerializableTest() throws IOException, ClassNotFoundException {
+        SqlSession sqlSession = factory.openSession();
+        Blog blog = sqlSession.selectOne("selectBlogById", 1);
+        byte[] bytes = writeObject(blog);
+        Blog blog2 = (Blog) readObject(bytes);
+        System.out.println("--------反列化完成-------");
+        blog2.getComments();
+    }
+~~~
+
+这个时候会报错：
+
+~~~java
+org.apache.ibatis.executor.ExecutorException: Cannot get Configuration as configuration factory was not set.
+~~~
+
+官方文档说的是：
+
+需要设置configurationFactory，指定一个提供 `Configuration` 实例的类。 这个被返回的 Configuration 实例用来加载被反序列化对象的延迟加载属性值。 这个类必须包含一个签名为`static Configuration getConfiguration()` 的方法，这个设置的值就是一个类型别名或者全限定名。
+
+按上述要求新建一个类，并返回Configuration
+
+~~~java
+public class ConfigurationFactory {
+    public static Configuration getConfiguration() {
+        SqlSessionFactoryBuilder factoryBuilder = new SqlSessionFactoryBuilder();
+
+        SqlSessionFactory factory = factoryBuilder.build(ConfigurationFactory.class.getResourceAsStream("/mybatis-config.xml"));
+
+        return factory.getConfiguration();
+    }
+}
+~~~
+
+
+
+然后在配置文件中配置：
+
+~~~xml
+<setting name="configurationFactory" value="cxylk.mybatis.ConfigurationFactory"/>
+~~~
+
+结果如下：
+
+~~~java
+12:07:53,514 DEBUG cxylk.mybatis.BlogMapper.selectBlogById:54 - ==>  Preparing: select * from blog where id=? 
+12:07:53,561 DEBUG cxylk.mybatis.BlogMapper.selectBlogById:54 - ==> Parameters: 1(Integer)
+12:07:53,655 DEBUG cxylk.mybatis.BlogMapper.selectBlogById:54 - <==      Total: 1
+--------反列化完成-------
+12:07:53,764 DEBUG cxylk.mybatis.BlogMapper.selectCommentsByBlogId:54 - ==>  Preparing: select * from comment where blog_id=? 
+12:07:53,764 DEBUG cxylk.mybatis.BlogMapper.selectCommentsByBlogId:54 - ==> Parameters: 1(Integer)
+12:07:53,764 DEBUG cxylk.mybatis.BlogMapper.selectCommentsByBlogId:54 - <==      Total: 1
+~~~
+
+可以看到，在反序列化完成之后才会触发懒加载，也就是去查询comment表。
+
+下面来测试下toString方法触发懒加载的情况：
+
+~~~java
+    @Test
+    public void lazyTest(){
+        SqlSession sqlSession=factory.openSession();
+        Blog blog = sqlSession.selectOne("selectBlogById", 1);
+        blog.getComments();
+    }
+~~~
+
+在最后一行打断点，当还没执行到getComments方法时，就已经执行了懒加载。这是因为在debug模式下自动的调用了toString方法。
+
+![](https://z3.ax1x.com/2021/04/04/cK2can.png)
+
+可以看到，此时已经查询到了commnts的值。
+
+如果再配置文件中配置：
+
+~~~xml
+<setting name="lazyLoadTriggerMethods" value="clone"/>
+~~~
+
+那么此时的comments就为null，只有调用getComments的时候才会去加载。
+
+当然，也可以这样设置：在Configuration中有这个属性：
+
+~~~java
+protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+~~~
+
+set方法：
+
+~~~java
+  public void setLazyLoadTriggerMethods(Set<String> lazyLoadTriggerMethods) {
+    this.lazyLoadTriggerMethods = lazyLoadTriggerMethods;
+  }
+~~~
+
+然后在初始化时：
+
+~~~java
+configuration.setLazyLoadTriggerMethods(new HashSet<>());
+~~~
+
+这样的话，comments也会为null。
+
+从debug中我们也可以得到懒加载的结构：
+
+![](https://z3.ax1x.com/2021/04/04/cKRvYq.png)
+
+就是图中画红线的部分，将它表示成下图：
+
+![](https://z3.ax1x.com/2021/04/04/cKWl0H.png)
+
+#### 内部实现
+
+在上面的debug结构图中，handle是JavassistProxyFactory中的EnhancedResultObjectProxyImpl，它实现了MethodHandle接口。在这个内部类中，主要来看invoke方法：
+
+~~~java
+@Override
+    public Object invoke(Object enhanced, Method method, Method methodProxy, Object[] args) throws Throwable {
+      //此时的methodNam=getComments
+      final String methodName = method.getName();
+      try {
+        synchronized (lazyLoader) {
+          if (WRITE_REPLACE_METHOD.equals(methodName)) {
+            Object original;
+            if (constructorArgTypes.isEmpty()) {
+              original = objectFactory.create(type);
+            } else {
+              original = objectFactory.create(type, constructorArgTypes, constructorArgs);
+            }
+            PropertyCopier.copyBeanProperties(type, enhanced, original);
+            if (lazyLoader.size() > 0) {
+              return new JavassistSerialStateHolder(original, lazyLoader.getProperties(), objectFactory, constructorArgTypes, constructorArgs);
+            } else {
+              return original;
+            }
+          } else {
+            if (lazyLoader.size() > 0 && !FINALIZE_METHOD.equals(methodName)) {
+              //这里就是判断是不是任意方法就触发懒加载，就是前面提到的那个配置属性aggressiveLazyLoading，或者当前方法名称是按需加载的值(就是那4个方法)
+              if (aggressive || lazyLoadTriggerMethods.contains(methodName)) {
+                //懒加载全部
+                lazyLoader.loadAll();
+              } else if (PropertyNamer.isSetter(methodName)) {//判断是不是set方法，如果是就移除当前属性，这就是前面说的如果调用了set方法设值的话不会触发懒加载，保证懒加载不会覆盖掉我们设置的值。
+                final String property = PropertyNamer.methodToProperty(methodName);
+                lazyLoader.remove(property);
+              } else if (PropertyNamer.isGetter(methodName)) {//调用get方法
+                final String property = PropertyNamer.methodToProperty(methodName);
+                //判断lazyLoader中是否有这个属性值(当前是commnts)，有则懒加载
+                if (lazyLoader.hasLoader(property)) {
+                  lazyLoader.load(property);
+                }
+              }
+            }
+          }
+        }
+        //否则调用invoke方法
+        return methodProxy.invoke(enhanced, args);
+      } catch (Throwable t) {
+        throw ExceptionUtil.unwrapThrowable(t);
+      }
+    }
+~~~
+
+其中的WRITE_REPLACE_METHOD是
+
+~~~java
+private static final String WRITE_REPLACE_METHOD = "writeReplace";
+~~~
+
+它是在方法调用序列化之前来返回一个对象，然后在序列化的时候就会去序列化这个返回的对象，这里不细讲。
+
+在上面的debug中我们看到lazyLoader有就是ResultLoadMap中是有值的，所以会触发懒加载load方法：
+
+~~~java
+  public boolean load(String property) throws SQLException {
+    LoadPair pair = loaderMap.remove(property.toUpperCase(Locale.ENGLISH));
+    if (pair != null) {
+      pair.load();
+      return true;
+    }
+    return false;
+  }
+~~~
+
+可以看到，首先会移除当前属性值，不管是否发生异常。**也就是说，懒加载只会触发一次，不管成功还是失败**。
+
+进入load方法：
+
+~~~java
+ public void load(final Object userObject) throws SQLException {
+      //这两个属性都是transient修饰的
+      if (this.metaResultObject == null || this.resultLoader == null) {
+        if (this.mappedParameter == null) {
+          throw new ExecutorException("Property [" + this.property + "] cannot be loaded because "
+                  + "required parameter of mapped statement ["
+                  + this.mappedStatement + "] is not serializable.");
+        }
+
+        final Configuration config = this.getConfiguration();
+        final MappedStatement ms = config.getMappedStatement(this.mappedStatement);
+        if (ms == null) {
+          throw new ExecutorException("Cannot lazy load property [" + this.property
+                  + "] of deserialized object [" + userObject.getClass()
+                  + "] because configuration does not contain statement ["
+                  + this.mappedStatement + "]");
+        }
+
+        this.metaResultObject = config.newMetaObject(userObject);
+        this.resultLoader = new ResultLoader(config, new ClosedExecutor(), ms, this.mappedParameter,
+                metaResultObject.getSetterType(this.property), null, null);
+      }
+
+      /* We are using a new executor because we may be (and likely are) on a new thread
+       * and executors aren't thread safe. (Is this sufficient?)
+       *
+       * A better approach would be making executors thread safe. */
+      if (this.serializationCheck == null) {
+        final ResultLoader old = this.resultLoader;
+        this.resultLoader = new ResultLoader(old.configuration, new ClosedExecutor(), old.mappedStatement,
+                old.parameterObject, old.targetType, old.cacheKey, old.boundSql);
+      }
+
+      this.metaResultObject.setValue(property, this.resultLoader.loadResult());
+    }
+~~~
+
+需要注意的是上面有个ClosedExecutor，它继承了BaseExecutor类，里面除了实现isClosed方法，其他什么都没有实现，作用就是**进行反序列化懒加载的时候，执行器已经关闭了，要重新去新建一个执行器**。
+
+代码前面部分都是做准备工作，最后一行才是去加载结果，然后通过
+
+metaResultObject.setValue设置值，而loadResult就是前面讲延迟加载时分析过的方法，里面会有一个selectList方法
+
+~~~java
+  private <E> List<E> selectList() throws SQLException {
+    Executor localExecutor = executor;
+    if (Thread.currentThread().getId() != this.creatorThreadId || localExecutor.isClosed()) {
+      localExecutor = newExecutor();
+    }
+    try {
+      return localExecutor.query(mappedStatement, parameterObject, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER, cacheKey, boundSql);
+    } finally {
+      if (localExecutor != executor) {
+        localExecutor.close(false);
+      }
+    }
+  }
+~~~
+
+#### 代理过程
+
+![](https://z3.ax1x.com/2021/04/05/cMrNY8.png)
+
