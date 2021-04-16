@@ -77,7 +77,10 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 ## 参考篇
 
-* [压测](reference/压测.md)
+* [ELK搭建日志系统](reference/elk搭建日志系统.md)
 
+* [压测](reference/压测.md)
 * [软件安装配置及环境部署](reference/soft_install.md)
+* [搭建jdk源码阅读环境](reference/搭建jdk源码阅读环境.md)
+* [搭建spring源码阅读环境](reference/搭建spring源码阅读环境.md)
 * [spring中对excel操作](reference/spring中对excel操作.md)
