@@ -5,6 +5,7 @@
   * [回调接口](java/basis/回调接口.md)
 * JVM
   * [深入理解类加载机制](java/jvm/深入理解类加载机制.md)
+  * [类加载器以及双亲委派机制](java/jvm/类加载器以及双亲委派机制.md)
 * 容器
 
   * [集合](java/collection/集合.md)
@@ -52,11 +53,10 @@
   * [DockerCompose](java/docker/DockerCompose.md)
 * Linux
   * [一些常用命令](linux/linux命令.md)
-* 工具篇
+* 参考篇
   * [压测](reference/压测.md)
   * [软件安装配置及环境部署](reference/soft_install.md)
   * [IDEA常用设置及推荐插件](reference/idea.md)
   * [spring中对excel操作](reference/spring中对excel操作.md)
-  * [Postman：API接口调试利器](reference/postman.md)
 * 工作中遇到的问题总结
   * [工作中的问题](work/工作中遇到的问题.md)

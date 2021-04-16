@@ -43,3 +43,21 @@ K
 0src/java/util/concurrent/ArrayBlockingQueue.java,0\2\02ed220feb15319ed32da9aa072bfff5067e969d
 P
  src/java/lang/StringBuilder.java,a\7\a74f9acaa53ea9ca348677f4ac97cf5b21cdd9c9
+P
+ src/java/net/URLClassLoader.java,7\c\7c14c584b4c599fe9e4f8ee0e9955df9f7c2caa7
+W
+'src/cxylk/test/design/proxy/Client.java,a\d\ad55cb1f8bdba52d69c83189c5c1189fbadb0c67
+\
+,src/java/lang/reflect/InvocationHandler.java,7\8\78d5d8ea6f449e50a3459aa79f13dadcbc89f61c
+K
+src/java/nio/file/Path.java,2\2\2284bd907efd57d7c8e75a584467f70e9955cc94
+V
+&src/java/lang/reflect/Constructor.java,a\5\a5db59b032197490f126a70757414b6e4d0c2cb3
+N
+src/java/lang/ClassLoader.java,9\7\974714d336559c1fa59ddb4f8a29ec58d30cffac
+P
+ src/java/lang/reflect/Proxy.java,2\a\2af9fa1a5c019085fe3863d47d6c19cb637d28bb
+\
+,src/cxylk/test/design/proxy/CreateProxy.java,7\3\73f9075b05d401f37cd3376c712a8c5a9ad34244
+Q
+!src/java/lang/reflect/Method.java,1\e\1e254b78ec369301d791b73d882a0dc28959fdc0
