@@ -7,6 +7,7 @@
 * JVM
   * [深入理解类加载机制](java/jvm/深入理解类加载机制.md)
   * [类加载器以及双亲委派机制](java/jvm/类加载器以及双亲委派机制.md)
+  * [jvm字节码](java/jvm/jvm字节码.md)
   
 * 容器
 
@@ -38,7 +39,7 @@
   * [处理器statementHandler解析](框架/mybatis/处理器statementHandler解析.md)
   * [mybatis映射体系](框架/mybatis/mybatis映射体系.md)
   
-* 分布式
+* RPC
   * [dubbo与springboot集成](分布式/dubbo与springboot集成.md)
   * [zk和redis注册中心](分布式/zk和redis注册中心的区别.md)
   * [Dubbon搭建管理平台](分布式/dubbo-admin平台搭建与管理.md)

@@ -15,6 +15,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 * [深入理解类加载机制](docs/java/jvm/深入理解类加载机制.md)
 * [类加载器以及双亲委派机制](docs/java/jvm/类加载器以及双亲委派机制.md)
+* [jvm字节码](docs/java/jvm/jvm字节码.md)
 
 ## 容器
 
@@ -54,7 +55,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [docker常用安装](docs/java/docker/docker常用安装)
 * [DockerCompose](docs/java/docker/DockerCompose.md)
 
-## 分布式
+## RPC
 
 * [dubbo与springboot集成](docs/分布式/dubbo与springboot集成.md)
 * [zk和redis注册中心](docs/分布式/zk和redis注册中心的区别.md)
