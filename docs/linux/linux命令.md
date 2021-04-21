@@ -43,3 +43,14 @@ watch ipvsadm -L -n -c
 ~~~
 
 监控当前机器上相关的请求连接
+
+#### rpm
+
+查找安装的软件。
+
+比如查找本机安装的jdk
+
+~~~shell
+rpm -qa | grep java
+~~~
+

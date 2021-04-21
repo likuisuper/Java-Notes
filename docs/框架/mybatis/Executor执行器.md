@@ -1,10 +1,10 @@
 ## Mybatis执行流程
 
-![](https://s3.ax1x.com/2021/03/17/6gANOx.png)
+![](https://z3.ax1x.com/2021/04/21/cHbBa4.png)
 
 各执行器之间的关系
 
-![](https://s3.ax1x.com/2021/03/17/6gAwTO.png)
+![](https://z3.ax1x.com/2021/04/21/cHb6R1.png)
 
 ## SimpleExecutor
 
