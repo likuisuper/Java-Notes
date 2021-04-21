@@ -2,6 +2,8 @@
 
 ![](https://z3.ax1x.com/2021/04/21/cHbBa4.png)
 
+前面的动态代理省略了，也就是mapperProxy。为什么我们可以不用写实现类就可以执行mapper接口中定义的方法呢？因为mybatis底层使用动态代理生成了代理类，可以通过arthas查看，在该类中，会拿到接口中的所有方法，而这个代理类继承了Proxy类，并且内部维护了一个InvokectionHandle，所以最终会调用该接口的invoke方法。mapperProxy实现了InvokectionHandle接口，所以会进入到这里。
+
 各执行器之间的关系
 
 ![](https://z3.ax1x.com/2021/04/21/cHb6R1.png)
@@ -142,11 +144,11 @@ public void sessionByBatchTest(){
 
 主要来测试执行setName,addUser这些sql语句，批处理的返回的结果应该是多少。
 
-首先说下mapperStatement是什么，它就是mapper接口中我们定义的方法名，而sql就是我们编写的sql。
+首先说下mappedStatement是什么，它的id就是mapper接口中我们定义的方法名，而sql就是我们编写的sql。
 
 输出结果是3，也就是说执行了5个sql语句，但是返回的结果是3。
 
-原因就是三个addUser操作是连续的，又是同一个mapperStatement和sql语句(虽然参数不一样)，所以这三个插入操作其实用的是同一个statement。我们可以通过源码来了解其中的原理。
+原因就是三个addUser操作是连续的，又是同一个mappedStatement和sql语句(虽然参数不一样)，所以这三个插入操作其实用的是同一个statement。我们可以通过源码来了解其中的原理。
 
 ~~~java
 public class BatchExecutor extends BaseExecutor {
@@ -157,17 +159,18 @@ public class BatchExecutor extends BaseExecutor {
   private MappedStatement currentStatement;
     
   ....
-  //不管是修改还是插入，但是update操作，所以都会进入这个方法
+  //不管是修改还是插入，都是update操作，所以都会进入这个方法
   @Override
   public int doUpdate(MappedStatement ms, Object parameterObject) throws SQLException {
     final Configuration configuration = ms.getConfiguration();
     final StatementHandler handler = configuration.newStatementHandler(this, ms, parameterObject, RowBounds.DEFAULT, null, null);
+    //获取绑定的sql语句
     final BoundSql boundSql = handler.getBoundSql();
     final String sql = boundSql.getSql();
     final Statement stmt;
     //1.第一次进来，sql和ms都不为空，而currentsql和currentStatement都为空，不会走这里
-    //2.第二次进来，sql为add，而currentSql经过上一步变为了update,两者不相等，不走这里
-    //3.第三次进来，sql为add，而currentSql经过上一步变为add，ms同理，所以这时会走这里、
+    //2.第二次进来，sql为insert，而currentSql经过上一步变为了update,两者不相等，不走这里
+    //3.第三次进来，sql为insert，而currentSql经过上一步变为insert，ms同理，所以这时会走这里、
     //....
     if (sql.equals(currentSql) && ms.equals(currentStatement)) {
       //此时的list大小为2，last=1
@@ -183,8 +186,8 @@ public class BatchExecutor extends BaseExecutor {
       Connection connection = getConnection(ms.getStatementLog());
       stmt = handler.prepare(connection, transaction.getTimeout());
       handler.parameterize(stmt);    //fix Issues 322
-      //1.将sql赋值给currentSql,当前sql变为update
-      //2.将sql赋值给currentSql,当前sql变为add
+      //第一次进来.将sql赋值给currentSql,当前sql变为update操作
+      //第二次进来.将sql赋值给currentSql,当前sql变为insert操作
       currentSql = sql;
       //同上操作
       currentStatement = ms;
@@ -207,7 +210,7 @@ sql.equals(currentSql) && ms.equals(currentStatement
 
 为什么要做这么一个判断呢？就是为了**确保当前语句的执行顺序**。
 
-另外，在上面的操作中，比如currentSql=sql;currentStatement=ms，这在多线程环境中是不安全带，所以可以得出结论，**无论是Executor还是SqlSession都不能跨线程使用。**
+另外，在上面的操作中，比如currentSql=sql;currentStatement=ms，这在多线程环境中是不安全的，所以可以得出结论，**无论是Executor还是SqlSession都不能跨线程使用。**
 
 ## 总结
 
