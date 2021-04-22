@@ -47,6 +47,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [mybatis二级缓存](框架/mybatis/二级缓存.md)
 * [处理器statementHandler解析](框架/mybatis/处理器statementHandler解析.md)
 * [mybatis映射体系](框架/mybatis/mybatis映射体系.md)
+* [mybatis插件体系](框架/mybatis/mybatis插件体系.md)
 
 ## Docker相关
 

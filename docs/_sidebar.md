@@ -38,6 +38,7 @@
   * [mybatis二级缓存](框架/mybatis/二级缓存.md)
   * [处理器statementHandler解析](框架/mybatis/处理器statementHandler解析.md)
   * [mybatis映射体系](框架/mybatis/mybatis映射体系.md)
+  * [mybatis插件体系](框架/mybatis/mybatis插件体系.md)
   
 * RPC
   * [dubbo与springboot集成](分布式/dubbo与springboot集成.md)
