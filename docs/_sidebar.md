@@ -8,9 +8,9 @@
   * [深入理解类加载机制](java/jvm/深入理解类加载机制.md)
   * [类加载器以及双亲委派机制](java/jvm/类加载器以及双亲委派机制.md)
   * [jvm字节码](java/jvm/jvm字节码.md)
-  * [jvm内存模型与os内存模型.md](java/jvm/jvm内存模型与os内存模型.md)
-  * [数组和字符串的底层实现.md](java/jvm/数组和字符串的底层实现.md)
-  * [对象分析以及jvm调优.md](java/jvm/对象分析以及jvm调优.md)
+  * [jvm内存模型与os内存模型](java/jvm/jvm内存模型与os内存模型.md)
+  * [数组和字符串的底层实现](java/jvm/数组和字符串的底层实现.md)
+  * [对象分析以及jvm调优](java/jvm/对象分析以及jvm调优.md)
   
 * 容器
 

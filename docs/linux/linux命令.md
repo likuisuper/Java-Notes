@@ -22,7 +22,11 @@ sz 文件名
 tail -f 文件名
 ~~~
 
-#### jar包运行结果追加到nohup.out
+#### 后台运行
+
+可以使用nohup命令，即no hang up（不挂起），即使命令退出程序还要在。当前程序不能霸占交互命令行，而是应该在后台运行，所以要在最后加一个&，表示后台运行。
+
+比如后台运行jar包，jar包输出内容会追加到nohup.out中。
 
 ~~~shell
 nohup java -jar jar包名 &
@@ -46,11 +50,50 @@ watch ipvsadm -L -n -c
 
 #### rpm
 
-查找安装的软件。
+rpm是centos系统下的软件安装包，在Ubuntu下是deb。
 
-比如查找本机安装的jdk
+比如安装jdk可以使用rpm -i jdk-xxx.rpm进行安装，-i就是install的意思
+
+可以使用rpm -qa查看安装的软件列表，-q就是query，a就是all。但是搜索出来的结果很长，这时候可以使用管道命令grep。
 
 ~~~shell
 rpm -qa | grep java
 ~~~
 
+这个命令是将列出来的所有软件形成一个输出，|是管道，用于连接两个程序，前面rpm -qa的输出就放进管道里面，然后作为grep的输入，grep将在里面进行搜索带关键字jdk的行，并且输出出来。如果不知道要搜索的关键字，可以使用rpm -qa | more和rpm -qa | less这两个命令，它**可以将很长的结果分页展示出来**。more是分页后只能往后翻页，翻到最后一页自动结束返回命令，less是往前往后都能翻页，需要输入q（quit）返回命令行。
+
+如果要删除，可以用`rpm -e`，-e就是erase。
+
+#### yum
+
+yum类似Windows上的软件管家，Ubuntu下面是apt-get。
+
+可以根据关键词进行搜索，例如搜索jdk，`yum search jdk`，可以搜索到很多可以安装的jdk版本，数目太多可以使用grep、more、less过滤。
+
+选中一个后，就可以使用yum install jdk来进行安装，使用`yum erase jdk`卸载。
+
+#### wget
+
+wget后面加上链接就能从网上下载了。
+
+#### 关机
+
+现在就关机
+
+~~~shell
+shutdown -h now
+~~~
+
+#### 重启
+
+使用`reboot`重启。
+
+#### strace
+
+用来跟踪进程执行时系统调用和所接收的信号，比如
+
+~~~shell
+strace ls -la
+~~~
+
+会输出具体的系统调用
