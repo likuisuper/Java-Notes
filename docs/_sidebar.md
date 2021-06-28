@@ -32,6 +32,8 @@
   
 * Spring&&SpringBoot
 
+  * [bean的建模基石BeanDefiniton](框架/spring/bean的基石beanDefinition.md)
+  
   * [常用注解](框架/spring/常用注解.md)
   * [IOC容器](框架/spring/SpringIOC容器分析.md)
   

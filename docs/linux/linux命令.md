@@ -97,3 +97,30 @@ strace ls -la
 ~~~
 
 会输出具体的系统调用
+
+#### 查看某个端口连接
+
+~~~shell
+netstat -ntulp|grep 端口号
+~~~
+
+#### 查看某个端口是否被占用
+
+~~~shell
+netstat -apn|grep 端口号
+~~~
+
+#### Ubuntu卸载软件
+
+~~~shell
+apt-get --purge remove 软件名
+~~~
+
+#### Ubuntu查看某个软件
+
+~~~shell
+dpkg -l|grep 软件
+~~~
+
+
+
