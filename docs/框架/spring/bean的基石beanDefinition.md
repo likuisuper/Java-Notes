@@ -72,7 +72,7 @@ beanDefinition是怎么被扫描进beanDefinitionMap中的？
 
 ![](https://z3.ax1x.com/2021/06/28/RUAOUJ.png)
 
-这5个beanDefinition是spring开天辟地的5个beanDefinition，由spring放进beanDefinitionMap中。
+**这5个beanDefinition是spring开天辟地的5个beanDefinition（最新版本只有4个了，有一个已经过期），由spring放进beanDefinitionMap中**。
 
 当执行完register(componentClasses)方法后：
 
@@ -155,7 +155,7 @@ public void refresh() throws BeansException, IllegalStateException {
 	}
 ~~~
 
-这个方法里面有12个核心方法，我们先来看`invokeBeanFactoryPostProcessors(beanFactory)`这个方法，通过它的名字可以看出是调用BeanFactoryPostProcessors，当执行完这个方法后：
+这个方法里面有12个核心方法，我们先来看`invokeBeanFactoryPostProcessors(beanFactory)`这个方法，通过它的名字可以看出是执行BeanFactoryPostProcessors（注意后面加了s，表示复数），当执行完这个方法后：
 
 ![](C:\Users\32328\AppData\Roaming\Typora\typora-user-images\image-20210628204321632.png)
 
@@ -177,9 +177,11 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
 此时控制台输出：-----beanFactoryPostProcessor-----
 
+总结：调用invokeBeanFactoryPostProcessors会执行以下步骤：
 
+1、执行所有需要被执行的BeanFactoryPostProcessor，它会执行spring内置的子类BeanFactoryPostProcessor，完成了扫描ConfigurationClassPostProcessor（这是前面说的开天辟地的5个bd之一）
 
-
+2、执行程序员提供的BeanFactoryPostProcessor
 
 
 
