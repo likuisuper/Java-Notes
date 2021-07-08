@@ -20,6 +20,8 @@ Spring是一个轻量级的开发框架，旨在提高开发人员的开发效�
 
 在Spring中，那些组成应用程序的主体及由Spring IOC容器所管理的对象，被称之为bean。简单地讲，bean就是由IOC容器初始化、装配及管理的对象，除此之外，bean就与应用程序中的其他对象没有什么区别了。
 
+一个java对象不一定是spring bean，但是spring bean一定是java对象，并且java对象没有生命周期，而spring bean是有生命周期的。
+
 ### bean的生命周期
 
 常见的有两种：singleton和prototype
@@ -32,7 +34,7 @@ Spring是一个轻量级的开发框架，旨在提高开发人员的开发效�
 
 获取bean的时候才会被创建，会创建多次
 
-
+后面会专门对bean的生命周期进行更全面的分析。
 
 ## 建模基石BeanDefinition
 
@@ -177,16 +179,12 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
 此时控制台输出：-----beanFactoryPostProcessor-----
 
+**而其实将beanDefinition放入bdmap中的是这个方法中的第一个`invokeBeanDefinitionRegistryPostProcessors`，它调用的是spring开天辟地5个bean中的ConfigurationClassPostProcessor重写的方法 **，具体会在后面的容器扫描原理中分析。
+
 总结：调用invokeBeanFactoryPostProcessors会执行以下步骤：
 
 1、执行所有需要被执行的BeanFactoryPostProcessor，它会执行spring内置的子类BeanFactoryPostProcessor，完成了扫描ConfigurationClassPostProcessor（这是前面说的开天辟地的5个bd之一）
 
 2、执行程序员提供的BeanFactoryPostProcessor
 
-
-
-## 什么是面向切面编程AOP
-
-**在运行时，动态地将代码切入到类的指定方法、指定位置上的编程思想就是面向切面的编程**
-
-一般而言，我们管切入到指定类指定方法的代码片段称为切面，而切入到哪些类 、哪些方法则叫切入点。有了AOP,我们就可以把几个类公有的代码，抽取到一个切片中，等到需要时再切入到对象中去，从而改变其原有的行为。
+具体的实现和顺序见后面的扫描原理。

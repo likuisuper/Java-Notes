@@ -93,7 +93,7 @@ public static void invokeBeanFactoryPostProcessors(
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			//将当前list合并到registryProcessors中
 			registryProcessors.addAll(currentRegistryProcessors);
-			//现在执行的是ConfigurationClassPostProcessor的postProcessBeanDefinitionRegistry方法，确定候选组件类
+			//现在执行的是ConfigurationClassPostProcessor的postProcessBeanDefinitionRegistry方法，将beanDefinition放入bdmap中
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			//执行完上述方法后，将当前list clear掉
 			currentRegistryProcessors.clear();
@@ -162,7 +162,13 @@ invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry)
 
 ![](https://z3.ax1x.com/2021/07/02/R6SEZV.png)
 
-意思就是确定候选组件类，这些类是我们实现BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor接口的类
+##### beanDefinition进入bdmp的时间
+
+**输出结果意思就是确定候选组件类，这些类是我们加了注解比如@Component注解的类（不管有没有实现beanFactoryPostProcessor或beanDefinitionRegistryPostProcessor），并且执行完这个方法后，这些类对应的BeanDefinition就放入了BeanDefinitionMap中**。
+
+![](https://z3.ax1x.com/2021/07/08/RL29Ld.png)
+
+具体放入bdmap的代码可以查看`ConfigurationClassPostProcessor`重写父类的`postProcessBeanDefinitionRegistry`方法
 
 当执行完上面代码倒数第四行的invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);方法后，控制台打印结果如下：
 
