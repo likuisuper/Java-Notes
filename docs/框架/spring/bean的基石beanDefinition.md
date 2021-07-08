@@ -159,7 +159,7 @@ public void refresh() throws BeansException, IllegalStateException {
 
 这个方法里面有12个核心方法，我们先来看`invokeBeanFactoryPostProcessors(beanFactory)`这个方法，通过它的名字可以看出是执行BeanFactoryPostProcessors（注意后面加了s，表示复数），当执行完这个方法后：
 
-![](C:\Users\32328\AppData\Roaming\Typora\typora-user-images\image-20210628204321632.png)
+![](https://z3.ax1x.com/2021/07/08/ROG2B4.png)
 
 此时beanDefinitonMap中多了两个beanDefinition，y是加了@Component注解的类，另外一个是自定义实现了beanFactoryPostProcessors接口的类
 
