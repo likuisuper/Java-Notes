@@ -42,6 +42,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 * [bean的建模基石BeanDefiniton](框架/spring/bean的基石beanDefinition.md)
 * [spring容器扫描原理](框架/spring/spring容器扫描原理.md)
+* [bean的生命周期](框架/spring/bean的生命周期.md)
 * [spring中bean工厂的扩展](框架/spring/spring bean工厂的扩展.md)
 * [常用注解](框架/spring/常用注解.md)
 * [IOC容器](框架/spring/SpringIOC容器分析.md)
