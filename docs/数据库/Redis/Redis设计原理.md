@@ -37,7 +37,7 @@ OK
 127.0.0.1:6379>
 ~~~
 
-**一个Redis实例对应一个RedisDB(db0)，一个RedisDB对应一个Dict（哈希表），一个Dict对应两个Dicht（哈希桶），正常情况下只用到ht[0]，ht[1]在Rehash时使用**。
+**一个Redis实例对应一个RedisDB(db0)，一个RedisDB对应一个Dict（字典表），一个Dict对应两个Dicht（哈希表），正常情况下只用到ht[0]，ht[1]在Rehash时使用**。
 
 #### redisDb
 

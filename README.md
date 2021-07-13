@@ -38,6 +38,10 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [Java并发工具类之Exchanger](docs/java/并发编程学习/Java并发工具类之Exchanger.md)
 * [线程池ThreadPoolExecutor原理](docs/java/并发编程学习/线程池ThreadPoolExecutor原理.md)
 
+## MySQL
+
+* [事务](docs/数据库/MySQL/事务.md)
+
 ## Spring&&SpringBoot
 
 * [bean的建模基石BeanDefiniton](docs/框架/spring/bean的基石beanDefinition.md)
