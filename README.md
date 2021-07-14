@@ -72,6 +72,8 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 ## RPC
 
+* [dubbo架构](docs/分布式/dubbo架构.md)
+
 * [dubbo与springboot集成](docs/分布式/dubbo与springboot集成.md)
 * [zk和redis注册中心](docs/分布式/zk和redis注册中心的区别.md)
 * [dubbon搭建管理平台](docs/分布式/dubbo-admin平台搭建与管理.md)

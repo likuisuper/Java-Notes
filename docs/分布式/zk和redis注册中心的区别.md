@@ -198,7 +198,7 @@ public CuratorZookeeperClient(URL url) {
         super(url);
         try {
             //url中需要配置timeout（没有配的话url默认是3000），否则就会使用这里的默认的超时时间5*1000
-            //可以通过 dubbo.registry.timeout调大超时时间，对服务提供者而言没有用，还是3000
+            //可以通过 dubbo.registry.timeout调大超时时间
             int timeout = url.getParameter(TIMEOUT_KEY, DEFAULT_CONNECTION_TIMEOUT_MS);
             int sessionExpireMs = url.getParameter(ZK_SESSION_EXPIRE_KEY, DEFAULT_SESSION_TIMEOUT_MS);
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
@@ -223,7 +223,7 @@ public CuratorZookeeperClient(URL url) {
     }
 ~~~
 
-消费端可以通过如下配置增大超时时间
+可以通过如下配置增大超时时间
 
 ~~~properties
 dubbo.registry.timeout=10000
