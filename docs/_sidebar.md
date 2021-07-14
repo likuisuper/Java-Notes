@@ -28,6 +28,8 @@
   * [线程池ThreadPoolExecutor原理](java/并发编程学习/线程池ThreadPoolExecutor原理.md)
 * MySQL
   * [事务](数据库/MySQL/事务.md)
+  * [索引](数据库/MySQL/索引.md)
+  * [数据库中的锁](数据库/MySQL/数据库中的锁.md)
 * Spring&&SpringBoot
 
   * [bean的建模基石BeanDefiniton](框架/spring/bean的基石beanDefinition.md)

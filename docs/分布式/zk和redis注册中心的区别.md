@@ -197,7 +197,8 @@ debug进入CuratorZookeeperClient类
 public CuratorZookeeperClient(URL url) {
         super(url);
         try {
-            //这里的超时时间默认是3000ms
+            //url中需要配置timeout（没有配的话url默认是3000），否则就会使用这里的默认的超时时间5*1000
+            //可以通过 dubbo.registry.timeout调大超时时间，对服务提供者而言没有用，还是3000
             int timeout = url.getParameter(TIMEOUT_KEY, DEFAULT_CONNECTION_TIMEOUT_MS);
             int sessionExpireMs = url.getParameter(ZK_SESSION_EXPIRE_KEY, DEFAULT_SESSION_TIMEOUT_MS);
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
@@ -222,36 +223,18 @@ public CuratorZookeeperClient(URL url) {
     }
 ~~~
 
-因为默认超时时间是3000ms，如果这期间连接不上就会报无法连接，所以要想办法将这个时间调大。
-
-通过这个配置来调大超时时间
-
-~~~properties
-dubbo.config-center.timeout=10000
-~~~
-
-时间确实调大了，但还是没用，后来发现还有个注册中心时间，继续配置该时间
+消费端可以通过如下配置增大超时时间
 
 ~~~properties
 dubbo.registry.timeout=10000
 ~~~
 
-但发现还是没用，想砸键盘的冲动都有了。。。
-
-没办法，再配置个服务端的超时时间
-
-~~~properties
-dubbo.provider.timeout=10000
-~~~
-
-这下终于tm能连接成功了！真tm离谱。所以以后如果一直遇到无法连接zk的情况，三个时间全给它配置上。
-
 但是下一次启动发现又连接不上了，这时候把注册中心的超时时间给去掉，又能正常启动。。。
 
-所以最终解决方案：
+解决方案：
 
 1.主要还是由于ConfigCenterConfig类中默认的超时时间是3s导致的网络问题，所以10s不行的话就设置为30s，一般都能解决问题。
 
 2.配置配置中心的超时时间和服务提供端的超时时间
 
-3.如果上面不行的话，那么三个超时时间都配置
+3.如果上面不行的话，那么三个超时时间都配置，主要还是dubbo.registry.timeout

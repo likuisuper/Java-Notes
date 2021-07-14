@@ -41,6 +41,8 @@ Java学习过程中遇到的知识点总结，复习笔记
 ## MySQL
 
 * [事务](数据库/MySQL/事务.md)
+* [索引](数据库/MySQL/索引.md)
+* [数据库中的锁](数据库/MySQL/数据库中的锁.md)
 
 ## Spring&&SpringBoot
 
