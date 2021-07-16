@@ -770,6 +770,55 @@ main方法中调用该方法，然后debug，进入到这里
 
 至此，就完成了bean的实例化、初始化、放入单例池的过程。
 
+#### bean的销毁
+
+在初始化后，如果当前bean需要被销毁，则会进入销毁
+
+~~~java
+		// Register bean as disposable.
+		try {
+			//销毁
+			registerDisposableBeanIfNecessary(beanName, bean, mbd);
+		}
+		catch (BeanDefinitionValidationException ex) {
+			throw new BeanCreationException(
+					mbd.getResourceDescription(), beanName, "Invalid destruction signature", ex);
+		}
+~~~
+
+点进该方法：
+
+~~~java
+	protected void registerDisposableBeanIfNecessary(String beanName, Object bean, RootBeanDefinition mbd) {
+		AccessControlContext acc = (System.getSecurityManager() != null ? getAccessControlContext() : null);
+		//不是原型并且需要被销毁，实现了DisposableBean接口
+		if (!mbd.isPrototype() && requiresDestruction(bean, mbd)) {
+			if (mbd.isSingleton()) {
+				// Register a DisposableBean implementation that performs all destruction
+				// work for the given bean: DestructionAwareBeanPostProcessors,
+				// DisposableBean interface, custom destroy method.
+				//回调destroy方法
+				registerDisposableBean(beanName,
+						new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
+			}
+			else {
+				// A bean with a custom scope...
+				Scope scope = this.scopes.get(mbd.getScope());
+				if (scope == null) {
+					throw new IllegalStateException("No Scope registered for scope name '" + mbd.getScope() + "'");
+				}
+				scope.registerDestructionCallback(beanName,
+						new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
+			}
+		}
+	}
+~~~
+
+简单来说，就是：
+
+* 如果当前bean实现了`DisposableBean`接口，则会回调该接口的`destroy`方法
+* 如果配置了`destroy-method`方法，则会配置`destroy-method`方法
+
 #### 总结
 
 下面我们就来总结下spring扫描bean和bean的生命周期这个过程，**bean的生命周期其实在`BeanFactory`这个类中，spring官方已经在注释中说明了**。
@@ -791,7 +840,15 @@ main方法中调用该方法，然后debug，进入到这里
 * （BeanPostProcessor before）执行部分生命周期的初始胡回调（注解版本），部分Aware接口的回调
 * （initMethods）接口版的生命周期回调，比如实现InitializingBean接口
 * （BeanPostProcessor after）完成事件发布，完成aop代理
+* bean的销毁
 
 最后总结成如下一张图：
 
 ![](https://z3.ax1x.com/2021/07/08/ROpvQS.png)
+
+上面这张图包含了容器初始化，bdmp扫描的过程，过于复杂了点。并且没有画出bean销毁的流程。
+
+下面这张图是bean完整生命周期的简单流程
+
+![](https://z3.ax1x.com/2021/07/16/WMpgLn.png)
+
