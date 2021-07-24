@@ -66,7 +66,17 @@ Reading messages... (press Ctrl-C to quit)
 
 ​	d. 停⽌：推送(publish) 接⼝注销事件 
 
-相关源码： org.apache.dubbo.registry.redis.RedisRegistry#doSubscribe// 订阅 org.apache.dubbo.registry.redis.RedisRegistry.Notifier#run// 订阅线程，阻塞读取 org.apache.dubbo.registry.redis.RedisRegistry.NotifySub#onMessage// 变更通知 org.apache.dubbo.registry.redis.RedisRegistry#doRegister // 注册 org.apache.dubbo.registry.redis.RedisRegistry#destroy // 消费
+相关源码：
+
+org.apache.dubbo.registry.redis.RedisRegistry#doSubscribe //订阅
+
+org.apache.dubbo.registry.redis.RedisRegistry.Notifier#run //订阅线程，阻塞读取
+
+org.apache.dubbo.registry.redis.RedisRegistry.NotifySub#onMessage// 变更通知 
+
+org.apache.dubbo.registry.redis.RedisRegistry#doRegister // 注册 
+
+org.apache.dubbo.registry.redis.RedisRegistry#destroy // 消费
 
 
 
