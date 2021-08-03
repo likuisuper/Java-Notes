@@ -1,34 +1,34 @@
 
 Q
-java:S2209ä	"5Change this instance-reference to a static reference.(Ë³Àßýÿÿÿÿ
+java:S1144ƒ	":Remove this unused private "initializeSystemClass" method.(®³Å„
+`
+java:S1124|"EReorder the modifiers to comply with the Java Language Specification.(­ªëùÿÿÿÿÿ
+S
+java:S1128%"8Remove this unused import 'java.security.AllPermission'.(ÅÝ÷½ùÿÿÿÿ
+P
+java:S1191("5Use classes from the Java API instead of Sun classes.(ÉÃ¾åüÿÿÿÿ
+s
+java:S3077€"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(Ø£ÝŽøÿÿÿÿ
+[
+java:S1124S"EReorder the modifiers to comply with the Java Language Specification.(–†µì
+K
+java:S1133”"5Do not forget to remove this deprecated code someday.(æÌ¿Y
 ;
 java:S1111ö	"Remove this call to finalize().(àŒœ›øÿÿÿÿ
 Q
-java:S1144ƒ	":Remove this unused private "initializeSystemClass" method.(®³Å„
-?	java:S108ú")Either remove or fill this block of code.(Ü–„þ
-p
-java:S1215á"TDon't try to be smarter than the JVM, remove this call to run the garbage collector.(‚êÝ§þÿÿÿÿ
-[
-java:S1124S"EReorder the modifiers to comply with the Java Language Specification.(–†µì
+java:S1128!"6Remove this unused import 'java.util.StringTokenizer'.(ÈÄ¬ñþÿÿÿÿ
 k
 java:S1215÷"TDon't try to be smarter than the JVM, remove this call to run the garbage collector.(³›í¦
+Q
+java:S2209ä	"5Change this instance-reference to a static reference.(Ë³Àßýÿÿÿÿ
 ?
 java:S1604¹"(Make this anonymous inner class a lambda(žËÖñ
-s
-java:S3077€"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(Ø£ÝŽøÿÿÿÿ
-P
-java:S1191("5Use classes from the Java API instead of Sun classes.(ÉÃ¾åüÿÿÿÿ
 n
 java:S3077Ë"WUse a thread-safe type; adding "volatile" is not enough to make this field thread-safe.(ÿäÓÑ
+p
+java:S1215á"TDon't try to be smarter than the JVM, remove this call to run the garbage collector.(‚êÝ§þÿÿÿÿ
 [
 java:S1124n"EReorder the modifiers to comply with the Java Language Specification.(¦›Ô±
 L
 java:S1874ö	"0Remove this use of "finalize"; it is deprecated.(àŒœ›øÿÿÿÿ
-K
-java:S1133”"5Do not forget to remove this deprecated code someday.(æÌ¿Y
-`
-java:S1124|"EReorder the modifiers to comply with the Java Language Specification.(­ªëùÿÿÿÿÿ
-Q
-java:S1128!"6Remove this unused import 'java.util.StringTokenizer'.(ÈÄ¬ñþÿÿÿÿ
-S
-java:S1128%"8Remove this unused import 'java.security.AllPermission'.(ÅÝ÷½ùÿÿÿÿ
+?	java:S108ú")Either remove or fill this block of code.(Ü–„þ

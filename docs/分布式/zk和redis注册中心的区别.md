@@ -76,7 +76,7 @@ org.apache.dubbo.registry.redis.RedisRegistry.NotifySub#onMessage// 变更通知
 
 org.apache.dubbo.registry.redis.RedisRegistry#doRegister // 注册 
 
-org.apache.dubbo.registry.redis.RedisRegistry#destroy // 消费
+org.apache.dubbo.registry.redis.RedisRegistry#destroy // 销毁
 
 
 
