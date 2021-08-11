@@ -121,6 +121,16 @@ java中的数组不是静态数据类型，它不像String，有java.lang.String
 
 ~~~java
 public class Hello {
+    public static final int a=3;
+
+    public static int b=5;
+
+    public static String c="sdf";
+
+    public static int d;
+
+    public final int e=0;
+    
     public static void main(String[] args) {
         int[] intArr=new int[1];
         Hello[] hellos=new Hello[1];
@@ -156,11 +166,17 @@ java -cp .\sa-jdi.jar sun.jvm.hotspot.HSDB
 
   点击main线程，点击堆栈信息，将对象的地址输入到inspector中
 
-  ![](https://z3.ax1x.com/2021/04/11/c0CDQP.png)
+  ![](https://z3.ax1x.com/2021/08/11/fUKuBd.png)
 
   可以看到，上面的结果是Oop，也就是对象模型，每一个类所对应的对象，这个后面再说。
 
   另外，在上图中也可以看到栈的结构，最下面对应的就是方法参数，然后往上依次是我们在代码中定义的int数组、对象数组、对象、class对象...
+  
+  我们可以查看该对象所对应类的Class对象，也就是instanceMirrorKlass：
+  
+  ![](https://z3.ax1x.com/2021/08/11/fUeELR.png)
+
+这里会发现上面没有e字段，因为e没有被static修饰，所以在类对象中看不到，但在上面对象所对应的oop模型中可以看到
 
 2、查看数组。
 
