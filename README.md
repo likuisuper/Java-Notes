@@ -8,11 +8,13 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 * [包装类型](docs/java/basis/包装类型.md)
 * [动态代理](docs/java/basis/动态代理.md)
+* [多态](docs/java/basis/多态.md)
 * [反射](docs/java/basis/反射.md)
 * [回调接口](docs/java/basis/回调接口)
 
 ## JVM
 
+* [对象在jvm中的模型](docs/java/jvm/对象在jvm中的模型.md)
 * [深入理解类加载机制](docs/java/jvm/深入理解类加载机制.md)
 * [类加载器以及双亲委派机制](docs/java/jvm/类加载器以及双亲委派机制.md)
 * [jvm字节码](docs/java/jvm/jvm字节码.md)
@@ -27,7 +29,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 ## 并发
 
-* [线程基础](docs/java/线程.md)
+* [线程基础](docs/java/并发编程学习/线程.md)
 * [Unsafe类剖析](docs/java/并发编程学习/Unsafe类剖析.md)
 * [CAS底层](docs/java/并发编程学习/CAS底层.md)
 * [原子类](docs/java/并发编程学习/原子类.md)

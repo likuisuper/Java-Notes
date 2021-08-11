@@ -1,9 +1,11 @@
 * Java基础
   * [包装类型](java/basis/包装类型.md)
   * [动态代理](java/basis/动态代理.md)
+  * [多态](java/basis/多态.md)
   * [反射](java/basis/反射)
   * [回调接口](java/basis/回调接口.md)
 * JVM
+  * [对象在jvm中的模型](java/jvm/对象在jvm中的模型.md)
   * [深入理解类加载机制](java/jvm/深入理解类加载机制.md)
   * [类加载器以及双亲委派机制](java/jvm/类加载器以及双亲委派机制.md)
   * [jvm字节码](java/jvm/jvm字节码.md)
@@ -16,7 +18,7 @@
   * [集合笔试题](java/collection/集合笔试题.md)
 * 并发
 
-  * [线程基础](java/线程.md)
+  * [线程基础](java/并发编程学习/线程.md)
   * [Unsafe类剖析](java/并发编程学习/Unsafe类剖析.md)
   * [CAS底层](java/并发编程学习/CAS底层.md)
   * [原子类](java/并发编程学习/原子类.md)
