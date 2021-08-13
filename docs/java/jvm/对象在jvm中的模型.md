@@ -75,7 +75,7 @@ class Klass : public Metadata {...}
 
 它有三个子类：
 
-* InstanceMirroKlass:用于表示java.lang.Class，java代码中获取到的class对象，实际上就是这个C++的实例，**它存值在堆区**，学名镜像类
+* InstanceMirroKlass:用于表示java.lang.Class，java代码中获取到的class对象（反射的原理），实际上就是这个C++的实例，**它存值在堆区**，学名镜像类
 
   源码中是这样解释这个类的：
 
