@@ -1,3 +1,44 @@
+## JVM中对象的分配
+
+首先来看下jvm中对关于对象分配的注释（src/share/vm/memory/allocation.hpp）：
+
+~~~cpp
+// All classes in the virtual machine must be subclassed
+// by one of the following allocation classes:
+//
+// For objects allocated in the resource area (see resourceArea.hpp).
+// - ResourceObj
+//
+// For objects allocated in the C-heap (managed by: free & malloc).
+// - CHeapObj
+//
+// For objects allocated on the stack.
+// - StackObj
+//
+// For embedded objects.
+// - ValueObj
+//
+// For classes used as name spaces.
+// - AllStatic
+//
+// For classes in Metaspace (class data)
+// - MetaspaceObj
+~~~
+
+翻译过来的意思：虚拟机中的所有类都是以下分配内存类的子类，这些类是：
+
+对于在资源区分配的对象：ResourceObj
+
+**对于在C堆中分配的对象：CHeapObj**
+
+对于分配在堆栈中的对象：StackObj
+
+对于嵌入对象：ValueObj
+
+对于用作命名空间的类：AllStatic
+
+**对于元空间中的类（类数据）：MetaspaceObj**
+
 ## Klass模型
 
 Java的每个类，在JVM中都有一个对应的Klass类实例与之相对应，它是用C++实现的，用来存储类的元信息，比如常量池、属性信息、方法信息等。
