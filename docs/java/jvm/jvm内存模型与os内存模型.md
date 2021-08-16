@@ -1,4 +1,4 @@
-## os和jvm两者的内存模型
+## OS和JVM两者的内存模型
 
 假如现在在操作系统上运行了不同的几个进程，如下图：
 
@@ -10,7 +10,7 @@
 
 * 数据区
 
-* 栈
+* 栈（编译器自动分配释放，存放函数的参数值和变量值等）
 
   ----上面三个都是操作系统控制的，我们程序员是无法操作的
 
@@ -26,7 +26,7 @@
 
   方法区（jdk1.8，实现为元空间，在直接内存，如上图所示）
 
-根据前面所学知识，我们知道，.class文件通过类加载器加载到内存后，会生成一个klass，它是c++实现的，在java堆区。klass包含instanceKlass和mirrorKlass（还有其他的），前者用来描述类的元信息，在方法区，后者是Class对象，在堆区。**那么mirrorKlass是怎么从java堆区跑到jvm堆区的呢？是用c++中的操作符重写实现的**。我们可以看看这部分的源码：
+根据前面所学知识，我们知道，.class文件通过类加载器加载到内存后，在jvm中对应的是Klass模型。klass包含instanceKlass和mirrorKlass（还有其他的），前者用来描述类的元信息，在方法区，后者是Class对象，在堆区。**那么mirrorKlass是怎么从java堆区跑到jvm堆区的呢？是用c++中的操作符重写实现的**。我们可以看看这部分的源码：
 
 源码：hotspot/src/share/vm/memory/allocation.hpp
 
@@ -44,51 +44,24 @@ template <MEMFLAGS F> class CHeapObj ALLOCATION_SUPER_CLASS_SPEC {
 };
 ~~~
 
-可以看到，通过对new关键字进行operator重写，来自定义new对象的这个过程。并且在上面代码我们还看到了一个类CHeapObj，也就是C堆，除了它之外，还定义了其他一些类，源码中对这些类的解释是：虚拟机中所有的类都必须是他们的子类，并且通过这些类型来分配对象：
+可以看到，通过对new关键字进行operator重写，来自定义new对象的这个过程。关于这部分内容，《C++Primer》这本书讲得非常好，比如下面这段：
 
 ~~~cpp
-// All classes in the virtual machine must be subclassed
-// by one of the following allocation classes:
-//
-// For objects allocated in the resource area (see resourceArea.hpp).
-// - ResourceObj
-//
-// For objects allocated in the C-heap (managed by: free & malloc).
-// - CHeapObj
-//
-// For objects allocated on the stack.
-// - StackObj
-//
-// For embedded objects.
-// - ValueObj
-//
-// For classes used as name spaces.
-// - AllStatic
-//
-// For classes in Metaspace (class data)
-// - MetaspaceObj
-~~~
+当我们使用一条new表达式时:
+// new表达式
+string *sp = new string("a value") ;//分配并初始化一个string对象
+string *arr = new string[10];//分配10个默认初始化的string对象
+实际执行了三步操作。第一步, new表达式调用一个名为operator new(或者operatornew []）的标准库函数。该函数分配一块足够大的、原始的、未命名的内存空间以便存储特定类型的对象（或者对象的数组)。第二步，编译器运行相应的构造函数以构造这些对象，并为其传入初始值。第三步，对象被分配了空间并构造完成，返回一个指向该对象的指针。
+	
+如果应用程序希望控制内存分配的过程，则它们需要定义自己的 operator new函数和 operator delete函数。即使在标准库中已经存在这两个函数的定义，我们仍旧可以定义自己的版本。编译器不会对这种重复的定义提出异议，相反，编译器将使用我们自定义的版本替换标准库定义的版本。
 
-举个例子，比如前面说到的Klass类，它是java类在c++中的映射，在前面我们看过klass模型的继承结构，在源码中是这样的：
-
-源码：hotspot/src/share/vm/oops/klass.hpp
-
-~~~cpp
-class Klass : public Metadata {
-    ...
-}
-~~~
-
-而Metadata又继承于MetaspaceObj
-
-源码：hotspot/src/share/vm/oops/metadata.hpp
+对于operator new函数或者 operator new [ ]函数来说，它的返回类型必须是void*，第一个形参的类型必须是size_t且该形参不能含有默认实参。当我们为一个对象分配空间时使用operator new;为一个数组分配空间时使用operator new[]。当编译器调用operator new时，把存储指定类型对象所需的字节数传给size_t形参;当调用operator new[ ]时，传入函数的则是存储数组中所有元素所需的空间。
 
 ~~~
-// This is the base class for an internal Class related metadata
-class Metadata : public MetaspaceObj {
 
-}
-~~~
+更详细的内容可以查看该书19.1.1节。
+
+## JVM内存模型
 
 **jvm内存模型如下**：
 
@@ -105,6 +78,23 @@ class Metadata : public MetaspaceObj {
 class content
 
 类加载器将硬盘上的.class文件读入内存的那一块内存区域。其实就是字节流stream
+
+关于`ClassFileStream`源码中有说明：
+
+~~~cpp
+// Input stream for reading .class file
+//
+// The entire input stream is present in a buffer allocated by the caller.
+// The caller is responsible for deallocating the buffer and for using
+// ResourceMarks appropriately when constructing streams.
+
+//用于读取 .class 文件的输入流
+//
+//整个输入流存在于调用者分配的缓冲区中。
+//调用者负责释放缓冲区并使用
+//在构造流时适当地使用 ResourceMarks。
+class ClassFileStream: public ResourceObj {...}
+~~~
 
 源码位置：hotspot/src/share/vm/classfile/classFileParser.cpp
 
@@ -145,13 +135,13 @@ java中通过new关键字实现。
 * 永久代缺点：
   * 回收条件苛刻
     * 该类所有的实例都已经被回收，堆中不存在该类的任何实例
-    * 加载该类的ClassLoader已经被回收
+    * 加载该类的ClassLoader已经被卸载
     * 无法通过反射访问该类的方法
   * 释放的内存很少
 * 元空间如何解决
   * 基本的调优
 * 元空间内部如何存储？存在的问题？如何优化？
-  * 具体参考https://stuefe.de/posts/metaspace/what-is-metaspace/，中文：https://javadoop.com/post/metaspace
+  * 具体参考[什么是元空间](https://stuefe.de/posts/metaspace/what-is-metaspace/)，[中文](https://javadoop.com/post/metaspace)
   * 存在问题：碎片化问题
   * 优化：比如内存合并算法
 
