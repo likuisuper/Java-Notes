@@ -155,7 +155,7 @@ java中通过new关键字实现。
 
 **一个虚拟机栈中有多少个栈帧取决于方法的调用次数**。
 
-##### 栈帧
+##### 栈帧（用来存储数据和部分过程结果的数据结构）
 
 * 局部变量表（具体参考深入理解jvm第8章）
 
@@ -180,13 +180,13 @@ java中通过new关键字实现。
 
   * 大小：编译时已知（Code属性的max_stacks属性）
   * 存储元素：任意java数据类型
-    * 32位数据类型所占的栈容量为1
-    * 64位数据类型所占的栈容量为2
+    * 32位数据类型所占的栈深度为1
+    * 64位数据类型（比如long和double）所占的栈深度为2
   * 操作
     * 写入，也就是pop操作
     * 提取，也就是push操作
 
-* 动态连接
+* 动态链接
 
   * 间接引用->直接引用，相对于静态解析
 
@@ -197,6 +197,10 @@ java中通过new关键字实现。
 * 附加信息
 
 ## 创建对象
+
+**对象是如何表示的？**
+
+根据《Java虚拟机规范》，在HotSpot虚拟机中，**指向对象的引用并不通过句柄，而是直接指向堆中对象的实例数据**。
 
 下面看看使用new关键字创建一个对象，底层需要几步操作
 
@@ -221,18 +225,27 @@ public class TestClass {
 字节码：
 
 ~~~java
-0 new #2 <com/cxylk/partfour/TestClass>
-3 dup
-4 invokespecial #3 <com/cxylk/partfour/TestClass.<init>>
-7 astore_1
-8 return
+Code:
+      stack=2, locals=2, args_size=1
+         0: new           #2                  // class com/cxylk/partfour/TestClass
+         3: dup
+         4: invokespecial #3                  // Method "<init>":()V
+         7: astore_1
+         8: return
+      LineNumberTable:
+        line 11: 0
+        line 12: 8
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       9     0  this   Lcom/cxylk/partfour/TestClass;
+            8       1     1  t   Lcom/cxylk/partfour/TestClass;
 ~~~
 
 1、执行第一条指令0 new #2 <com/cxylk/partfour/TestClass>
 
 new：创建一个对象，并将其引用值压入栈顶
 
-![](https://z3.ax1x.com/2021/04/20/c75GY6.png)
+![](https://z3.ax1x.com/2021/08/17/fh3MSs.png)
 
 因为该方法是实例方法，所以局部变量表的第一个slot存放的是this（但是此时this=null）。执行这条指令，会做如下事情：
 
@@ -243,15 +256,15 @@ new：创建一个对象，并将其引用值压入栈顶
 
 dup是duplicate的缩写，也就是复制的意思，含义：复制栈顶元素并将复制值压入栈顶。
 
-![](https://z3.ax1x.com/2021/04/20/c7XoqK.png)
+![](https://z3.ax1x.com/2021/08/17/fh3JTU.png)
 
 思考：为什么要复制一份到栈顶呢？
 
 因为上面说过了，该方法不是静态方法，所以还需要为局部变量表中的位于索引0的slot中的this赋值，不然就没法玩了。这也是为什么我们可以放心使用this的原因，jvm在底层会给它赋好值。
 
-3、执行第三条指令invokespecial #3 <com/cxylk/partfour/TestClass.<init>>
+3、执行第三条指令invokespecial #3 <com/cxylk/partfour/TestClass.`<init>`>
 
-invokespecial：调用超类的构造方法，实例初始化方法，私有方法。也就是说这条指令会执行<init>方法去初始化。一个对象初始化的过程会做下面几件事
+invokespecial：调用超类的构造方法，实例初始化方法，私有方法。也就是说这条指令会执行`<init>`方法去初始化。一个对象初始化的过程会做下面几件事
 
 * 构建环境
   * 创建栈帧
@@ -262,16 +275,16 @@ invokespecial：调用超类的构造方法，实例初始化方法，私有方�
 
 执行完后，上图中堆中的不完全对象就变成了完全对象，栈顶元素被弹出赋值给了索引0处slot中的this，此时的this保存的是完整对象的地址
 
-![](https://z3.ax1x.com/2021/04/20/c7jtL6.png)
+![](https://z3.ax1x.com/2021/08/17/fh3h6I.png)
 
 4、执行第四条指令astore_1
 
 astore_1含义：将操作数栈顶的引用类型值出栈并存放到第2个本地变量slot中。
 
-![](https://z3.ax1x.com/2021/04/20/c7vCOx.png)
+![](https://z3.ax1x.com/2021/08/17/fh8PNF.png)
 
 5、执行指令return
 
 return指令是方法返回指令之一，它将结束方法并返回操作数栈顶的值给方法调用者。
 
-上面就是执行一条new语句所要执行的字节码指令操作，可以看到，它需要经过这么多步骤，而且这些指令还要经过c++执行，再转换成机器指令让机器执行。。。所以说，创建对象不是一个轻松的事情。更别说后续对创建对象的gc等。
+上面就是执行一条new语句所要执行的字节码指令操作，可以看到，它需要经过这么多步骤，而且这些指令还要经过c++执行，再转换成机器指令让机器执行。。。所以说，创建对象不是一个轻松的事情。更别说后续对创建的对象还会有gc。
