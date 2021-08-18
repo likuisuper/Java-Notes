@@ -11,7 +11,8 @@
   * [Class类文件结构](java/jvm/Class类文件结构.md)
   * [jvm内存模型与os内存模型](java/jvm/jvm内存模型与os内存模型.md)
   * [数组和字符串的底层实现](java/jvm/数组和字符串的底层实现.md)
-  * [对象分析以及jvm调优](java/jvm/对象分析以及jvm调优.md)
+  * [深入分析java对象.md](java/jvm/深入分析java对象.md)
+  * [jvm垃圾回收和调优.md](java/jvm/jvm垃圾回收和调优.md)
 * 容器
 
   * [集合](java/collection/集合.md)
@@ -42,6 +43,7 @@
   * [spring中bean工厂的扩展](框架/spring/spring中bean工厂的扩展.md)
   * [常用注解](框架/spring/常用注解.md)
   * [IOC容器](框架/spring/springIOC容器分析.md)
+  * [bean的自动装配](框架/spring/springboot/自动装配.md)
 * MyBatis
   * [Executor执行器](框架/mybatis/Executor执行器.md)
   * [mybatis一级缓存](框架/mybatis/一级缓存.md)
