@@ -18,10 +18,10 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [深入理解类加载机制](docs/java/jvm/深入理解类加载机制.md)
 * [类加载器以及双亲委派机制](docs/java/jvm/类加载器以及双亲委派机制.md)
 * [Class类文件结构](docs/java/jvm/Class类文件结构.md)
-* [jvm内存模型与os内存模型.md](docs/java/jvm/jvm内存模型与os内存模型.md)
-* [数组和字符串的底层实现.md](docs/java/jvm/数组和字符串的底层实现.md)
-* [深入分析java对象.md](docs/java/jvm/深入分析java对象.md)
-* [jvm垃圾回收和调优.md](docs/java/jvm/jvm垃圾回收和调优.md)
+* [jvm内存模型与os内存模型](docs/java/jvm/jvm内存模型与os内存模型.md)
+* [数组和字符串的底层实现](docs/java/jvm/数组和字符串的底层实现.md)
+* [深入分析java对象](docs/java/jvm/深入分析java对象.md)
+* [jvm垃圾回收和调优](docs/java/jvm/jvm垃圾回收和调优.md)
 
 ## 容器
 
