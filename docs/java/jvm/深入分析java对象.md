@@ -6,7 +6,13 @@ java对象的创建过程如下
 
 #### 1:类加载检查
 
-虚拟机遇到一条 new 指令时，首先将去检查这个指令的参数是否能在常量池中定位到这个类的符号引用，并且检查这个符号引用代表的类是否已被加载过、解析和初始化过。如果没有，那必须先执行相应的类加载过程。
+虚拟机遇到一条 new 指令时，首先将去检查这个指令的参数是否能在常量池中定位到这个类的符号引用，并且检查这个符号引用代表的类是否已被加载过、解析和初始化过。如果没有，那必须先执行相应的类加载过程。比如下面这条new指令
+
+~~~assembly
+new #3 <com/cxylk/partone/Hello>
+~~~
+
+后面便是它的参数在常量池中的符号引用
 
 #### 2:分配内存
 
@@ -71,15 +77,21 @@ Mark Word主要存放了对象运行时的数据，比如哈希码、gc分代年
 
 在32位的虚拟机中它占4个字节（**32位虚拟机没有指针压缩**），但是在64位虚拟机中需要特别注意：
 
-**如果开启了指针压缩（`-XX:+UseCompressedOops`）或者JVM堆的最大值小于32G，那么它占用4个字节，否则占用8个字节。在JDK6以后，指针压缩默认是开启的**，可以使用如下命令查看
+**如果开启了指针压缩（`-XX:+UseCompressedOops`，默认强制开启`-XX:+UseCompressedClassPointers`）或者JVM堆的最大值小于32G，那么它占用4个字节，否则占用8个字节。在JDK6以后，指针压缩默认是开启的**，可以使用如下命令查看
 
 ~~~java
-jinfo -flag UseCompressedOops 进程id
-    
+jinfo -flag UseCompressedOops 进程id   
 -XX:+UseCompressedOops
+    
+jinfo -flag UseCompressedClassPointers 进程id
+-XX:+UseCompressedClassPointers
 ~~~
 
 当然，使用`java -XX:+PrintFlagsFinal`也是可以的（jdk6以上）
+
+当开启后，这个引用是32位的值，为了找到真正的64位地址，还需要加上一个base值。
+
+![](https://z3.ax1x.com/2021/08/20/fOE4zQ.png)
 
 ##### 数组长度
 
@@ -121,7 +133,7 @@ jinfo -flag UseCompressedOops 进程id
         </dependency>
 ~~~
 
-下面分别计算三种不同类型的对象大小
+下面分别计算三种不同类型的对象大小。注意：这里说的是计算对象大小，但是实际消耗内存还要加上指针大小
 
 #### 空对象
 
@@ -199,7 +211,27 @@ Space losses: 0 bytes internal + 0 bytes external = 0 bytes total
 
 ![](https://z3.ax1x.com/2021/08/17/f4Jvss.png)
 
-发现此时的类型指针变成了`_klass`，确实是占用了8个字节
+发现此时的类型指针变成了`_klass`，确实是占用了8个字节。
+
+**总结**：
+
+开启指针压缩，那么会在内存中消耗20字节，其中指针obj占4字节，CountEmptyObj对象占16字节
+
+关闭指针压缩，那么会在内存中消耗24字节，其中指针obj占8字节，CountEmptyObj对象占16字节
+
+`补充`：知道类指针后，发现开启对象指针压缩会默认开启类指针压缩，**所以类型指针应该是由类指针压缩的**，而obj由8字节压缩成4字节才是对象指针压缩的（关于对象指针和类型指针可以看对象访问定位那张图），比如上面的测试代码加上启动参数`-XX:+UseCompressedOops -XX:-UseCompressedClassPointers`：
+
+~~~java
+ OFFSET  SIZE   TYPE DESCRIPTION                               VALUE
+      0     4        (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+      4     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+      8     4        (object header)                           28 30 34 1c (00101000 00110000 00110100 00011100) (473182248)
+     12     4        (object header)                           00 00 00 00 (00000000 00000000 00000000 00000000) (0)
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 0 bytes external = 0 bytes total
+~~~
+
+发现这就是上面关闭对象指针压缩的结果！！！
 
 #### 普通对象
 
@@ -361,6 +393,10 @@ Space losses: 4 bytes internal + 4 bytes external = 8 bytes total
 
 ## 指针压缩
 
+### 对象指针压缩
+
+会默认开启类指针压缩，压缩`klass *`大小，所以这里分析的对象指针压缩实际上是在分析类指针压缩。
+
 #### 实现
 
 下面具体探究指针压缩以及实现原理。
@@ -466,9 +502,25 @@ test3=48	000 110 000
 * 64位机下，其实只用到了48位虚拟地址空间，还有16位是保留位。为什么只用48位呢？因为现在还用不到完整的64位寻址空间，所以硬件也没有必要支持那么多位的地址。为什么用不到呢？因为CPU的计算能力还跟不上，它没法在短时间内去寻址这么大的内存。
 * 浪费内存更严重，使用指针压缩的目的就是为了节省内存，但是如果使用16字节对齐的话节省出来的内存可能又被浪费了，比如现在有一个对象占用17个字节，使用8字节对齐的话只需要补7个字节（17+7=24，能被8整除），但是使用16个字节的话需要补15个字节（17+15=32能被16整除）
 
-#### 类指针压缩
+### 类指针压缩
 
-上面说的都是对象指针压缩，其实还有类指针压缩，关于这部分内容可以阅读这篇文章[什么是元空间](https://stuefe.de/posts/metaspace/what-is-metaspace/)；[中文翻译](https://javadoop.com/post/metaspace)
+关于这部分内容可以阅读这篇文章[什么是元空间](https://stuefe.de/posts/metaspace/what-is-metaspace/)；[中文翻译](https://javadoop.com/post/metaspace)
+
+开启`UseCompressedOops`，默认会开启`UseCompressedClassPointers`，会压缩klass pointer 这部分的大小。
+
+由于`UseCompressedClassPointers`的开启是依赖于`UseCompressedOops`的开启，因此，要使`UseCompressedClassPointers`起作用，得先开启`UseCompressedOops`，并且开启`UseCompressedOops` 也默认强制开启`UseCompressedClassPointers`，关闭`UseCompressedOops` 默认关闭`UseCompressedClassPointers`
+
+如果开启类指针压缩，`+UseCompressedClassPointers`，并关闭普通对象指针压缩，`-UseCompressedOops`，此时会警告，
+`UseCompressedClassPointers requires UseCompressedOops`，源码如下：
+
+```
+// UseCompressedOops must be on for UseCompressedClassPointers to be on.
+  if (!UseCompressedOops) {
+    if (UseCompressedClassPointers) {
+      warning("UseCompressedClassPointers requires UseCompressedOops");
+    }
+    FLAG_SET_DEFAULT(UseCompressedClassPointers, false);	
+```
 
 ## 对象的访问定位
 
