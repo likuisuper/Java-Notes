@@ -21,6 +21,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [jvm内存模型与os内存模型](docs/java/jvm/jvm内存模型与os内存模型.md)
 * [数组和字符串的底层实现](docs/java/jvm/数组和字符串的底层实现.md)
 * [深入分析java对象](docs/java/jvm/深入分析java对象.md)
+* [OOM与调优实战](docs/java/jvm/OOM与调优实战.md)
 * [jvm垃圾回收和调优](docs/java/jvm/jvm垃圾回收和调优.md)
 
 ## 容器

@@ -12,6 +12,7 @@
   * [jvm内存模型与os内存模型](java/jvm/jvm内存模型与os内存模型.md)
   * [数组和字符串的底层实现](java/jvm/数组和字符串的底层实现.md)
   * [深入分析java对象](java/jvm/深入分析java对象.md)
+  * [OOM与调优实战](java/jvm/OOM与调优实战.md)
   * [jvm垃圾回收和调优](java/jvm/jvm垃圾回收和调优.md)
 * 容器
 

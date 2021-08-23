@@ -83,7 +83,7 @@ public class FairAndUnfairTest {
                     //如果这里改成new ReentrantLock2(fair)的话,那么和传进来的lock是不相关的，不会输出结果
                     //父类转换成子类，就可以调用子类的方法
                     System.out.println("Lock by["+ Thread.currentThread().getName()+"]"+
-                            ",Waiting buy"+((ReentrantLock2)lock).getQueuedThreads());
+                            ",Waiting by"+((ReentrantLock2)lock).getQueuedThreads());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }finally {
