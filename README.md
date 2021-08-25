@@ -7,6 +7,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 ## Java基础
 
 * [包装类型](docs/java/basis/包装类型.md)
+* [集合](docs/java/basis/集合.md)
 * [动态代理](docs/java/basis/动态代理.md)
 * [多态](docs/java/basis/多态.md)
 * [反射](docs/java/basis/反射.md)
@@ -23,11 +24,6 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [深入分析java对象](docs/java/jvm/深入分析java对象.md)
 * [OOM与调优实战](docs/java/jvm/OOM与调优实战.md)
 * [jvm垃圾回收和调优](docs/java/jvm/jvm垃圾回收和调优.md)
-
-## 容器
-
-* [集合](docs/java/collection/集合.md)
-* [集合笔试题](docs/java/collection/集合笔试题.md)
 
 ## 并发
 

@@ -3,6 +3,7 @@
   * [动态代理](java/basis/动态代理.md)
   * [多态](java/basis/多态.md)
   * [反射](java/basis/反射)
+  * [集合](java/basis/集合.md)
   * [回调接口](java/basis/回调接口.md)
 * JVM
   * [对象在jvm中的模型](java/jvm/对象在jvm中的模型.md)
@@ -14,10 +15,6 @@
   * [深入分析java对象](java/jvm/深入分析java对象.md)
   * [OOM与调优实战](java/jvm/OOM与调优实战.md)
   * [jvm垃圾回收和调优](java/jvm/jvm垃圾回收和调优.md)
-* 容器
-
-  * [集合](java/collection/集合.md)
-  * [集合笔试题](java/collection/集合笔试题.md)
 * 并发
 
   * [线程基础](java/并发编程学习/线程.md)

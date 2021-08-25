@@ -10,6 +10,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [动态代理](java/basis/动态代理.md)
 * [多态](java/basis/多态.md)
 * [反射](java/basis/反射.md)
+* [集合](java/basis/集合.md)
 * [回调接口](java/basis/回调接口)
 
 ## JVM
@@ -23,11 +24,6 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [深入分析java对象](java/jvm/深入分析java对象.md)
 * [OOM与调优实战](java/jvm/OOM与调优实战.md)
 * [jvm垃圾回收和调优](java/jvm/jvm垃圾回收和调优.md)
-
-## 容器
-
-* [集合](java/collection/集合.md)
-* [集合笔试题](java/collection/集合笔试题.md)
 
 ## 并发
 
