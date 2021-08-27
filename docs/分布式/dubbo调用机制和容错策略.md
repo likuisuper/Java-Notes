@@ -10,7 +10,7 @@ dubbo默认是使用同步调用的，还支持异步调用、并行调用、广
 
 对远程接口方法调用就属于同步调用。
 
-原理：向远程服务端发送参数后，整个线程将会阻塞，知道服务端将结果返回。
+原理：向远程服务端发送参数后，整个线程将会阻塞，直到服务端将结果返回。
 
 dubbo远程调用传输是由专门的IO线程(非阻塞)完成的，调用线程把结果传递给IO线程后，会构建一个CompletableFuture，并通过它阻塞当前线程去等待结果返回，当服务端返回结果后就会为CompletableFuture填充结果，并释放阻塞的调用线程。如果在设定的时间内服务端没有返回，就会触发超时异常。
 
@@ -18,7 +18,9 @@ dubbo远程调用传输是由专门的IO线程(非阻塞)完成的，调用线�
 
 相关源码：
 
-org.apache.dubbo.remoting.exchange.support.DefaultFuture// 结果回执 org.apache.dubbo.rpc.protocol.AsyncToSyncInvoker // 异步转同步
+org.apache.dubbo.remoting.exchange.support.DefaultFuture// 结果回执 
+
+org.apache.dubbo.rpc.protocol.AsyncToSyncInvoker // 异步转同步
 
 ### 异步调用
 
@@ -318,7 +320,7 @@ dubbo支持4中容错策略
 
 **2.快速失败：**快速失败，只发起一次调用，失败立即报错。通常用于非幂等写入
 
-**3.忽略失败：**失败后忽略，不抛出异常给客户端，并且返回一个空
+**3.忽略失败：**失败后忽略，不抛出异常给客户端，并且返回一个空，常用于不重要的接口调用，比如记录日志。
 
 **4.失败重试：**失败时记录失败请求并安排定期重发。通常用于消息通知操作
 

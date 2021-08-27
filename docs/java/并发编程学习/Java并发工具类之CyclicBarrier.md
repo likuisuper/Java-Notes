@@ -6,9 +6,9 @@
 
 #### 观察类图可知CyclicBarrier内部是采用lock+condition实现的
 
-我们知道CountDownLatch可以在主线程中开启多个线程去并行执行任务，但是它有一个缺点：**CountDownLatch的计数器是一次性的，也就算等到计数器值变为0后，再调用await和countdown方法都会立刻返回，达不到同步效果**
+我们知道CountDownLatch可以在主线程中开启多个线程去并行执行任务，但是它有一个缺点：**CountDownLatch的计数器是一次性的，也就是等到计数器值变为0后，再调用await和countdown方法都会立刻返回，达不到同步效果**
 
-还有以游戏加载为例，假设现在每个关卡都要加载三个前置任务，如果使用CountDownLatch显然不太合适，需要为每个关卡都创建一个实例。所以可以使用CyclicBarrier来实现。代码如下：
+还是以游戏加载为例，假设现在每个关卡都要加载三个前置任务，如果使用CountDownLatch显然不太合适，需要为每个关卡都创建一个实例。所以可以使用CyclicBarrier来实现。代码如下：
 
 ~~~java
 /**
@@ -123,7 +123,7 @@ public int await() throws InterruptedException, BrokenBarrierException {
 
 （2）其他线程调用了当前线程的interrupt()方法中断了当前线程，当前线程抛出中断异常并返回
 
-（3）与当前屏障点惯量的Generation对象的broken标志被设为true，会抛出BrokenBarrierException异常并返回。
+（3）与当前屏障点关联的Generation对象的broken标志被设为true，会抛出BrokenBarrierException异常并返回。
 
 #### 核心实现dowait方法
 
@@ -209,7 +209,7 @@ public int await() throws InterruptedException, BrokenBarrierException {
 
 ![](https://s3.ax1x.com/2021/01/23/s7bK0g.png)
 
-当一个线程由于**被阻塞释放锁后**，原来没有获取到锁而被阻塞的两个线程中会有一个竞争到锁，执行与第一个线程一样的操作。知道最后一个线程获取到lock锁，此时index=--count=0，所以执行代码（1）。因为传入任务不为null，所以调用run方法执行任务，并且调用nextGeneration方法唤醒条件队列里被阻塞的两个线程（要等当前线程释放lock锁后被唤醒的两个线程才会处于激活状态），并重置屏障。nextGeneration方法如下
+当一个线程由于**被阻塞释放锁后**，原来没有获取到锁而被阻塞的两个线程中会有一个竞争到锁，执行与第一个线程一样的操作。直到最后一个线程获取到lock锁，此时index=--count=0，所以执行代码（1）。因为传入任务不为null，所以调用run方法执行任务，并且调用nextGeneration方法唤醒条件队列里被阻塞的两个线程（要等当前线程释放lock锁后被唤醒的两个线程才会处于激活状态），并重置屏障。nextGeneration方法如下
 
 ~~~java
 /**

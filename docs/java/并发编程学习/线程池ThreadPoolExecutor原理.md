@@ -674,3 +674,101 @@ protected boolean tryRelease(int unused) {
 解释下为什么：因为任务有20个，而核心线程池大小为5，所以核心线程池执行5个任务后，剩下的15个任务会进入队列，但是队列大小为10，也就是只能容纳10个任务，所以还有5个任务不会进入队列。而线程池大小为10，除去核心线程的大小，还能容纳5个线程，所以线程池会新建5个非核心线程，也就是上图用红线标记的线程。最后执行完毕：
 
 ![](https://s3.ax1x.com/2021/01/27/svqaIx.png)
+
+#### 合理配置线程池
+
+要想合理地配置线程池，就必须首先分析任务特性，可以从以下几个角度来分析。 
+
+* 任务的性质：CPU密集型任务、IO密集型任务和混合型任务。
+  * CPU密集型任务应配置尽可能小的 线程，如配置Ncpu+1个线程的线程池
+  * IO密集型任务线程并不是一直在执行任务，则应配 置尽可能多的线程，如2*Ncpu。混合型的任务， 
+* 任务的优先级：高、中和低。 
+* 任务的执行时间：长、中和短。 
+* 任务的依赖性：是否依赖其他系统资源，如数据库连接。
+
+除此之外，还**建议使用有界队列**：使用无界队列，队列中的任务就会越来越多，有可能会撑满内存
+
+#### 线程池的监控
+
+可以通过线程池提供的参数进行监控，在监控线程池的 时候可以使用以下属性。 
+
+* taskCount：线程池需要执行的任务数量。 
+* completedTaskCount：线程池在运行过程中已完成的任务数量，小于或等于taskCount。 
+* largestPoolSize：线程池里曾经创建过的最大线程数量。通过这个数据可以知道线程池是 否曾经满过。如该数值等于线程池的最大大小，则表示线程池曾经满过。 
+* getPoolSize：线程池的线程数量。如果线程池不销毁的话，线程池里的线程不会自动销 毁，所以这个大小只增不减
+* getActiveCount：获取活动的线程数。
+
+通过扩展线程池进行监控。可以通过继承线程池来自定义线程池，重写线程池的 beforeExecute、afterExecute和terminated方法，也可以在任务执行前、执行后和线程池关闭前执 行一些代码来进行监控
+
+## 四种常见线程池
+
+#### newCachedThreadPool
+
+~~~java
+public static ExecutorService newCachedThreadPool() {
+    return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                  60L, TimeUnit.SECONDS,
+                                  new SynchronousQueue<Runnable>());
+}
+~~~
+
+`CacheThreadPool`的**运行流程**如下：
+
+1. 提交任务进线程池。
+2. 因为**corePoolSize**为0的关系，不创建核心线程，线程池最大为Integer.MAX_VALUE。
+3. 尝试将任务添加到**SynchronousQueue**队列。
+4. 如果SynchronousQueue入列成功，等待被当前运行的线程空闲后拉取执行。如果当前没有空闲线程，那么就创建一个非核心线程，然后从SynchronousQueue拉取任务并在当前线程执行。
+5. 如果SynchronousQueue已有任务在等待，入列操作将会阻塞。
+
+当需要执行很多**短时间**的任务时，CacheThreadPool的线程复用率比较高， 会显著的**提高性能**。而且线程60s后会回收，意味着即使没有任务进来，CacheThreadPool并不会占用很多资源。
+
+#### newFixedThreadPool
+
+~~~java
+public static ExecutorService newFixedThreadPool(int nThreads) {
+        return new ThreadPoolExecutor(nThreads, nThreads,
+                                      0L, TimeUnit.MILLISECONDS,
+                                      new LinkedBlockingQueue<Runnable>());
+}
+~~~
+
+核心线程数量和总线程数量相等，都是传入的参数nThreads，所以只能创建核心线程，不能创建非核心线程。因为LinkedBlockingQueue的默认大小是Integer.MAX_VALUE，故如果核心线程空闲，则交给核心线程处理；如果核心线程不空闲，则入列等待，直到核心线程空闲。
+
+**与CachedThreadPool的区别**：
+
+- 因为 corePoolSize == maximumPoolSize ，所以FixedThreadPool只会创建核心线程。 而CachedThreadPool因为corePoolSize=0，所以只会创建非核心线程。
+- 在 getTask() 方法，如果队列里没有任务可取，线程会一直阻塞在 LinkedBlockingQueue.take() ，线程不会被回收。 CachedThreadPool会在60s后收回。
+- 由于线程不会被回收，会一直卡在阻塞，所以**没有任务的情况下， FixedThreadPool占用资源更多**。
+- 都几乎不会触发拒绝策略，但是原理不同。FixedThreadPool是因为阻塞队列可以很大（最大为Integer最大值），故几乎不会触发拒绝策略；CachedThreadPool是因为线程池很大（最大为Integer最大值），几乎不会导致线程数量大于最大线程数，故几乎不会触发拒绝策略。
+
+#### newSingleThreadPool
+
+~~~java
+public static ExecutorService newSingleThreadExecutor() {
+    return new FinalizableDelegatedExecutorService
+        (new ThreadPoolExecutor(1, 1,
+                                0L, TimeUnit.MILLISECONDS,
+                                new LinkedBlockingQueue<Runnable>()));
+}
+~~~
+
+有且仅有一个核心线程（ corePoolSize == maximumPoolSize=1），使用了LinkedBlockingQueue（容量很大），所以，**不会创建非核心线程**。所有任务按照**先来先执行**的顺序执行。如果这个唯一的线程不空闲，那么新来的任务会存储在任务队列里等待执行。
+
+#### newSchedualedThreadPool
+
+创建一个定长线程池，支持定时及周期性任务执行。
+
+~~~java
+public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize) {
+    return new ScheduledThreadPoolExecutor(corePoolSize);
+}
+
+//ScheduledThreadPoolExecutor():
+public ScheduledThreadPoolExecutor(int corePoolSize) {
+    super(corePoolSize, Integer.MAX_VALUE,
+          DEFAULT_KEEPALIVE_MILLIS, MILLISECONDS,
+          new DelayedWorkQueue());
+}
+~~~
+
+《阿里巴巴开发手册》不建议直接使用Executors类中的线程池，而是通过`ThreadPoolExecutor`的方式，这样的处理方式让写的同学需要更加明确线程池的运行规则，规避资源耗尽的风险。
