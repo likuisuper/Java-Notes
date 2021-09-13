@@ -4,38 +4,44 @@
 
 ## 基本设置
 
-### 设置界面风格及修改外部UI尺寸大小
+#### Apperance
 
-![](../images/idea_screen_1.png)
+![](https://z3.ax1x.com/2021/09/13/4ibg4H.png)
 
-### 打开IDEA时设置不重新打开最近的项目
-> IDEA默认会打开最近的项目，有时候我们需要自己选择要打开的项目，不勾选该选项可以实现。
+#### font
 
-![](../images/idea_screen_2.png)
+![](https://z3.ax1x.com/2021/09/13/4iL26I.png)
 
-### 设置IDEA的快捷键
+#### 主题字体
 
-![](../images/idea_screen_3.png)
+使用主题后，设置字体要更改这个设置
 
-### 设置代码字体大小
+![](https://z3.ax1x.com/2021/09/13/4iLLXq.png)
 
-![](../images/idea_screen_4.png)
+#### Console Font
 
-### 设置项目文件编码格式
+![](https://z3.ax1x.com/2021/09/13/4iOGHf.png)
 
-![](../images/idea_screen_5.png)
+#### file and code template
 
-### 设置代码提示的匹配模式
+includes新增`File Header`
 
-![](../images/idea_screen_6.png)
+~~~java
+/**
+ * @Classname ${NAME}
+ * @Description TODO
+ * @Author likui
+ * @Date ${DATE} ${TIME}
+**/
+~~~
 
-### 设置新建类文件的类注释模版
+#### tabs多行显示
 
-![](../images/idea_screen_7.png)
+![](https://z3.ax1x.com/2021/09/13/4iX1G4.png)
 
-### 鼠标停在类、方法、字段上显示详细信息
+#### material theme
 
-settings->editor->general->other，将show quickdocumentation on mouse move打勾，tooltipdelay设置时长
+![](https://z3.ax1x.com/2021/09/13/4iXLwV.png)
 
 ## IDEA和Eclipse常用快捷键对比
 
@@ -64,30 +70,46 @@ settings->editor->general->other，将show quickdocumentation on mouse move打�
 | ctrl+alt+s    | alt+insert          | Generate                      | 生成getter,setter,tostring等            |
 
 ## 推荐插件
-> 由于IDEA本身就自带很多插件，可以完成大部分需求，这里就推荐两个本人常用的插件。
+
+### CodeGlance
+
+右侧显示代码条
+
+### Grep Console
+
+设置
+
+![](https://z3.ax1x.com/2021/09/13/4ivGHx.png)
+
+### Material Theme UI
+
+### Maven Helper
+
+### maven-search
+
+### MyBatis Log Plugin
+
+### Nyan Progress Bar
+
+彩虹条
+
+### RestfulTookit
+
+### Translation
+
+### jclasslib Bytecode Viewer
+
+字节码查看工具
 
 ### Free MyBatis plugin
 
-> 非常好用的MyBatis插件，对MyBatis的xml具有强大的提示功能，同时可以关联mapper接口和mapper.xml中的sql实现。
-
-#### 可以从mapper接口和mapper.xml文件中相互跳转
-
-![](../images/idea_screen_8.png)
-
-#### mapper.xml中的各种提示
-
-![](../images/idea_screen_9.png)
-![](../images/idea_screen_10.png)
+可以从mapper接口和mapper.xml文件中相互跳转
 
 ### Lombok plugin
-
-> Lombok为Java语言添加了非常有趣的附加功能，你可以不用再为实体类手写getter,setter等方法，通过一个注解即可拥有。
-
-一个没有getter,setter方法的类通过添加@Getter和@Setter注解拥有了getter,setter方法。
-
-![](../images/idea_screen_11.png)
 
 ### SequenceDiagram
 
 查看源码的好帮手，能够查看调用的方法时序图
+
+
 

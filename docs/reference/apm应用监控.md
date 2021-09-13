@@ -14,7 +14,9 @@
 
 拦截的目标类是`HttpServlet`，方法是service方法，但是这里有一个点需要注意：
 
-Tomcat的类加载机制，我们的apm项目是有appclassloader加载器加载的，而servlet是由Tomcat自定义的commonclassloader下的webclassloader加载器加载的，这两个加载器是appclassloader加载器的父类，也就是说，apm项目是找不到httpservlet这个类的，因为父类访问不了子类。解决办法就是**采用适配器模式，利用反射来获取httpservlet的方法**。
+Tomcat的类加载机制，我们的apm项目是有appclassloader加载器加载的，而servlet是由Tomcat自定义的commonclassloader下的webclassloader加载器加载的，这两个加载器是appclassloader加载器的子类，也就是说，apm项目是找不到httpservlet这个类的，因为父类访问不了子类。解决办法就是**采用适配器模式，利用反射来获取httpservlet的方法**。
+
+![](https://z3.ax1x.com/2021/08/31/hapsBj.png)
 
 #### fastjson的问题
 
