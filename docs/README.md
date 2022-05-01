@@ -11,7 +11,6 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [多态](java/basis/多态.md)
 * [反射](java/basis/反射.md)
 * [集合](java/basis/集合.md)
-* [回调接口](java/basis/回调接口)
 
 ## JVM
 
@@ -24,6 +23,7 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [深入分析java对象](java/jvm/深入分析java对象.md)
 * [OOM与调优实战](java/jvm/OOM与调优实战.md)
 * [jvm垃圾回收和调优](java/jvm/jvm垃圾回收和调优.md)
+* [字节码编程](java/jvm/字节码编程.md)
 
 ## 并发
 
@@ -41,9 +41,23 @@ Java学习过程中遇到的知识点总结，复习笔记
 
 ## MySQL
 
+* [基础](数据库/MySQL/基础.md)
 * [事务](数据库/MySQL/事务.md)
 * [索引](数据库/MySQL/索引.md)
 * [数据库中的锁](数据库/MySQL/数据库中的锁.md)
+
+* [日志](数据库/MySQL/日志.md)
+* [参数和命令](数据库/MySQL/参数和命令.md)
+* [优化](数据库/MySQL/优化.md)
+
+## Redis
+
+* [Redis设计原理](数据库/Redis/Redis设计原理.md)
+
+## ElasticSearch
+
+* [ES快速入门](数据库/ElasticSearch/ES快速入门.md)
+* [ES核心数据类型及映射](数据库/ElasticSearch/ES核心数据类型及映射.md)
 
 ## Spring&&SpringBoot
 
@@ -64,6 +78,10 @@ Java学习过程中遇到的知识点总结，复习笔记
 * [处理器statementHandler解析](框架/mybatis/处理器statementHandler解析.md)
 * [mybatis映射体系](框架/mybatis/mybatis映射体系.md)
 * [mybatis插件体系](框架/mybatis/mybatis插件体系.md)
+
+## Netty
+
+* [NIO核心组件](框架/netty/NIO核心组件.md)
 
 ## Docker相关
 

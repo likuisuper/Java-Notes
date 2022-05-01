@@ -4,7 +4,7 @@
   * [多态](java/basis/多态.md)
   * [反射](java/basis/反射)
   * [集合](java/basis/集合.md)
-  * [回调接口](java/basis/回调接口.md)
+  
 * JVM
   * [对象在jvm中的模型](java/jvm/对象在jvm中的模型.md)
   * [深入理解类加载机制](java/jvm/深入理解类加载机制.md)
@@ -15,6 +15,8 @@
   * [深入分析java对象](java/jvm/深入分析java对象.md)
   * [OOM与调优实战](java/jvm/OOM与调优实战.md)
   * [jvm垃圾回收和调优](java/jvm/jvm垃圾回收和调优.md)
+  * [字节码编程](java/jvm/字节码编程.md)
+  
 * 并发
 
   * [线程基础](java/并发编程学习/线程.md)
@@ -28,10 +30,28 @@
   * [Java并发工具类之Semaphore](java/并发编程学习/Java并发工具类之Semaphore.md)
   * [Java并发工具类之Exchanger](java/并发编程学习/Java并发工具类之Exchanger.md)
   * [线程池ThreadPoolExecutor原理](java/并发编程学习/线程池ThreadPoolExecutor原理.md)
+  
 * MySQL
+  
+  * [基础](数据库/MySQL/基础.md)
+  
+  * [日志](数据库/MySQL/日志.md)
+  
   * [事务](数据库/MySQL/事务.md)
   * [索引](数据库/MySQL/索引.md)
   * [数据库中的锁](数据库/MySQL/数据库中的锁.md)
+  * [参数和命令](数据库/MySQL/参数和命令.md)
+  * [优化](数据库/MySQL/优化.md)
+  
+* Redis
+
+  * [Redis设计原理](数据库/Redis/Redis设计原理.md)
+
+* ElasticSearch
+
+  * [ES快速入门](数据库/ElasticSearch/ES快速入门.md)
+  * [ES核心数据类型及映射](数据库/ElasticSearch/ES核心数据类型及映射.md)
+
 * Spring&&SpringBoot
 
   * [bean的建模基石BeanDefiniton](框架/spring/bean的基石beanDefinition.md)
@@ -42,6 +62,7 @@
   * [常用注解](框架/spring/常用注解.md)
   * [IOC容器](框架/spring/springIOC容器分析.md)
   * [bean的自动装配](框架/spring/springboot/自动装配.md)
+
 * MyBatis
   * [Executor执行器](框架/mybatis/Executor执行器.md)
   * [mybatis一级缓存](框架/mybatis/一级缓存.md)
@@ -49,6 +70,11 @@
   * [处理器statementHandler解析](框架/mybatis/处理器statementHandler解析.md)
   * [mybatis映射体系](框架/mybatis/mybatis映射体系.md)
   * [mybatis插件体系](框架/mybatis/mybatis插件体系.md)
+
+* Netty
+
+  * [NIO核心组件](框架/netty/NIO核心组件.md)
+
 * RPC
   * [dubbo架构](分布式/dubbo架构.md)
   * [dubbo与springboot集成](分布式/dubbo与springboot集成.md)
@@ -61,20 +87,24 @@
   * [dubbo服务暴露与引用](分布式/dubbo服务暴露与引用.md)
   * [注册中心源码剖析](分布式/注册中心源码剖析.md)
   * [dubbo远程通讯源码解析](分布式/dubbo远程通讯源码解析.md)
+
 * 服务器
-  
+
   * [nginx服务器](服务器/nginx服务器.md)
+
 * Docker相关
 
   * [dokcer命令及原理](java/docker/Docker命令及原理.md)
   * [dockerfile原理及应用](java/docker/Dockerfile原理及应用.md)
   * [docker常用安装](java/docker/Docker常用安装.md)
   * [DockerCompose](java/docker/DockerCompose.md)
+
 * Linux
-  
+
   * [一些常用命令](linux/linux命令.md)
+
 * 参考篇
-  
+
   * [apm应用性能监控](reference/apm应用监控.md)
   * [ELK搭建日志系统](reference/elk搭建日志系统.md)
   * [压测](reference/压测.md)
@@ -83,6 +113,3 @@
   * [搭建spring源码阅读环境](reference/搭建spring源码阅读环境.md)
   * [IDEA常用设置及推荐插件](reference/idea.md)
   * [spring中对excel操作](reference/spring中对excel操作.md)
-* 工作中遇到的问题总结
-  
-  * [工作中的问题](work/工作中遇到的问题.md)
