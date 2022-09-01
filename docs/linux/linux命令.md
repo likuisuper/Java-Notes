@@ -122,5 +122,49 @@ apt-get --purge remove 软件名
 dpkg -l|grep 软件
 ~~~
 
+#### firewall限制或开放IP及端口
 
+##### 开放端口
+
+（1）比如开放xshell连接时使用的22端口
+
+~~~shell
+firewall-cmd --zone=public --add-port=22/tcp --permanent
+~~~
+
+其中–permanent的作用是使设置永久生效，不加的话机器重启之后失效
+
+（2）重新载入以下防火墙设置，时设置立即生效，执行下命令，设置才会生效：
+
+~~~shell
+firewall-cmd --reload
+~~~
+
+（3）可通过如下命令查看是否生效
+
+~~~shell
+firewall-cmd --zone=public --query-port=22/tcp
+~~~
+
+（4）如下命令可查看当前系统打开的所有端口
+
+~~~shell
+firewall-cmd --zone=public --list-ports
+~~~
+
+##### 限制端口
+
+比如我们现在需要关掉刚刚打开的22端口
+
+~~~shell
+firewall-cmd --zone=public --remove-port=22/tcp --permanent
+~~~
+
+##### 批量开放或限制端口
+
+批量开放端口，如从100到500这之间的端口我们全部要打开
+
+~~~shell
+firewall-cmd --zone=public --add-port=100-500/tcp --permanent
+~~~
 
