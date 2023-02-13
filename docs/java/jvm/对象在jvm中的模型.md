@@ -227,6 +227,10 @@ java -cp .\sa-jdi.jar sun.jvm.hotspot.HSDB
 
 ​	可以看到，基本数据类型对应的typeArrayKlass，其中I代表的是描述符，这里是Int类型，所以对应的是I。而引用类型对应的是ObjArrayKlass。
 
+#### 总结
+
+Klass代表了Java类在JVM中的内存映像。Klass 模型是 JVM 实现 Java 类加载、存储和执行的核心部分，用于管理类的元数据和实例，包括类的定义、字段、方法、常量池等信息。Klass 模型的作用是统一管理 Java 类的元数据，使得 JVM 能够快速访问这些元数据，从而实现 Java 类的加载、链接和初始化。此外，Klass 模型还提供了 JVM 实现 Java 虚拟机的一些高级特性，例如内存管理、垃圾回收、类型安全等。
+
 ## Oop模型
 
 前面说过klass模型是java类的元数据在jvm中的存在形式，而oop模型就是java对象在jvm中的存在形式。
@@ -361,3 +365,6 @@ class objArrayOopDesc : public arrayOopDesc {
 }
 ~~~
 
+#### 总结
+
+OOP模型指的是 JVM 在内存中管理 Java 对象的方式。在 JVM 中，OOP 模型被用来实现 Java 程序语言的面向对象特性，包括封装、继承、多态等。JVM 中的 OOP 模型定义了内存布局和对象的生命周期，以及如何使用内存来实现 Java 对象的动态分配、初始化和销毁。在 JVM 中，Java 对象被存储在堆内存中，并由 JVM 负责管理和回收
