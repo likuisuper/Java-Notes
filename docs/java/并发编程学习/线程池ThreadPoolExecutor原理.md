@@ -86,6 +86,64 @@ KeepAliveTime：存活时间，空闲的非核心线程的存活时间。
 
 TimeUnit：存活时间的时间单位。
 
+这里补充两个面试题：
+
+一、线程池被创建后里面有线程吗？如果没有的，有什么方法对线程池进行预热？
+
+答：线程池被创建后如果没有任务过来，里面是不会有线程的。如果需要预热可以调用下面两个方法：
+
+1、全部启动
+
+~~~Java
+    /**
+     * Starts all core threads, causing them to idly wait for work. This
+     * overrides the default policy of starting core threads only when
+     * new tasks are executed.
+     *
+     * @return the number of threads started
+     */
+    public int prestartAllCoreThreads() {
+        int n = 0;
+        while (addWorker(null, true))
+            ++n;
+        return n;
+    }
+~~~
+
+2、仅启动一个
+
+~~~Java
+  /**
+     * Starts a core thread, causing it to idly wait for work. This
+     * overrides the default policy of starting core threads only when
+     * new tasks are executed. This method will return {@code false}
+     * if all core threads have already been started.
+     *
+     * @return {@code true} if a thread was started
+     */
+    public boolean prestartCoreThread() {
+        return workerCountOf(ctl.get()) < corePoolSize &&
+            addWorker(null, true);
+    }
+~~~
+
+二、核心线程数会被回收吗？
+
+默认不会被回收，需要回收的话调用下面方法：
+
+~~~Java
+    public void allowCoreThreadTimeOut(boolean value) {
+        if (value && keepAliveTime <= 0)
+            throw new IllegalArgumentException("Core threads must have nonzero keep alive times");
+        if (value != allowCoreThreadTimeOut) {
+            allowCoreThreadTimeOut = value;
+            if (value)
+                interruptIdleWorkers();
+        }
+    }
+
+~~~
+
 #### 实现原理
 
 查看execute方法的源码了解其实现
@@ -614,8 +672,8 @@ protected boolean tryRelease(int unused) {
 
             try {
                 //当timed为true,也就是设置核心线程即使空闲也会被销毁或者worker数量>核心线程数，
-                //这时就会调用poll方法获取任务。超时时间为keepAlivTime,单位为ns。如果超过该时长，                 //上面的while循环就会退出，线程执行完毕。
-                //如果timd为false，说明核心线程空闲被销毁，并且workr数量<核心线程数，则调用take方				   //法。队列中由任务加入时，线程被唤醒，take方法返回任务，并执行。
+                //这时就会调用poll方法获取任务。超时时间为keepAlivTime,单位为ns。如果									//超过该时长，上面的while循环就会退出，线程执行完毕。
+                //如果timd为false，说明核心线程空闲被销毁，并且workr数量<核心线程数，则				   			//调用take方法。队列中由任务加入时，线程被唤醒，take方法返回任务，并执行。
                 Runnable r = timed ?
                     workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
                     workQueue.take();
@@ -715,7 +773,9 @@ protected boolean tryRelease(int unused) {
 * 任务的执行时间：长、中和短。 
 * 任务的依赖性：是否依赖其他系统资源，如数据库连接。
 
-除此之外，还**建议使用有界队列**：使用无界队列，队列中的任务就会越来越多，有可能会撑满内存
+除此之外，还**建议使用有界队列**：使用无界队列，队列中的任务就会越来越多，有可能会撑满内存。
+
+线程池的参数配置并没有一个标准，可以参考美团的这篇文章：https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html，推荐使用这款动态配置线程池参数的框架：https://github.com/likuisuper/hippo4j.git
 
 #### 线程池的监控
 
