@@ -212,4 +212,4 @@ protected boolean tryReleaseShared(int releases) {
 
 #### 总结
 
-CountDownLatch相比join更加灵活和方便。它使用AQS来实现，**使用AQS的状态变量来存放计数器的值**。首先在实例化CountDownLatch时设置状态值，当多个线程调用countdown方法时实际是原子性递减AQS的状态值。而当线程调用awit方法时会被放入AQS的阻塞队列等待计数器为0。直到最后一个线程将计数器变为后唤醒由于调用了awit方法而被阻塞的线程。
+CountDownLatch相比join更加灵活和方便。它使用AQS来实现，**使用AQS的状态变量来存放计数器的值**。首先在实例化CountDownLatch时设置状态值，当多个线程调用countdown方法时实际是原子性递减AQS的状态值。而当线程调用awit方法时会被放入AQS的阻塞队列等待计数器为0。直到最后一个线程将计数器变为0后唤醒由于调用了awit方法而被阻塞的线程。
