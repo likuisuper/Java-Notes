@@ -168,3 +168,45 @@ firewall-cmd --zone=public --remove-port=22/tcp --permanent
 firewall-cmd --zone=public --add-port=100-500/tcp --permanent
 ~~~
 
+#### 查看当前放开的端口
+
+ss -tunlp
+
+#### rabbitmq相关命令
+
+后台启动：
+
+~~~bash
+rabbitmq-server -detached
+~~~
+
+关闭服务：
+
+~~~bash
+rabbitmqctl stop
+~~~
+
+查看所有队列信息
+
+```bash
+rabbitmqctl list_queues
+```
+
+如果要指定某个virtual-host：
+
+~~~bash
+rabbitmqctl list_queues -p virtualhost
+~~~
+
+删除指定队列：
+
+```bash
+rabbitmqctl delete_queue 队列名称
+```
+
+如果要指定某个virtual-host：
+
+~~~bash
+rabbitmqctl delete_queue name -p virtualhost
+~~~
+
