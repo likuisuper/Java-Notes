@@ -1,3 +1,11 @@
+#### 切换用户
+
+~~~shell
+su - uesr
+~~~
+
+
+
 #### 查看cpu核数
 
 ~~~shell
@@ -208,5 +216,31 @@ rabbitmqctl delete_queue 队列名称
 
 ~~~bash
 rabbitmqctl delete_queue name -p virtualhost
+~~~
+
+#### service文件相关命令
+
+查看状态
+
+~~~shell
+systemctl status test.service
+~~~
+
+修改文件后重新加载
+
+~~~shell
+systemctl daeload test.service
+~~~
+
+然后重启
+
+~~~shell
+systemctl restart test.service
+~~~
+
+在使用京东sgm监控程序时，目标程序是jdk11，sgm版本是jdk8，这时就是报错，可以使用如下命令
+
+~~~shell
+/usr/java/jdk11/bin/jar 目标jar包路径
 ~~~
 
