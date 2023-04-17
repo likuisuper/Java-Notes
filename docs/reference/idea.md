@@ -69,6 +69,10 @@ includes新增`File Header`
 | ctrl+/        | ctrl+/              | Other->Fix doc comment        | 方法注释                                |
 | ctrl+alt+s    | alt+insert          | Generate                      | 生成getter,setter,tostring等            |
 
+command+shift+f：全局搜索
+
+command+f12：查找类方法
+
 ## 推荐插件
 
 ### CodeGlance
@@ -110,6 +114,12 @@ includes新增`File Header`
 ### SequenceDiagram
 
 查看源码的好帮手，能够查看调用的方法时序图
+
+### GitToolBox
+
+### EasyCode
+
+代码生成插件
 
 
 
