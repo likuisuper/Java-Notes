@@ -188,3 +188,53 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 2、执行程序员提供的BeanFactoryPostProcessor
 
 具体的实现和顺序见后面的扫描原理。
+
+#### BeanFactoryPostProcessor和BeanPostProcessor的执行时机：
+
+首先是BeanFactoryPostProcessor：
+
+~~~Java
+public interface BeanFactoryPostProcessor {
+
+    /**
+     * 在所有的 BeanDefinition 加载完成后，实例化 Bean 对象之前，提供修改 BeanDefinition 属性的机制
+     *
+     * @param beanFactory
+     * @throws BeansException
+     */
+    void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException;
+
+}
+~~~
+
+在 Spring 源码中有这样一段描述 `Allows for custom modification of an application context's bean definitions,adapting the bean property values of the context's underlying bean factory.` 其实也就是说这个接口是满足于在所有的 BeanDefinition 加载完成后，**实例化 Bean 对象之前**，提供修改 BeanDefinition 属性的机制。
+
+BeanPostProcessor：
+
+~~~Java
+public interface BeanPostProcessor {
+
+    /**
+     * 在 Bean 对象执行初始化方法之前，执行此方法
+     *
+     * @param bean
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
+    Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException;
+
+    /**
+     * 在 Bean 对象执行初始化方法之后，执行此方法
+     *
+     * @param bean
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
+    Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException;
+
+}
+~~~
+
+在 Spring 源码中有这样一段描述 `Factory hook that allows for custom modification of new bean instances,e.g. checking for marker interfaces or wrapping them with proxies.`也就是提供了修改新实例化 Bean 对象的扩展点。

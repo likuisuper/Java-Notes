@@ -67,13 +67,82 @@ ThreadFactory：创建线程的工厂
 RejectedExecutionHandle：饱和策略，就是当队列满并且线程个数达到maximunPoolSize后需要采取的策略。主要有四种：
 
 * AbortPolicy(抛出异常)
+
+  丢弃任务并抛出异常。默认策略，在任务不能再提交的时候，抛出异常，及时反馈程序运行状态。如果是比较关键的业务，推荐使用此拒接策略，这样在系统不能承载更大的并发量的时候，能够及时的通过异常发现。
+
 * CallerRunsPolicy(使用调用者所在线程来运行任务)
+
+  由调用线程（提交任务的线程）处理该任务。这种情况是需要让所有任务都执行完毕，那么就适合大量计算的任务类型去执行，多线程仅仅是增大吞吐量的手段，最终必须要让每个任务都执行完毕
+
 * DiscardOldestPolicy(丢弃队列里最近的一个任务，执行当前任务)
+
+  丢弃队列最前面的任务，然后重新提交被拒绝的任务。是否要采用此种策略，还得根据实际业务是否允许丢弃老任务来认真衡量
+
 * DiscardPolicy(不处理，直接丢弃掉)
+
+  丢弃任务，但是不抛出异常。使用此策略，可能会使我们无法发现系统的异常状态。建议是一些无关紧要的业务采用此策略
 
 KeepAliveTime：存活时间，空闲的非核心线程的存活时间。
 
 TimeUnit：存活时间的时间单位。
+
+这里补充两个面试题：
+
+一、线程池被创建后里面有线程吗？如果没有的，有什么方法对线程池进行预热？
+
+答：线程池被创建后如果没有任务过来，里面是不会有线程的。如果需要预热可以调用下面两个方法：
+
+1、全部启动
+
+~~~Java
+    /**
+     * Starts all core threads, causing them to idly wait for work. This
+     * overrides the default policy of starting core threads only when
+     * new tasks are executed.
+     *
+     * @return the number of threads started
+     */
+    public int prestartAllCoreThreads() {
+        int n = 0;
+        while (addWorker(null, true))
+            ++n;
+        return n;
+    }
+~~~
+
+2、仅启动一个
+
+~~~Java
+  /**
+     * Starts a core thread, causing it to idly wait for work. This
+     * overrides the default policy of starting core threads only when
+     * new tasks are executed. This method will return {@code false}
+     * if all core threads have already been started.
+     *
+     * @return {@code true} if a thread was started
+     */
+    public boolean prestartCoreThread() {
+        return workerCountOf(ctl.get()) < corePoolSize &&
+            addWorker(null, true);
+    }
+~~~
+
+二、核心线程数会被回收吗？
+
+默认不会被回收，需要回收的话调用下面方法：
+
+~~~Java
+    public void allowCoreThreadTimeOut(boolean value) {
+        if (value && keepAliveTime <= 0)
+            throw new IllegalArgumentException("Core threads must have nonzero keep alive times");
+        if (value != allowCoreThreadTimeOut) {
+            allowCoreThreadTimeOut = value;
+            if (value)
+                interruptIdleWorkers();
+        }
+    }
+
+~~~
 
 #### 实现原理
 
@@ -127,7 +196,7 @@ public void execute(Runnable command) {
 
 1.判断核心线程池的线程是否都在执行任务，如果不是，那么创建新的线程，否则进入下一步
 
-2.线程池判断工作队列是否已满，如果没有，就将新加入的任务放入工作队列。否则进入下一步
+2.线程池判断工作队列是否已满，如果没有，就将新加入的任务放入工作队列。否则进入下一步。这里会进行一个Double Check的过程。目的是判断加入到阻塞队列中的线程是否可以被执行。如果线程池不是RUNNING状态，则调用remove()方法从阻塞队列中删除该任务，然后调用reject方法处理任务。否则需要确保还有线程执行。
 
 3.如果当前队列已满，线程池判断线程池的线程是否都在执行任务，如果没有，那么创建新的工作线程，否则执行拒绝策略
 
@@ -244,6 +313,7 @@ public void execute(Runnable command) {
         for (;;) {
             （1）
             int c = ctl.get();//-537068912
+          	//获取当前线程状态
             int rs = runStateOf(c);//-537068912
 
             // Check if queue empty only if necessary.
@@ -255,6 +325,7 @@ public void execute(Runnable command) {
 
             for (;;) {
                 //（2）进入这里
+              	//线程数量
                 int wc = workerCountOf(c);//0
                 //如果线程个数超限则返回false
                 //传进来的是核心线程，就判断是否超过核心线程池的大小，否则判断线程池的大小
@@ -267,6 +338,7 @@ public void execute(Runnable command) {
                 //CAS失败，查看线程池状态是否变化，变化则跳到外层循环重新尝试获取线程池状态
                 //否则内层循环重新CAS
                 c = ctl.get();  // Re-read ctl
+              	//如果状态不等于之前获取的state，跳出内层循环，继续去外层循环判断
                 if (runStateOf(c) != rs)
                     continue retry;
                 // else CAS failed due to workerCount change; retry inner loop
@@ -278,7 +350,9 @@ public void execute(Runnable command) {
         boolean workerAdded = false;
         Worker w = null;
         try {
+          	//新建线程：Worker
             w = new Worker(firstTask);
+          	//当前线程
             final Thread t = w.thread;
             if (t != null) {
                 final ReentrantLock mainLock = this.mainLock;
@@ -290,10 +364,11 @@ public void execute(Runnable command) {
                     // shut down before lock acquired.
                     //上一步已经将ctl加1了，所以此时的rs=-536870911
                     int rs = runStateOf(ctl.get());
-
+									
+                  	//rs < SHUTDOWN==>线程处于RUNNING状态，或者线程处于SHUTDOWN，且firstTask==null(可能是workQueue中仍有未执行完成的任务，创建没有初始化任务的worker线程执行)
                     if (rs < SHUTDOWN ||
                         (rs == SHUTDOWN && firstTask == null)) {
-                        //此时线程都该没启动，所以这里为false
+                        //此时线程都还没启动，所以这里为false
                         if (t.isAlive()) // precheck that t is startable
                             throw new IllegalThreadStateException();
                         workers.add(w);//添加任务
@@ -311,6 +386,7 @@ public void execute(Runnable command) {
                 }
             }
         } finally {
+          	//线程启动失败
             if (! workerStarted)
                 addWorkerFailed(w);
         }
@@ -329,7 +405,7 @@ public void execute(Runnable command) {
                 return false;
 ~~~
 
-即检查队列是否只在必要时为空
+即判断当前线程是否可以添加新任务，如果可以则进行下一步，否则return false
 
 将上面的代码展开
 
@@ -340,7 +416,7 @@ if(rs>=SHUTDOWN&&(rs!=SHUTDOWN||firstTask!=null||workQueue.isEmpty()))
 
 由上面可知，在下面几种情况下会返回false:
 
-(1)当前线程池状态为STOP、TIDYING、或TREMINATED
+(1)当前线程池状态为SHUTDOWN、STOP、TIDYING、或TREMINATED
 
 (2)当前线程为SHUTDOWN，并且已经有了第一个任务
 
@@ -384,6 +460,7 @@ public void run() {
          * @param firstTask the first task (null if none)
          */
         Worker(Runnable firstTask) {
+          	//设置AQS的同步状态，大于0代表锁已经被获取
             setState(-1); // inhibit interrupts until runWorker
             this.firstTask = firstTask;
             //创建一个线程(线程的任务就是自己)
@@ -455,10 +532,13 @@ private final HashSet<Worker> workers = new HashSet<Worker>();
 
 ~~~java
     final void runWorker(Worker w) {
+      	//当前线程
         Thread wt = Thread.currentThread();
+      	//要执行的任务
         Runnable task = w.firstTask;
         w.firstTask = null;
-        //允许中断
+        //释放锁，允许中断，因为调用unlock()方法可以将state设置为0
+      	//interruptWorkers()方法只有在state>=0时才会执行
         w.unlock(); //(1) allow interrupts
         boolean completedAbruptly = true;
         try {
@@ -592,8 +672,8 @@ protected boolean tryRelease(int unused) {
 
             try {
                 //当timed为true,也就是设置核心线程即使空闲也会被销毁或者worker数量>核心线程数，
-                //这时就会调用poll方法获取任务。超时时间为keepAlivTime,单位为ns。如果超过该时长，                 //上面的while循环就会退出，线程执行完毕。
-                //如果timd为false，说明核心线程空闲被销毁，并且workr数量<核心线程数，则调用take方				   //法。队列中由任务加入时，线程被唤醒，take方法返回任务，并执行。
+                //这时就会调用poll方法获取任务。超时时间为keepAlivTime,单位为ns。如果									//超过该时长，上面的while循环就会退出，线程执行完毕。
+                //如果timd为false，说明核心线程空闲被销毁，并且workr数量<核心线程数，则				   			//调用take方法。队列中由任务加入时，线程被唤醒，take方法返回任务，并执行。
                 Runnable r = timed ?
                     workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
                     workQueue.take();
@@ -611,6 +691,8 @@ protected boolean tryRelease(int unused) {
 
 ~~~java
     private void processWorkerExit(Worker w, boolean completedAbruptly) {
+      	//true：用户线程运行异常，需要扣减
+      	//false：getTask方法中扣减线程数量
         if (completedAbruptly) // If abrupt, then workerCount wasn't adjusted
             decrementWorkerCount();
 
@@ -631,16 +713,21 @@ protected boolean tryRelease(int unused) {
         //线程池的awaitTermination方法而被阻塞的线程
         tryTerminate();
 
-        //如果当前线程个数小于核心个数，则增加
         int c = ctl.get();
+      	//如果线程为running或shutdown状态，即tryTerminate()没有成功终止线程池，则判断
+      	//是否有必要一个worker
         if (runStateLessThan(c, STOP)) {
+          	//正常退出，计算min：需要维护的最小线程数量
             if (!completedAbruptly) {
+              	//是否需要维持核心线程的数量
                 int min = allowCoreThreadTimeOut ? 0 : corePoolSize;
                 if (min == 0 && ! workQueue.isEmpty())
                     min = 1;
+              	//如果线程数量大于最少数量min，直接返回，不需要新增线程
                 if (workerCountOf(c) >= min)
                     return; // replacement not needed
             }
+          	//添加一个没有firstTask的worker
             addWorker(null, false);
         }
     }
@@ -686,7 +773,9 @@ protected boolean tryRelease(int unused) {
 * 任务的执行时间：长、中和短。 
 * 任务的依赖性：是否依赖其他系统资源，如数据库连接。
 
-除此之外，还**建议使用有界队列**：使用无界队列，队列中的任务就会越来越多，有可能会撑满内存
+除此之外，还**建议使用有界队列**：使用无界队列，队列中的任务就会越来越多，有可能会撑满内存。
+
+线程池的参数配置并没有一个标准，可以参考美团的这篇文章：https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html，推荐使用这款动态配置线程池参数的框架：https://github.com/likuisuper/hippo4j.git
 
 #### 线程池的监控
 
