@@ -165,6 +165,23 @@ channel = DatagramChannel.open();
 channel.bind(new InetSocketAddress(8080));
 // 3.接收消息，如果客户端没有消息，则当前会阻塞等待channel.receive(buffer); 
 ByteBuffer buffer = ByteBuffer.allocate(8192);
+
+while (true){
+    buffer.clear(); //  清空还原
+    channel.receive(buffer); // 阻塞
+    buffer.flip();
+    byte[] bytes=new byte[buffer.remaining()];
+    buffer.get(bytes);
+    System.out.println(new String(bytes));
+    //因为调用了get，所以要调用rewind
+    buffer.rewind();
+    //回写消息到客户端，但是报错，因为udp是单向的，没有连接，不支持回写
+    //datagramChannel.write(buffer);
+    //只能通过send方法将消息重新发送到另外一个地址
+    channel.send(buffer,new InetSocketAddress("127.0.0.1",8010));
+    //关闭管道
+    channel.close();
+}
 ~~~
 
 在mac中，可使用`nc -vu 127.0.0.1 8080`这个命令向udp发送消息
@@ -194,7 +211,7 @@ public void  test() throws IOException {
         ByteBuffer buffer=ByteBuffer.allocate(1024);
         //4、读取客服端发来的消息，如果没有则阻塞，idea运行后，可以发现线程一直没有结束，知道收到客户端消息
         socketChannel.read(buffer);
-        //read就相当于往buffer中put数据，所以一定要flip，让position重新从0开始，flip常用于put之后，至于为什么？想想就明白了
+        //read就是读取客户端的数据写入到buffer中，底层调用的是buffer的put方法，所以一定要flip，让position重新从0开始，flip常用于put之后
         buffer.flip();
     	//remaining方法返回的是limit - position的值，也就是剩余数量，但是我们先调用了filp，所以得到的就是已使用的空间大小
         byte[] bytes=new byte[buffer.remaining()];
@@ -234,7 +251,7 @@ public void  test2() throws IOException {
             buffer.clear();
             //4、读取客服端发来的消息，如果没有则阻塞
             socketChannel.read(buffer);
-            //read就相当于往buffer中put数据，所以一定要flip，让position重新从0开始，flip常用于put之后，至于为什么？想想就明白了
+            //read就是读取客户端的数据写入到buffer中，底层调用的是buffer的put方法，所以一定要flip，让position重新从0开始，flip常用于put之后
             buffer.flip();
             byte[] bytes = new byte[buffer.remaining()];
             //将缓冲区的数据读取到字节数组
@@ -293,7 +310,7 @@ public void  test2() throws IOException {
                     buffer.clear();
                     //4、读取客服端发来的消息，如果没有则阻塞
                     socketChannel.read(buffer);
-                    //read就相当于往buffer中put数据，所以一定要flip，让position重新从0开始，flip常用于put之后，至于为什么？想想就明白了
+                    //read就是读取客户端的数据写入到buffer中，底层调用的是buffer的put方法，所以一定要flip，让position重新从0开始，flip常用于put之后
                     buffer.flip();
                     byte[] bytes = new byte[buffer.remaining()];
                     //将缓冲区的数据读取到字节数组
@@ -323,19 +340,238 @@ public void  test2() throws IOException {
     }
 ~~~
 
+ debug启动后，通过快照可以发现
 
+~~~java
+        while (true){
+            //这里将相当于tomcat的BIO模型中的Acceptor
+            handle(channel.accept());
+        }
+~~~
+
+这里是阻塞的：
+
+~~~java
+"main@1" prio=5 tid=0x1 nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+	  at sun.nio.ch.ServerSocketChannelImpl.accept0(ServerSocketChannelImpl.java:-1)
+	  at sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:422)
+	  at sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:250)
+	  - locked <0x36e> (a java.lang.Object)
+	  at com.cxylk.nio.channel.ServerSocketChannelTest.test3(ServerSocketChannelTest.java:104)
+	  at sun.reflect.NativeMethodAccessorImpl.invoke0(NativeMethodAccessorImpl.java:-1)
+	  at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	  ...
+~~~
+
+然后通过telnet建立连接后，这里
+
+~~~java
+                    //4、读取客服端发来的消息，如果没有则阻塞
+                    socketChannel.read(buffer);
+~~~
+
+会阻塞：
+
+~~~java
+"Thread-0@1040" prio=5 tid=0xe nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+	  at sun.nio.ch.SocketDispatcher.read0(SocketDispatcher.java:-1)
+	  at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:43)
+	  at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:223)
+	  at sun.nio.ch.IOUtil.read(IOUtil.java:197)
+	  at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:380)
+	  - locked <0x416> (a java.lang.Object)
+	  at com.cxylk.nio.channel.ServerSocketChannelTest.lambda$handle$0(ServerSocketChannelTest.java:127)
+~~~
 
 开启三个终端，分别使用`telnet`建立连接，这时候使用`jstack`命令可以看到建立了3个线程来处理请求
 
 ![](https://s1.ax1x.com/2023/06/04/pC9LfMQ.png)
 
-上面就是一个简易的BIO模型，不管是read还是write都是阻塞的，可以采用下面的方法变为非阻塞：
+上面就是一个简易的BIO模型，不管是read还是write都是阻塞的。
+
+### selector
+
+selector用于监听多个通道的事件，比如连接打开，数据到达等。因此，单个的线程可以监听多个数据通道。即用选择器，借助单一线程，就可以对数量庞大的活动I/O通道实施监控和维护。
+
+但需要注意的是，**写就绪相对来说有一点特殊**，一般来说，不应该注册写事件。写操作就绪条件为底层缓冲区有空闲空间，而写缓冲区绝大部分时间都是有空闲空间的，所以当注册了写事件后，写操作一直就是就绪的，选择处理线程会占用整个CPU资源。所以，**只有当确实有数据要写时再注册写操作，并在写完以后马上取消注册**。
+
+没有selector，我们可以实现一个BIO，但要实现一个NIO，则必须需要selector组件。channel只需要设置为异步，然后注册到selector，selector负责监视这些socket的IO状态，当其中任意一个或多个channel具有可用的IO操作时，该selector的select()方法（该方法是阻塞的，selectNow是非阻塞的）将会返回大于0的整数，该整数值就表示该selector上有多少个channel具有可用的IO操作，并提供了selectedKeys()方法来返回这些channel对应的SelectionKey集合（一个SelectionKey对应一个就绪的通道）。正是通过selector，使得服务器端只需要不断地调用selector实例的select()方法即可知道当前所有channel是否有需要处理的IO操作。
+
+#### 核心组件
+
+选择器核心组件有三个:管道(SelectableChannel)、选择器(Selector)、选择键(SelectorKey)。
+
+并非所有的Channel都支持向选择器注册，只有SelectableChannel子类才可以。当管道注册到Selector后就会返回一个Key，通过它就可以获取到关联的管道。接下来就分别介绍三个组件的作用:
+
+![](https://s1.ax1x.com/2023/06/16/pCMQEvT.png)
+
+##### SelectableChannel
+
+管道。
+
+不是所有的channel都可以注册到选择器，只有SelectableChannel的子类才可以。
+
+核心功能有两个：
+
+* configureBlocking 设置阻塞模式
+
+  默认为true，即同步。向选择器注册前必须设置为false。
+
+* 第二就是调用register方法注册到选择器，并且指定要监听的事件。可选的事件有`CONNECT`建立连接、`ACCEPT`接受连接、`READ`可读、`WRITE`可写。但并非所有管道都支持这四个事件，可以通过`validOps()`方法来查看当前管道支持哪些事件，比如ServerSocketChannel只支持ACCEPT事件：
+
+  ~~~java
+      public final int validOps() {
+          return SelectionKey.OP_ACCEPT;
+      }
+  ~~~
+
+##### Selector
+
+选择器。
+
+管道注册到selector后，会生成一个键（SelectorKey）该键维护在selector的keys中。选择器中维护了三个键集，底层都是set实现所以不会重复：
+
+* 全部键集(keys)：所有向该选择器注册的键都放在里面
+* 选择键集(selectedKeys)：存放准备就绪的键
+* 取消键集(cancelledKeys)：存放已取消的键
+
+通过调用select方法会进行刷新，如果返回数大于0表示有指定数量的键状态发生了变更。
+
+* select()：有键更新，立马返回。否则会一直阻塞知道有键更新为止。
+* select(long)：有键更新，立马返回。否则会阻塞指定参数毫秒时。
+* selectNow()：无论有没有键更新都会立马返回。
+
+通过下面代码来演示调用selector方法后键集的变化：
 
 ~~~java
-        //构建一个选择器来托管管道
+    public void demo() throws IOException {
+        DatagramChannel channel = DatagramChannel.open();
+        channel.bind(new InetSocketAddress(8081));
+        channel.configureBlocking(false);
         Selector selector=Selector.open();
-        //选择器会监听当前的read操作，当数据读取好了之后，再通知管道
-        //只有继承了SelectableChannel的类才能register
-        socketChannel.register(selector, SelectionKey.OP_READ);//非阻塞
+        channel.register(selector,SelectionKey.OP_READ);
+    }
 ~~~
 
+调用selectNow立即刷新，此时selectedKeys加1：
+
+![](https://s1.ax1x.com/2023/06/15/pCKRV3t.png)
+
+处理完要remove，不然虽然selectNow返回0了，但是selectKey里面还是存在键：
+
+![](https://s1.ax1x.com/2023/06/15/pCK2dfI.png)
+
+可以发现，selectedKeys中已经移除了该键。
+
+如果调用cancel，则cancelledKeys中会加入该键
+
+![](https://s1.ax1x.com/2023/06/15/pCK260g.png)
+
+而且我们可以发现，此时keys里面还是1，当调用selectNow刷新后就变为0了，同时cancelledKeys也变为了0，因为刷新操作会去添加已经就绪的键集，也会清空键集
+
+![](https://s1.ax1x.com/2023/06/15/pCK2xc6.png)
+
+可以通过下面这张图来清楚的看到当刷新或者关闭选择器时键集的变化：
+
+![](https://s1.ax1x.com/2023/06/16/pCMKNQO.png)
+
+调用cancel方法或关闭选择器、关闭管道都会将键添加到取消键集中，但不会被立马清楚，需要调用刷新时才会被清空。
+
+##### SelectorKey
+
+选择键。用于关联管道与选择器，并监听维护管道1至多个事件，监听事件可在注册时指定，也可以后续调用`interestOps`来改变感兴趣的键集。
+
+`SelectorKey`中关于IO事件的集合有两个。一个是上面说的`interestOps`，用于记录channel感兴趣的IO事件。另外一个就是`readyOps`，用于记录在channel感兴趣的IO事件中具体有哪些IO事件就绪了。
+
+其中有4个常量，也是支持的事件：
+
+~~~java
+    public static final int OP_READ = 1 << 0;
+
+    public static final int OP_WRITE = 1 << 2;
+
+    public static final int OP_CONNECT = 1 << 3;
+
+    public static final int OP_ACCEPT = 1 << 4;
+~~~
+
+查看当前管道是否支持某个事件，可以使用`validOps()`和某个具体事件进行`&`运算，比如：
+
+~~~java
+//表示该管道支持 OP_CONNECT 事件监听
+socketChannel.validOps()&SelectionKey.OP_CONNECT != 0
+~~~
+
+此外Key还有如下主要功能：
+
+1. **channel()** 获取管道
+
+2. **判断状态**
+
+   ​	a. isAcceptable() 管道是否处于Accept状态
+
+   ​	b. isConnectable 管道是否处于连接就绪状态
+
+   ​	c. isReadable   管道是否处于读取就绪状态
+
+   ​	d. isWritable   管道是否处于写就续状态
+
+3. **isValid()** 判断该键是否有效，管道关闭、选择器关闭、键调用**cancel()方法**都会导致该键无效。
+
+4. **cancel()**取消管道注册（不会直接关闭管道）
+
+#### 使用
+
+下面是一个UDP的demo：
+
+~~~java
+public void test3() throws IOException {    
+    Selector selector = Selector.open();    
+    DatagramChannel channel = DatagramChannel.open();    
+    channel.bind(new InetSocketAddress(8080));    
+    channel.configureBlocking(false);// 设置非阻塞模式    
+    // 1.注册读取就续事件    
+    channel.register(selector, SelectionKey.OP_READ);    
+    while (true) {        
+        int count = selector.select();
+        //2.刷新键集        
+        if (count > 0) {            
+            Iterator<SelectionKey> iterator =   selector.selectedKeys().iterator();    
+            // 3.遍历就续集            
+            while (iterator.hasNext()) {                
+                SelectionKey key = iterator.next();                
+                //4.处理该就续键                
+                handle(key);                
+                //5.从就续集中移除                 
+                iterator.remove();            
+            }        
+        }    
+    }
+}
+~~~
+
+处理该键，从键中获取管道并读取消息
+
+~~~java
+public void handle(SelectionKey key) throws IOException {    
+    ByteBuffer buffer = ByteBuffer.allocate(8192);    
+    DatagramChannel channel = (DatagramChannel) key.channel();    		
+    channel.receive(buffer);// 读取消息并写入缓冲区
+}
+~~~
+
+流程：
+
+1、将管道注册到选择器
+
+2、通过select方法刷新已注册键的状态
+
+3、获取就绪集并遍历
+
+4、**处理键，即获取管道并读取消息**
+
+5、**从选择键集中移除**
+
+需要注意，如果第四步没有进行读取，那么管道目前还是处于读就绪状态，当调用select方法时会立马返回，造成死循环。如果没有执行第5步，会导致其留存在选择集中，从而重复进行处理。
