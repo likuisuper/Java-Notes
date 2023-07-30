@@ -74,6 +74,7 @@
 * Netty
 
   * [NIO核心组件](框架/netty/NIO核心组件.md)
+  * [Netty线程模型](框架/netty/reactor模型.md)
   * [Netty核心组件](框架/netty/Netty核心组件.md)
   * [编解码](框架/netty/编解码.md)
 
