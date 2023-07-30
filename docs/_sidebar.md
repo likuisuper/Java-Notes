@@ -74,6 +74,8 @@
 * Netty
 
   * [NIO核心组件](框架/netty/NIO核心组件.md)
+  * [Netty核心组件](框架/netty/Netty核心组件.md)
+  * [编解码](框架/netty/编解码.md)
 
 * RPC
   * [dubbo架构](分布式/dubbo架构.md)

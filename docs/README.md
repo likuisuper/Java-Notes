@@ -82,6 +82,8 @@ Java学习过程中遇到的知识点总结，复习笔记
 ## Netty
 
 * [NIO核心组件](框架/netty/NIO核心组件.md)
+* [Netty核心组件](框架/netty/Netty核心组件.md)
+* [编解码](框架/netty/编解码.md)
 
 ## Docker相关
 
